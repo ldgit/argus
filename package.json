@@ -6,6 +6,12 @@
   "author": "Danko Lučić",
   "license": "MIT",
   "devDependencies": {
+    "chai": "^4.1.0",
+    "chokidar": "^1.7.0",
     "mocha": "^3.4.2"
+  },
+  "dependencies": {},
+  "scripts": {
+    "test": "mocha"
   }
 }
