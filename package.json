@@ -1,0 +1,11 @@
+{
+  "name": "watch-tests",
+  "version": "0.1.0",
+  "description": "Watches for changes and executes automatic tests",
+  "main": "index.js",
+  "author": "Danko Lučić",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^3.4.2"
+  }
+}
