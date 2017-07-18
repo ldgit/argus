@@ -7,7 +7,7 @@ module.exports = function Watcher() {
             throw new TypeError();
         }
 
-        watcher = fileWatcher.watch(dirpath);
+        watcher = fileWatcher.watch(dirpath + '/**/*.php');
         watcher.on('change', callback);
     };
 };
