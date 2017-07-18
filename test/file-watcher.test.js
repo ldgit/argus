@@ -1,5 +1,5 @@
 var assert = require('chai').assert;
-var Watcher = require('../src/watcher');
+var Watcher = require('../src/file-watcher');
 
 "use strict";
 
