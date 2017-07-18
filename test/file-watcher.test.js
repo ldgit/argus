@@ -8,6 +8,8 @@ const { fork } = require('child_process');
 describe('watcher', function() {
     var watcher;
 
+    this.slow(300);
+
     beforeEach(function() {
         process.chdir('./test');
         watcher = new Watcher();
