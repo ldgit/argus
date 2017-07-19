@@ -37,7 +37,7 @@ describe('watcher', function() {
 
     it('should call given callback if a watched file changes and send changed path to callback', function(done) {
         watcher.watchPhpFiles('./fixtures', function(pathToChangedFile) {
-            assert.equal('fixtures/src/Example.php', pathToChangedFile);
+            assert.equal('fixtures/src/ExampleFileForFileWatcher.php', pathToChangedFile);
             done();
         });
 
