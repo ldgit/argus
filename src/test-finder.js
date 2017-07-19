@@ -1,12 +1,28 @@
 var fs = require('fs');
 
-module.exports = function TestFinder(testsDirectoryPath = 'tests/') {
-    this.findTestFor = function(filePath) {
-        var testPath = testsDirectoryPath + getPathWithoutExtension(filePath) + 'Test.php';
+"use strict";
 
-        if(!fs.existsSync(testPath)) {
-            return '';            
-        }
+module.exports = function TestFinder() {
+    var possibleTestDirectories = [
+        'tests/',
+        'tests/unit/',
+        'test/',
+        'test/unit/',
+    ];
+
+    this.findTestFor = function(filePath) {
+        var testPath = '';
+
+        possibleTestDirectories.every(function(testsDirectoryPath) {
+            var possibleTestPath = testsDirectoryPath + getPathWithoutExtension(filePath) + 'Test.php';
+
+            if(fs.existsSync(possibleTestPath)) {
+                testPath = possibleTestPath;
+                return false; // ie. break
+            }
+
+            return true;
+        });
 
         return testPath;
     };
