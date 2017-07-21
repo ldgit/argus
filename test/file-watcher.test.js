@@ -1,4 +1,4 @@
-var assert = require('chai').assert;
+var assert = require('assert');
 var Watcher = require('../src/file-watcher');
 
 "use strict";
@@ -26,7 +26,7 @@ describe('watcher', function() {
             callbackWasCalled = true;
         });
 
-        assert.isFalse(callbackWasCalled);
+        assert.strictEqual(callbackWasCalled, false);
     });
 
     it('should throw error if path does not exist', function() {
