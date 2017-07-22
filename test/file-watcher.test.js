@@ -56,5 +56,15 @@ describe('watcher', function() {
           done();
         })
     })
+
+    it('should ignore vendor directory', function(done) {
+        watcher.watchPhpFiles('./mock-project', function(pathToChangedFile) {
+            assert.fail('callback was called when it should not have been');
+        });
+
+        child = fork('touch-vendor-php-file.js').on('exit', function() {
+          done();
+        })
+    })
 });
 
