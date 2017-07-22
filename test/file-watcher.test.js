@@ -22,7 +22,7 @@ describe('watcher', function() {
     it('should not call given callback if no files changed', function() {
         var callbackWasCalled = false;
 
-        watcher.watchPhpFiles('./fixtures', function() {
+        watcher.watchPhpFiles('./mock-project', function() {
             callbackWasCalled = true;
         });
 
@@ -31,13 +31,13 @@ describe('watcher', function() {
 
     it('should throw error if path does not exist', function() {
         assert.throws(function() {
-            watcher.watchPhpFiles('./fixtures/nonexistent/path', function() {});
+            watcher.watchPhpFiles('./mock-project/nonexistent/path', function() {});
         }, TypeError);
     });
 
     it('should call given callback if a watched file changes and send changed path to callback', function(done) {
-        watcher.watchPhpFiles('./fixtures', function(pathToChangedFile) {
-            assert.equal('fixtures/src/ExampleFileForFileWatcher.php', pathToChangedFile);
+        watcher.watchPhpFiles('./mock-project', function(pathToChangedFile) {
+            assert.equal('mock-project/src/ExampleFileForFileWatcher.php', pathToChangedFile);
             done();
         });
 
@@ -48,7 +48,7 @@ describe('watcher', function() {
     })
 
     it('should watch only php files', function(done) {
-        watcher.watchPhpFiles('./fixtures', function(pathToChangedFile) {
+        watcher.watchPhpFiles('./mock-project', function(pathToChangedFile) {
             assert.fail('callback was called when it should not have been');
         });
 

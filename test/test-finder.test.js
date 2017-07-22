@@ -5,7 +5,7 @@ describe('test-finder', function() {
     var testFinder;
 
     beforeEach(function() {
-        process.chdir('./test/fixtures');
+        process.chdir('./test/mock-project');
         testFinder = new TestFinder();
     });
 

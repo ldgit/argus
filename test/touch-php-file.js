@@ -1,3 +1,3 @@
 const spawnSync = require('child_process').spawnSync;
 
-spawnSync('touch', ['./fixtures/src/ExampleFileForFileWatcher.php']);
+spawnSync('touch', ['./mock-project/src/ExampleFileForFileWatcher.php']);
