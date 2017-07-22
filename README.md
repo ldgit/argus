@@ -1,4 +1,4 @@
-Argos
+Argus
 =====
 
 Watches PHP files and executes [PHPUnit](https://phpunit.de/) unit tests for them (if it finds any).
@@ -20,5 +20,5 @@ Watches PHP files and executes [PHPUnit](https://phpunit.de/) unit tests for the
 1. clone or download this repository
 10. ```cd``` into repo directory
 20. run ```yarn``` (or ```npm install```)
-30. navigate to your project root and run ```node {path_to_argos_index.js_file}``` 
-40. Argos should now watch for changes in your source files and run the tests for you
+30. navigate to your project root and run ```node {path_to_argus_index.js_file}``` 
+40. Argus should now watch for changes in your source files and run the tests for you
