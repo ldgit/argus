@@ -13,6 +13,7 @@
     "glob": "^7.1.2"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "test-int": "mocha test/integration/**/*.test.js"
   }
 }

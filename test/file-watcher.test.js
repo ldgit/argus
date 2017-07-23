@@ -52,7 +52,7 @@ describe('watcher', function() {
             assert.fail('callback was called when it should not have been');
         });
 
-        child = fork('touch-js-file.js').on('exit', function() {
+        fork('touch-js-file.js').on('exit', function() {
           done();
         })
     })
@@ -62,7 +62,7 @@ describe('watcher', function() {
             assert.fail('callback was called when it should not have been');
         });
 
-        child = fork('touch-vendor-php-file.js').on('exit', function() {
+        fork('touch-vendor-php-file.js').on('exit', function() {
           done();
         })
     })
