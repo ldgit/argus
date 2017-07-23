@@ -13,4 +13,3 @@ module.exports = function Watcher() {
         watcher.on('change', callback);
     };
 };
-

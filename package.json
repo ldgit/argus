@@ -9,7 +9,8 @@
     "mocha": "^3.4.2"
   },
   "dependencies": {
-    "chokidar": "^1.7.0"
+    "chokidar": "^1.7.0",
+    "glob": "^7.1.2"
   },
   "scripts": {
     "test": "mocha"

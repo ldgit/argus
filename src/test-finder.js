@@ -4,11 +4,28 @@ var fs = require('fs');
 
 module.exports = function TestFinder() {
     var possibleTestDirectories = [
-        'tests/',
         'tests/unit/',
-        'test/',
         'test/unit/',
+        'tests/',
+        'test/',
     ];
+
+    this.getTestDir = function() {
+        var testDirPath = '';
+        possibleTestDirectories.every(function(possibleTestsDirPath) {
+            if(fs.existsSync(possibleTestsDirPath)) {
+                testDirPath = possibleTestsDirPath;
+                return false; // ie. break
+            }
+
+            return true;
+        });
+
+        if('' === testDirPath)
+            throw new Error('Test directory not found, looked in ', possibleTestDirectories.join(', '));
+
+        return testDirPath;
+    };
 
     this.findTestFor = function(filePath) {
         var testPath = '';
