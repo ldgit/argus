@@ -15,16 +15,11 @@ describe('command-runner', function() {
         spawnSpyData.lastOptions = options;
     };
 
-    beforeEach(function() {
+    it('should run given command', function() {
         commandRunner = new CommandRunner(spawnSpy);
-    });
-
-    context('when given a command', function() {
-        it('should run it', function() {
-            commandRunner.run({command: 'echo', args: ["what if this was a unit test command?"]});
-            assert.equal(spawnSpyData.lastCommand, 'echo');
-            assert.deepEqual(spawnSpyData.lastArgs, ["what if this was a unit test command?"]);
-            assert.equal(spawnSpyData.lastOptions.stdio, 'inherit');
-        });
+        commandRunner.run({command: 'echo', args: ["what if this was a unit test command?"]});
+        assert.equal(spawnSpyData.lastCommand, 'echo');
+        assert.deepEqual(spawnSpyData.lastArgs, ["what if this was a unit test command?"]);
+        assert.equal(spawnSpyData.lastOptions.stdio, 'inherit');
     });
 });

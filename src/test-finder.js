@@ -31,7 +31,7 @@ module.exports = function TestFinder() {
         var testPath = '';
 
         possibleTestDirectories.every(function(testsDirectoryPath) {
-            var possibleTestPath = testsDirectoryPath + getPathWithoutExtension(filePath) + 'Test.php';
+            var possibleTestPath = getPossibleTestPath(filePath, testsDirectoryPath);
 
             if(fs.existsSync(possibleTestPath)) {
                 testPath = possibleTestPath;
@@ -43,6 +43,13 @@ module.exports = function TestFinder() {
 
         return testPath;
     };
+
+    function getPossibleTestPath(filePath, testsDirectoryPath) {
+        if(filePath.startsWith(testsDirectoryPath))
+            return filePath;
+
+        return testsDirectoryPath + getPathWithoutExtension(filePath) + 'Test.php';
+    }
 
     function getPathWithoutExtension(filePath) {
         return filePath.split('.').slice(0, -1).join('.');

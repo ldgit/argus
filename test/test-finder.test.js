@@ -14,23 +14,24 @@ describe('test-finder', function() {
             process.chdir('./../../');
         });
 
-        it('should look for test file in tests directory', function() {
-            assert.equal(testFinder.findTestFor('src/ExampleOne.php'), 'tests/src/ExampleOneTest.php');
+        testsGroup = [
+            {startingFile: 'src/ExampleOne.php', expectedTestFile: 'tests/src/ExampleOneTest.php'},
+            {startingFile: 'src/ExampleTwo.php', expectedTestFile: 'tests/unit/src/ExampleTwoTest.php'},
+            {startingFile: 'src/ExampleThree.php', expectedTestFile: 'test/src/ExampleThreeTest.php'},
+            {startingFile: 'src/ExampleFour.php', expectedTestFile: 'test/unit/src/ExampleFourTest.php'},
+            {startingFile: 'tests/src/ExampleOneTest.php', expectedTestFile: 'tests/src/ExampleOneTest.php'},
+            {startingFile: 'tests/unit/src/ExampleTwoTest.php', expectedTestFile: 'tests/unit/src/ExampleTwoTest.php'},
+            {startingFile: 'test/src/ExampleThreeTest.php', expectedTestFile: 'test/src/ExampleThreeTest.php'},
+            {startingFile: 'test/unit/src/ExampleFourTest.php', expectedTestFile: 'test/unit/src/ExampleFourTest.php'},
+        ];
+
+        testsGroup.forEach(function(test) {
+            it('should look for test for file "' + test.startingFile + '" in possible test directories', function() {
+                assert.equal(testFinder.findTestFor(test.startingFile), test.expectedTestFile);
+            });
         });
 
-        it('should look for test file in tests/unit directory', function() {
-            assert.equal(testFinder.findTestFor('src/ExampleTwo.php'), 'tests/unit/src/ExampleTwoTest.php');
-        });
-
-        it('should look for test file in test directory', function() {
-            assert.equal(testFinder.findTestFor('src/ExampleThree.php'), 'test/src/ExampleThreeTest.php');
-        });
-
-        it('should look for test file in test/unit directory', function() {
-            assert.equal(testFinder.findTestFor('src/ExampleFour.php'), 'test/unit/src/ExampleFourTest.php');
-        });
-
-        context('and if test was not found', function() {
+        context('and if test file was not found', function() {
             it('should return empty path', function() {
                 assert.strictEqual(testFinder.findTestFor('nonexistent/file.php'), '');
             });
