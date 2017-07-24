@@ -1,3 +1,3 @@
 const spawnSync = require('child_process').spawnSync;
 
-spawnSync('touch', ['./mock-project/src/Example.js']);
+spawnSync('touch', [process.argv[2]]);
