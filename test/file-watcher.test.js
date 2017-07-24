@@ -44,7 +44,7 @@ describe('watcher', function() {
         // This seems to be the only option that triggers "on file change" callback. Watcher does not seem to be able to
         // detect that the file was changed by this node process (ie. the same node process that test and watcher itself 
         // are running from). The file *needs* to be changed by a different node.js process for this test to work.
-        fork('touch-php-file.js');
+        fork('helpers/touch-php-file.js');
     })
 
     it('should watch only php files', function(done) {
@@ -52,7 +52,7 @@ describe('watcher', function() {
             assert.fail('callback was called when it should not have been');
         });
 
-        fork('touch-js-file.js').on('exit', function() {
+        fork('helpers/touch-js-file.js').on('exit', function() {
           done();
         })
     })
@@ -62,7 +62,7 @@ describe('watcher', function() {
             assert.fail('callback was called when it should not have been');
         });
 
-        fork('touch-vendor-php-file.js').on('exit', function() {
+        fork('helpers/touch-vendor-php-file.js').on('exit', function() {
           done();
         })
     })
