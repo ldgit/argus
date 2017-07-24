@@ -23,7 +23,7 @@ describe('argus', function() {
 
     it('should watch project source files and run console command if they change', function(done) {
         argus.run('.');
-        fork('./../touch-php-file.js');
+        fork('./../../helpers/touch.js', ['./src/PhpClass.php']);
 
         setTimeout(function() {
             assert.equal(lastRunCommand.command, 'vendor/bin/phpunit');
