@@ -9,7 +9,7 @@ describe('command-builder', function() {
     });
 
     context('given a path to php test file', function() {
-        it('should return a command to run it in phpunit', function() {
+        it('should return a command to run in phpunit', function() {
             assert.deepEqual(
                 commandBuilder.buildFor('tests/src/ExampleOneTest.php'), 
                 {
@@ -26,4 +26,11 @@ describe('command-builder', function() {
             );
         });
     });
+
+    context('if given an empty string', function() {
+        it('should return a null command', function() {
+            assert.deepEqual(commandBuilder.buildFor(''), {command: '', args: ['']});
+        });
+    });
+
 });

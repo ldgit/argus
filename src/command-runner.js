@@ -1,5 +1,7 @@
 module.exports = function (spawn) {
     this.run = function (command) {
-        spawn(command.command, command.args, {stdio: 'inherit'});
+        if(command.command !== '') {
+            spawn(command.command, command.args, {stdio: 'inherit'});
+        }
     };
 }
