@@ -1,12 +1,13 @@
 var assert = require('assert');
 var CommandRunner = require('../src/command-runner');
+var nullPrinter = require('../src/printer').createNull();
 
 describe('command-runner', function() {
     var commandRunner;
     var spawnSpyData;
 
     beforeEach(function() {
-        commandRunner = new CommandRunner(spawnSpy);
+        commandRunner = new CommandRunner(spawnSpy, nullPrinter);
         spawnSpyData = {
             lastCommand: null,
             lastArgs: null,
@@ -34,5 +35,20 @@ describe('command-runner', function() {
         assert.strictEqual(spawnSpyData.wasCalled, false);
         commandRunner.run({command: '', args: ['neki argument']});
         assert.strictEqual(spawnSpyData.wasCalled, false);
+    });
+
+    context('when running command', function() {
+        var textSentToInfo;
+        beforeEach(function() {
+            textSentToInfo = '';
+            nullPrinter.info = function(text) {
+                textSentToInfo = text;
+            };
+        });
+
+        it('should print info message', function() {
+            commandRunner.run({command: 'echo', args: ['some arg']});
+            assert.equal(textSentToInfo, 'echo "some arg"');
+        });
     });
 });

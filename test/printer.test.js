@@ -1,6 +1,6 @@
 const assert = require('assert');
 const chalk = require('chalk');
-const Printer = require('../src/printer');
+const Printer = require('../src/printer').Printer;
 
 describe('printer', function() {
     var printer;

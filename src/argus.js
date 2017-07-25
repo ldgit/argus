@@ -4,13 +4,14 @@ var TestFinder = require('./test-finder');
 var CommandBuilder = require('./command-builder');
 var Watchlist = require('./watchlist');
 var spawn = require('child_process').spawn;
+var printer = require('./printer').create();
 
 var testFinder = new TestFinder();
 
 var argusModule = {
     factory: {
         create: function() {
-            return new argusModule.Argus(new CommandRunner(spawn));
+            return new argusModule.Argus(new CommandRunner(spawn, printer));
         }
     },
     Argus: function(commandRunner) {
