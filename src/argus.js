@@ -2,6 +2,7 @@ var CommandRunner = require('./command-runner');
 var FileWatcher = require('./file-watcher');
 var TestFinder = require('./test-finder');
 var CommandBuilder = require('./command-builder');
+var Watchlist = require('./watchlist');
 var spawn = require('child_process').spawn;
 
 var testFinder = new TestFinder();
@@ -13,11 +14,12 @@ var argusModule = {
         }
     },
     Argus: function(commandRunner) {
-        this.run = function(inDir) {
+        this.run = function() {
             var fileWatcher = new FileWatcher();
-            var commandBuilder = new CommandBuilder();       
+            var commandBuilder = new CommandBuilder();
+            var watchlist = new Watchlist();
 
-            fileWatcher.watchPhpFiles(inDir, function (pathToChangedFile) {
+            fileWatcher.watchPhpFiles(watchlist.compileFrom(testFinder.getTestDir()), function (pathToChangedFile) {
                 var testFilePath = testFinder.findTestFor(pathToChangedFile);
                 var command = commandBuilder.buildFor(testFilePath);
                 commandRunner.run(command);

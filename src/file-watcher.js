@@ -2,14 +2,30 @@ var fileWatcher = require('chokidar');
 var fs = require('fs');
 
 module.exports = function Watcher() {
-    this.watchPhpFiles = function (dirpath, callback) {
-        if (!fs.existsSync(dirpath)) {
+    var watcher;
+
+    this.watchPhpFiles = function (watchlist, callback) {
+        if (typeof watchlist === 'object') {
+            watchlist.forEach(function(watchlistPath){
+                if (!fs.existsSync(watchlistPath)) {
+                    throw new TypeError();     
+                } 
+            });
+        } else if (!fs.existsSync(watchlist)) {
             throw new TypeError();
         }
 
-        watcher = fileWatcher.watch(dirpath + '/**/*.php', {
+        var fullWatchlist = typeof watchlist === 'string' ? watchlist + '/**/*.php' : watchlist;
+
+        watcher = fileWatcher.watch(fullWatchlist, {
             ignored:  /vendor/
         });
         watcher.on('change', callback);
+    };
+
+    this.close = function() {
+        if (watcher) {
+            watcher.close();
+        }
     };
 };

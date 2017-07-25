@@ -35,7 +35,7 @@ describe('argus', function() {
     });
 
     it('should watch project test files and run console command if they change', function(done) {
-        argus.run('.');
+        argus.run();
         fork('./../../helpers/touch.js', ['./tests/src/PhpClassTest.php']);
 
         setTimeout(function() {

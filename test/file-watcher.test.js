@@ -16,6 +16,7 @@ describe('watcher', function() {
     });
 
     afterEach(function() {
+        watcher.close();
         process.chdir('./../');
     });
 
@@ -29,9 +30,15 @@ describe('watcher', function() {
         assert.strictEqual(callbackWasCalled, false);
     });
 
-    it('should throw error if path does not exist', function() {
+    it('should throw error if path is string and does not exist', function() {
         assert.throws(function() {
             watcher.watchPhpFiles('./mock-project/nonexistent/path', function() {});
+        }, TypeError);
+    });
+
+    it('should throw error if path is array and any element does not exist', function() {
+        assert.throws(function() {
+            watcher.watchPhpFiles(['./mock-project', './mock-project/nonexistent/path'], function() {});
         }, TypeError);
     });
 
@@ -46,7 +53,17 @@ describe('watcher', function() {
         // are running from). The file *needs* to be changed by a different node.js process for this test to work.
         // fork('helpers/touch-php-file.js');
         fork('helpers/touch.js', ['./mock-project/src/ExampleFileForFileWatcher.php']);
-    })
+    });
+
+    it('should call given callback if a file from a watchlist changes and send changed path to callback', function(done) {
+        var watchlist = ['./mock-project/src/ExampleFour.php', './mock-project/src/ExampleFileForFileWatcher.php'];
+        watcher.watchPhpFiles(watchlist, function(pathToChangedFile) {
+            assert.equal('mock-project/src/ExampleFileForFileWatcher.php', pathToChangedFile);
+            done();
+        });
+
+        fork('helpers/touch.js', ['./mock-project/src/ExampleFileForFileWatcher.php']);
+    });
 
     it('should watch only php files', function(done) {
         watcher.watchPhpFiles('./mock-project', function(pathToChangedFile) {
@@ -56,7 +73,7 @@ describe('watcher', function() {
         fork('helpers/touch.js', ['./mock-project/src/Example.js']).on('exit', function() {
           done();
         })
-    })
+    });
 
     it('should ignore vendor directory', function(done) {
         watcher.watchPhpFiles('./mock-project', function(pathToChangedFile) {

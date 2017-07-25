@@ -11,13 +11,12 @@ module.exports = function () {
         var locationsToWatch = [];
         var testsToWatch = glob.sync(testsDir + '/**/*.php');
 
-
         testsToWatch.forEach(function(filepath) {
             var fullFilepath = filepath.startsWith('./') ? filepath : './' + filepath;
-            var sourceFilePath = '.' + fullFilepath.replace(testsDir, '').replace('Test.php', '.php');
+            var sourceFilePath = './' + fullFilepath.replace(testsDir, '').replace('Test.php', '.php');
 
             locationsToWatch.push(fullFilepath);
-            locationsToWatch.push(sourceFilePath);
+            locationsToWatch.push(sourceFilePath.replace('//', '/'));
         });
 
         return locationsToWatch;

@@ -31,6 +31,10 @@ describe('watchlist', function() {
             './test/unit/src/ExampleFourTest.php',
             './src/ExampleFour.php',  
         ]},
+        {args: './test/unit/', expected: [
+            './test/unit/src/ExampleFourTest.php',
+            './src/ExampleFour.php',
+        ]},
     ];
 
     invalidUseCases.forEach(function(test) {
