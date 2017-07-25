@@ -32,5 +32,4 @@ describe('command-builder', function() {
             assert.deepEqual(commandBuilder.buildFor(''), {command: '', args: ['']});
         });
     });
-
 });
