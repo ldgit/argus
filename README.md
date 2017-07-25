@@ -8,11 +8,11 @@ Watches PHP files and executes [PHPUnit](https://phpunit.de/) unit tests for the
 ## Requirements
 * [Node.js](https://nodejs.org/en/) v6.* or greater
 * [Yarn](https://yarnpkg.com/en/) or npm 3 or greater
-* your project must keep it's tests in one of four locations (in that order):
-  1. tests/
-  20. tests/unit/
-  30. test/
-  40. test/unit/
+* your project must keep it's tests in one of these four locations:
+  1. tests/unit/
+  20. test/unit/
+  30. tests/
+  40. test/
 * test file names must end with ```*Test.php```
 * directory structure inside your project test directory must mirror project root directory for tests to be found
 
