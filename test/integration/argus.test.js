@@ -7,7 +7,7 @@ describe('argus', function() {
 
     var argus;
     var lastRunCommand = '';
-    var isTravis = process.env.TRAVIS === true;
+    var timeoutDuration = 'TRAVIS' in process.env ? 1000 : 200;
 
     var CommandRunnerMock = function () {
         this.run = function (command) {
@@ -32,7 +32,7 @@ describe('argus', function() {
             assert.equal(lastRunCommand.command, 'vendor/bin/phpunit');
             assert.deepEqual(lastRunCommand.args, ['tests/src/PhpClassTest.php']);
             done();
-        }, isTravis ? 1000 : 200);
+        }, timeoutDuration);
     });
 
     it('should watch project test files and run console command if they change', function(done) {
@@ -43,6 +43,6 @@ describe('argus', function() {
             assert.equal(lastRunCommand.command, 'vendor/bin/phpunit');
             assert.deepEqual(lastRunCommand.args, ['tests/src/PhpClassTest.php']);
             done();
-        }, isTravis ? 1000 : 200);
+        }, timeoutDuration);
     });
 });
