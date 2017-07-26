@@ -20,20 +20,20 @@ describe('watchlist', function() {
 
     var validUseCases = [
         {args: './test/unit', expected: [
-            './test/unit/src/ExampleFourTest.php',
-            './src/ExampleFour.php',  
+            './test/unit/src/[E]xampleFourTest.php',
+            './src/[E]xampleFour.php',  
         ]},
         {args: './tests/unit', expected: [
-            './tests/unit/src/ExampleTwoTest.php',
-            './src/ExampleTwo.php',  
+            './tests/unit/src/[E]xampleTwoTest.php',
+            './src/[E]xampleTwo.php',  
         ]},
         {args: 'test/unit', expected: [
-            './test/unit/src/ExampleFourTest.php',
-            './src/ExampleFour.php',  
+            './test/unit/src/[E]xampleFourTest.php',
+            './src/[E]xampleFour.php',  
         ]},
         {args: './test/unit/', expected: [
-            './test/unit/src/ExampleFourTest.php',
-            './src/ExampleFour.php',
+            './test/unit/src/[E]xampleFourTest.php',
+            './src/[E]xampleFour.php',
         ]},
     ];
 
@@ -46,7 +46,7 @@ describe('watchlist', function() {
     });
 
     validUseCases.forEach(function(test) {
-        it('should compile appropriate watchlist from "' + test.args + '" test directory', function() {
+        it('should compile watchlist of globified filepaths from "' + test.args + '" test directory', function() {
             var locationsToWatch = watchlist.compileFrom(test.args);
 
             assert.deepEqual(locationsToWatch, test.expected);

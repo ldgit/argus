@@ -37,13 +37,20 @@ describe('watcher', function() {
         }, TypeError);
     });
 
-    it('should print out a warning if path is array and any element does not exist', function() {
-        var warnings = [];
-        nullPrinter.warning = function(text) {
-            warnings.push(text);
-        };
-        watcher.watchPhpFiles(['./mock-project', './mock-project/nonexistent/path'], function() {});
-        assert.equal(warnings[0], 'Path "./mock-project/nonexistent/path" does not exist');
+    context('when given an array of "globified" file paths', function() {
+        it('should print out a warning if any file path does not exist', function() {
+            var warnings = [];
+            nullPrinter.warning = function(text) {
+                warnings.push(text);
+            };
+
+            watcher.watchPhpFiles([
+                './mock-project/src/[E]xample.js', // Exists, glob-ified to avoid issue #8
+                './mock-project/nonexistent/[p]ath',
+            ], function() {});
+
+            assert.equal(warnings[0], 'File not found: "./mock-project/nonexistent/path"');
+        });
     });
 
     it('should call given callback if a watched file changes and send changed path to callback', function(done) {
