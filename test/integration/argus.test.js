@@ -31,7 +31,7 @@ describe('argus', function() {
             assert.equal(lastRunCommand.command, 'vendor/bin/phpunit');
             assert.deepEqual(lastRunCommand.args, ['tests/src/PhpClassTest.php']);
             done();
-        }, 2000);
+        }, 1000);
     });
 
     it('should watch project test files and run console command if they change', function(done) {
@@ -42,6 +42,6 @@ describe('argus', function() {
             assert.equal(lastRunCommand.command, 'vendor/bin/phpunit');
             assert.deepEqual(lastRunCommand.args, ['tests/src/PhpClassTest.php']);
             done();
-        }, 2000);
+        }, 1000);
     });
 });
