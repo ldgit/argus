@@ -1,6 +1,8 @@
 Argus
 =====
 
+[![Build Status](https://travis-ci.org/ldgit/argus.svg?branch=master)](https://travis-ci.org/ldgit/argus)
+
 Watches PHP files and executes [PHPUnit](https://phpunit.de/) unit tests for them (if it finds any).
 
 **Notice:** this software is still in alpha phase, expect lots of bugs.
