@@ -1,14 +1,14 @@
 var fileWatcher = require('chokidar');
 var fs = require('fs');
 
-module.exports = function Watcher() {
+module.exports = function Watcher(printer) {
     var watcher;
 
     this.watchPhpFiles = function (watchlist, callback) {
         if (typeof watchlist === 'object') {
             watchlist.forEach(function(watchlistPath){
                 if (!fs.existsSync(watchlistPath)) {
-                    throw new TypeError();     
+                    printer.warning('Path "' + watchlistPath + '" does not exist');
                 } 
             });
         } else if (!fs.existsSync(watchlist)) {

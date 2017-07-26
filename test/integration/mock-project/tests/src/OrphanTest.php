@@ -1,0 +1,1 @@
+Just a test without a source file.

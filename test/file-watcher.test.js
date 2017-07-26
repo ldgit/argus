@@ -1,5 +1,6 @@
 var assert = require('assert');
 var Watcher = require('../src/file-watcher');
+var nullPrinter = require('../src/printer').createNull();
 
 "use strict";
 
@@ -12,7 +13,7 @@ describe('watcher', function() {
 
     beforeEach(function() {
         process.chdir('./test');
-        watcher = new Watcher();
+        watcher = new Watcher(nullPrinter);
     });
 
     afterEach(function() {
@@ -36,10 +37,13 @@ describe('watcher', function() {
         }, TypeError);
     });
 
-    it('should throw error if path is array and any element does not exist', function() {
-        assert.throws(function() {
-            watcher.watchPhpFiles(['./mock-project', './mock-project/nonexistent/path'], function() {});
-        }, TypeError);
+    it('should print out a warning if path is array and any element does not exist', function() {
+        var warnings = [];
+        nullPrinter.warning = function(text) {
+            warnings.push(text);
+        };
+        watcher.watchPhpFiles(['./mock-project', './mock-project/nonexistent/path'], function() {});
+        assert.equal(warnings[0], 'Path "./mock-project/nonexistent/path" does not exist');
     });
 
     it('should call given callback if a watched file changes and send changed path to callback', function(done) {

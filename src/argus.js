@@ -16,7 +16,7 @@ var argusModule = {
     },
     Argus: function(commandRunner) {
         this.run = function() {
-            var fileWatcher = new FileWatcher();
+            var fileWatcher = new FileWatcher(printer);
             var commandBuilder = new CommandBuilder();
             var watchlist = new Watchlist();
 
