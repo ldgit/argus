@@ -9,7 +9,7 @@ module.exports = function () {
             throw new TypeError('Test directory ' + testsDir + 'was not found');
 
         var locationsToWatch = [];
-        var testsToWatch = glob.sync(testsDir + '/**/*.php');
+        var testsToWatch = glob.sync(testsDir + '/**/*Test.php');
 
         testsToWatch.forEach(function(filepath) {
             var fullFilepath = filepath.startsWith('./') ? filepath : './' + filepath;
