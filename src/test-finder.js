@@ -1,57 +1,57 @@
-var fs = require('fs');
-
-"use strict";
+const fs = require('fs');
 
 module.exports = function TestFinder() {
-    var possibleTestDirectories = [
-        'tests/unit/',
-        'test/unit/',
-        'tests/',
-        'test/',
-    ];
+  const possibleTestDirectories = [
+    'tests/unit/',
+    'test/unit/',
+    'tests/',
+    'test/',
+  ];
 
-    this.getTestDir = function() {
-        var testDirPath = '';
-        possibleTestDirectories.every(function(possibleTestsDirPath) {
-            if(fs.existsSync(possibleTestsDirPath)) {
-                testDirPath = possibleTestsDirPath;
-                return false; // ie. break
-            }
+  this.getTestDir = () => {
+    let testDirPath = '';
+    possibleTestDirectories.every((possibleTestsDirPath) => {
+      if (fs.existsSync(possibleTestsDirPath)) {
+        testDirPath = possibleTestsDirPath;
+        return false; // ie. break
+      }
 
-            return true;
-        });
+      return true;
+    });
 
-        if('' === testDirPath)
-            throw new Error('Test directory not found, looked in ', possibleTestDirectories.join(', '));
-
-        return testDirPath;
-    };
-
-    this.findTestFor = function(filePath) {
-        var testPath = '';
-
-        possibleTestDirectories.every(function(testsDirectoryPath) {
-            var possibleTestPath = getPossibleTestPath(filePath, testsDirectoryPath);
-
-            if(fs.existsSync(possibleTestPath)) {
-                testPath = possibleTestPath;
-                return false; // ie. break
-            }
-
-            return true;
-        });
-
-        return testPath;
-    };
-
-    function getPossibleTestPath(filePath, testsDirectoryPath) {
-        if(filePath.startsWith(testsDirectoryPath))
-            return filePath;
-
-        return testsDirectoryPath + getPathWithoutExtension(filePath) + 'Test.php';
+    if (testDirPath === '') {
+      throw new Error('Test directory not found, looked in ', possibleTestDirectories.join(', '));
     }
 
-    function getPathWithoutExtension(filePath) {
-        return filePath.split('.').slice(0, -1).join('.');
-    };
-}
+    return testDirPath;
+  };
+
+  this.findTestFor = (filePath) => {
+    let testPath = '';
+
+    possibleTestDirectories.every((testsDirectoryPath) => {
+      const possibleTestPath = getPossibleTestPath(filePath, testsDirectoryPath);
+
+      if (fs.existsSync(possibleTestPath)) {
+        testPath = possibleTestPath;
+        return false; // ie. break
+      }
+
+      return true;
+    });
+
+    return testPath;
+  };
+
+  function getPossibleTestPath(filePath, testsDirectoryPath) {
+    if (filePath.startsWith(testsDirectoryPath)) {
+      return filePath;
+    }
+
+    return `${testsDirectoryPath}${getPathWithoutExtension(filePath)}Test.php`;
+  }
+
+  function getPathWithoutExtension(filePath) {
+    return filePath.split('.').slice(0, -1).join('.');
+  }
+};
