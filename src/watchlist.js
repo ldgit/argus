@@ -1,42 +1,43 @@
-var glob = require('glob');
-var fs = require('fs');
+const glob = require('glob');
+const fs = require('fs');
 
-module.exports = function () {
-    this.compileFrom = function(testsDir) {
-        if (!testsDir.startsWith('./')) 
-            testsDir = './' + testsDir;
-        if (!fs.existsSync(testsDir))
-            throw new TypeError('Test directory ' + testsDir + 'was not found');
+module.exports = function Watchlist() {
+  this.compileFrom = (testsDir) => {
+    const normalizedTestsDir = !testsDir.startsWith('./') ? `./${testsDir}` : testsDir;
 
-        var locationsToWatch = [];
-        var testsToWatch = glob.sync(testsDir + '/**/*Test.php');
-
-        testsToWatch.forEach(function(filepath) {
-            var fullFilepath = filepath.startsWith('./') ? filepath : './' + filepath;
-            var sourceFilePath = './' + fullFilepath.replace(testsDir, '').replace('Test.php', '.php');
-
-            locationsToWatch.push(globify(fullFilepath));
-            locationsToWatch.push(globify(sourceFilePath.replace('//', '/')));
-        });
-
-        return locationsToWatch;
-    };
-
-    /**
-     * Converts normal filepath into glob for that filepath.
-     * 
-     * @param  {string} filepath 
-     * @return {string} first letter of the filename in the path is wrapped in squared brackets
-     */
-    function globify(filepath) {
-        return wrapFirstLetterOfTheFileNameInSquareBrackets(filepath);
+    if (!fs.existsSync(normalizedTestsDir)) {
+      throw new TypeError(`Test directory ${normalizedTestsDir} was not found`);
     }
 
-    function wrapFirstLetterOfTheFileNameInSquareBrackets(filepath) {
-        var pathFragments = filepath.split('/');
-        var filename = pathFragments.pop();
-        filename = filename.replace(filename[0], '[' + filename[0] + ']');
+    const locationsToWatch = [];
+    const testsToWatch = glob.sync(`${normalizedTestsDir}/**/*Test.php`);
 
-        return pathFragments.join('/') + '/' + filename;
-    }
+    testsToWatch.forEach((filepath) => {
+      const fullFilepath = filepath.startsWith('./') ? filepath : `./${filepath}`;
+      const sourceFilePath = ['./', fullFilepath.replace(normalizedTestsDir, '').replace('Test.php', '.php')].join('');
+
+      locationsToWatch.push(globify(fullFilepath));
+      locationsToWatch.push(globify(sourceFilePath.replace('//', '/')));
+    });
+
+    return locationsToWatch;
+  };
+
+  /**
+   * Converts normal filepath into glob for that filepath.
+   * 
+   * @param  {string} filepath 
+   * @return {string} first letter of the filename in the path is wrapped in squared brackets
+   */
+  function globify(filepath) {
+    return wrapFirstLetterOfTheFileNameInSquareBrackets(filepath);
+  }
+
+  function wrapFirstLetterOfTheFileNameInSquareBrackets(filepath) {
+    const pathFragments = filepath.split('/');
+    const filename = pathFragments.pop();
+    const globifiedFilename = filename.replace(filename[0], `[${filename[0]}]`);
+
+    return `${(pathFragments.join('/'))}/${globifiedFilename}`;
+  }
 };
