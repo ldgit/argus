@@ -7,7 +7,7 @@ describe('argus', function argusTestSuite() {
 
   let argus;
   let lastRunCommand = '';
-  const timeoutDuration = 'TRAVIS' in process.env ? 1000 : 200;
+  const timeoutDuration = 'TRAVIS' in process.env ? 1000 : 400;
 
   function CommandRunnerMock() {
     this.run = (command) => {
