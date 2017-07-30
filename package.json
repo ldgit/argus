@@ -30,7 +30,7 @@
   "scripts": {
     "test": "npm run lint && mocha",
     "test-int": "mocha test/integration/**/*.test.js",
-    "test-all": "yarn test && yarn test-int",
+    "test-all": "npm test && npm run test-int",
     "lint": "eslint test/ src/ ./index.js"
   },
   "engines": {
