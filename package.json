@@ -1,6 +1,6 @@
 {
   "name": "argus-test-runner",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Watches for changes in PHP files and executes automatic tests",
   "main": "index.js",
   "author": "Danko Lučić",
