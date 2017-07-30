@@ -4,4 +4,4 @@ node_js:
   - "7"
   - "8"
 script:
-  - npm test-all
+  - npm run test-all
