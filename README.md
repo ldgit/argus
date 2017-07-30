@@ -1,7 +1,7 @@
 Argus test runner
 =================
 
-[![NPM version](https://badge.fury.io/js/argus-test-runner.svg)](https://www.npmjs.com/package/argus-test-runner) [![Build Status](https://travis-ci.org/ldgit/argus.svg?branch=master)](https://travis-ci.org/ldgit/argus)
+[![npm](https://img.shields.io/npm/v/argus-test-runner.svg)](https://www.npmjs.com/package/argus-test-runner) [![Build Status](https://travis-ci.org/ldgit/argus.svg?branch=master)](https://travis-ci.org/ldgit/argus)
 
 Watches PHP files and executes [PHPUnit](https://phpunit.de/) unit tests for them (if it finds any).
 
