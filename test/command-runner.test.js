@@ -1,4 +1,5 @@
 const assert = require('assert');
+const clock = require('lolex');
 const CommandRunner = require('../src/command-runner');
 const nullPrinter = require('../src/printer').createNull();
 
@@ -14,12 +15,7 @@ describe('command-runner', () => {
 
   beforeEach(() => {
     commandRunner = new CommandRunner(spawnSpy, nullPrinter);
-    spawnSpyData = {
-      lastCommand: null,
-      lastArgs: null,
-      lastOptions: null,
-      wasCalled: false,
-    };
+    spawnSpyData = { lastCommand: null, lastArgs: null, lastOptions: null, wasCalled: false };
   });
 
   it('should run given command', () => {
@@ -32,6 +28,7 @@ describe('command-runner', () => {
   it('should not run null commands', () => {
     commandRunner.run({ command: '', args: [''] });
     assert.strictEqual(spawnSpyData.wasCalled, false);
+
     commandRunner.run({ command: '', args: ['neki argument'] });
     assert.strictEqual(spawnSpyData.wasCalled, false);
   });
@@ -46,8 +43,9 @@ describe('command-runner', () => {
     });
 
     it('should print info message', () => {
+      clock.install({ now: new Date(2017, 7, 1, 18, 50, 42) });
       commandRunner.run({ command: 'echo', args: ['some arg'] });
-      assert.equal(textSentToInfo, 'echo "some arg"');
+      assert.equal(textSentToInfo, '[2017-08-01 18:50:42] echo "some arg"');
     });
   });
 });

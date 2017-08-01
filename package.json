@@ -17,12 +17,14 @@
     "eslint": "^4.3.0",
     "eslint-config-airbnb-base": "^11.3.1",
     "eslint-plugin-import": "^2.7.0",
+    "lolex": "^2.1.2",
     "mocha": "^3.4.2"
   },
   "dependencies": {
     "chalk": "^2.0.1",
     "chokidar": "^1.7.0",
-    "glob": "^7.1.2"
+    "glob": "^7.1.2",
+    "moment": "^2.18.1"
   },
   "optionalDependencies": {
     "fsevents": "^1.0.0"
