@@ -23,6 +23,8 @@ const argusModule = {
         const command = commandBuilder.buildFor(testFilePath);
         commandRunner.run(command);
       });
+
+      return fileWatcher;
     };
   },
 };
