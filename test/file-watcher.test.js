@@ -43,11 +43,25 @@ describe('watcher', function watcherTest() {
       };
 
       watcher.watchPhpFiles([
-        './mock-project/src/[E]xample.js', // Exists, glob-ified to avoid issue #8
+        './mock-project/src/[E]xample.js', // Exists
         './mock-project/nonexistent/[p]ath',
       ], () => {});
 
       assert.equal(warnings[0], 'File not found: "./mock-project/nonexistent/path"');
+    });
+
+    it('should print out information about the number of watched files', (done) => {
+      const infos = [];
+      nullPrinter.info = (text) => {
+        infos.push(text);
+      };
+
+      watcher.watchPhpFiles(['./mock-project/src/[E]xampleOne.php'], () => {});
+
+      watcher.on('ready', () => {
+        assert.equal(infos[0], 'Watching 1 file(s)');
+        done();
+      });
     });
   });
 
