@@ -43,9 +43,9 @@ describe('command-runner', () => {
     });
 
     it('should print info message', () => {
-      clock.install({ now: new Date(2017, 7, 1, 18, 50, 42) });
+      clock.install({ now: new Date(2017, 7, 1, 18, 5, 42) });
       commandRunner.run({ command: 'echo', args: ['some arg'] });
-      assert.equal(textSentToInfo, '[2017-08-01 18:50:42] echo "some arg"');
+      assert.equal(textSentToInfo, '[2017-08-01 18:05:42] echo "some arg"');
     });
   });
 });

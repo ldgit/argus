@@ -9,6 +9,6 @@ module.exports = function CommandRunner(spawn, printer) {
   };
 
   function getCurrentTime() {
-    return moment().format('YYYY-MM-DD HH:m:s');
+    return moment().format('YYYY-MM-DD HH:mm:s');
   }
 };
