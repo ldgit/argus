@@ -43,11 +43,25 @@ describe('watcher', function watcherTest() {
       };
 
       watcher.watchPhpFiles([
-        './mock-project/src/[E]xample.js', // Exists
+        './mock-project/src/[E]xampleFour.php', // Exists
         './mock-project/nonexistent/[p]ath',
       ], () => {});
 
       assert.equal(warnings[0], 'File not found: "./mock-project/nonexistent/path"');
+    });
+
+    it('should filter out paths that don\'t exist so that ready event will fire correctly', (done) => {
+      const info = [];
+      nullPrinter.info = (text) => {
+        info.push(text);
+      };
+
+      watcher.watchPhpFiles(['./mock-project/src/[E]xampleFour.php'], () => {});
+
+      watcher.on('ready', () => {
+        assert.equal(info[0], 'Watching 1 file(s)');
+        done();
+      });
     });
 
     it('should print out information about the number of watched files', (done) => {

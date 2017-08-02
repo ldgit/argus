@@ -3,6 +3,7 @@ const fs = require('fs');
 
 module.exports = function Watcher(printer) {
   let watcher;
+  const filteredWatchlist = [];
 
   this.watchPhpFiles = (watchlist, callback) => {
     if (typeof watchlist === 'object') {
@@ -10,13 +11,15 @@ module.exports = function Watcher(printer) {
         const deglobifiedPath = watchlistPath.replace('[', '').replace(']', '');
         if (!fs.existsSync(deglobifiedPath)) {
           printer.warning(`File not found: "${deglobifiedPath}"`);
+        } else {
+          filteredWatchlist.push(watchlistPath);
         }
       });
     } else if (!fs.existsSync(watchlist)) {
       throw new TypeError();
     }
 
-    const fullWatchlist = typeof watchlist === 'string' ? `${watchlist}/**/*.php` : watchlist;
+    const fullWatchlist = typeof watchlist === 'string' ? `${watchlist}/**/*.php` : filteredWatchlist;
 
     watcher = fileWatcher.watch(fullWatchlist, {
       ignored: /vendor/,
