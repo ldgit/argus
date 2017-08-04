@@ -17,7 +17,24 @@ Watches PHP files and executes [PHPUnit](https://phpunit.de/) unit tests for the
 * directory structure inside your project test directory must mirror project root directory for tests to be found
 
 ## Installation and usage
-1. Install globally: ```npm install -g argus-test-runner```
-30. Navigate to your project root and run ```argus```
-40. Argus will now watch for changes in your source files and run the tests for you
-50. To stop watching files just press ```Ctrl + C```
+
+### Global installation
+1. ```npm install -g argus-test-runner```
+30. Navigate to your project root and type ```argus``` to start watching
+
+### Local installation
+1. If you already have a package.json in your project, you can also install argus-test-runner locally
+20. Navigate to your project root and type ```npm install --save-dev argus-test-runner```
+30. Start Argus with ```./node_modules/.bin/argus```
+40. You can also add an npm script for convenience in your package.json:
+    ```json
+        "devDependencies": {
+          "argus-test-runner": "^1.1.1"
+        },
+        "scripts": {
+          "argus": "argus"
+        }
+    ``` 
+    and run ```npm run argus```
+
+To stop watching files just press ```Ctrl + C```
