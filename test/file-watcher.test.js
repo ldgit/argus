@@ -1,4 +1,5 @@
 const assert = require('assert');
+const path = require('path');
 const Watcher = require('../src/file-watcher');
 const nullPrinter = require('../src/printer').createNull();
 
@@ -10,13 +11,13 @@ describe('watcher', function watcherTest() {
   this.slow(300);
 
   beforeEach(() => {
-    process.chdir('./test');
+    process.chdir(path.join('.', 'test'));
     watcher = new Watcher(nullPrinter);
   });
 
   afterEach(() => {
     watcher.close();
-    process.chdir('./../');
+    process.chdir(path.join('.', '..'));
   });
 
   it('should not call given callback if no files changed', () => {

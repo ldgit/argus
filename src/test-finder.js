@@ -1,11 +1,12 @@
 const fs = require('fs');
+const path = require('path');
 
 module.exports = function TestFinder() {
   const possibleTestDirectories = [
-    'tests/unit/',
-    'test/unit/',
-    'tests/',
-    'test/',
+    path.join('tests', 'unit'),
+    path.join('test', 'unit'),
+    path.join('tests'),
+    path.join('test'),
   ];
 
   this.getTestDir = () => {
@@ -48,7 +49,7 @@ module.exports = function TestFinder() {
       return filePath;
     }
 
-    return `${testsDirectoryPath}${getPathWithoutExtension(filePath)}Test.php`;
+    return [path.join(testsDirectoryPath, getPathWithoutExtension(filePath)), 'Test.php'].join('');
   }
 
   function getPathWithoutExtension(filePath) {

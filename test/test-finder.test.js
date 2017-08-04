@@ -1,4 +1,5 @@
 const assert = require('assert');
+const path = require('path');
 const TestFinder = require('../src/test-finder');
 
 describe('test-finder', () => {
@@ -6,12 +7,12 @@ describe('test-finder', () => {
 
   context('findTestFor method, when searching for test file', () => {
     beforeEach(() => {
-      process.chdir('./test/mock-project');
+      process.chdir(path.join('.', 'test', 'mock-project'));
       testFinder = new TestFinder();
     });
 
     afterEach(() => {
-      process.chdir('./../../');
+      process.chdir(path.join('.', '..', '..'));
     });
 
     const testsGroup = [
@@ -44,14 +45,14 @@ describe('test-finder', () => {
     });
 
     afterEach(() => {
-      process.chdir('./../../../');
+      process.chdir(path.join('.', '..', '..', '..'));
     });
 
     const tests = [
-      { projectDir: 'project-one', expectedTestDir: 'tests/' },
-      { projectDir: 'project-two', expectedTestDir: 'tests/unit/' },
-      { projectDir: 'project-three', expectedTestDir: 'test/unit/' },
-      { projectDir: 'project-four', expectedTestDir: 'test/' },
+      { projectDir: 'project-one', expectedTestDir: 'tests' },
+      { projectDir: 'project-two', expectedTestDir: 'tests/unit' },
+      { projectDir: 'project-three', expectedTestDir: 'test/unit' },
+      { projectDir: 'project-four', expectedTestDir: 'test' },
     ];
 
     tests.forEach((test) => {

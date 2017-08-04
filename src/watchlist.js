@@ -1,9 +1,10 @@
-const glob = require('glob');
 const fs = require('fs');
+const path = require('path');
+const glob = require('glob');
 
 module.exports = function Watchlist() {
   this.compileFrom = (testsDir) => {
-    const normalizedTestsDir = !testsDir.startsWith('./') ? `./${testsDir}` : testsDir;
+    const normalizedTestsDir = path.normalize(testsDir);
 
     if (!fs.existsSync(normalizedTestsDir)) {
       throw new TypeError(`Test directory ${normalizedTestsDir} was not found`);
@@ -13,11 +14,10 @@ module.exports = function Watchlist() {
     const testsToWatch = glob.sync(`${normalizedTestsDir}/**/*Test.php`);
 
     testsToWatch.forEach((filepath) => {
-      const fullFilepath = filepath.startsWith('./') ? filepath : `./${filepath}`;
-      const sourceFilePath = ['./', fullFilepath.replace(normalizedTestsDir, '').replace('Test.php', '.php')].join('');
+      const sourceFilePath = path.join('./', filepath.replace(normalizedTestsDir, '').replace('Test.php', '.php'));
 
-      locationsToWatch.push(globify(fullFilepath));
-      locationsToWatch.push(globify(sourceFilePath.replace('//', '/')));
+      locationsToWatch.push(globify(filepath));
+      locationsToWatch.push(globify(sourceFilePath));
     });
 
     return locationsToWatch;
@@ -34,10 +34,10 @@ module.exports = function Watchlist() {
   }
 
   function wrapFirstLetterOfTheFileNameInSquareBrackets(filepath) {
-    const pathFragments = filepath.split('/');
+    const pathFragments = filepath.split(path.sep);
     const filename = pathFragments.pop();
     const globifiedFilename = filename.replace(filename[0], `[${filename[0]}]`);
 
-    return `${(pathFragments.join('/'))}/${globifiedFilename}`;
+    return path.join(...pathFragments, globifiedFilename);
   }
 };
