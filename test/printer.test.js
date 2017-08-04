@@ -22,22 +22,22 @@ describe('printer', () => {
 
   context('info method', () => {
     it('should print info text in bright cyan color', () => {
-      printer.info('info tekst');
-      assert.equal(console.getLogs()[0], chalk.cyanBright('info tekst'));
+      printer.info('info text');
+      assert.equal(console.getLogs()[0], chalk.cyanBright('info text'));
     });
   });
 
   context('warning method', () => {
     it('should print text in bright yellow color', () => {
-      printer.warning('info tekst');
-      assert.equal(console.getLogs()[0], chalk.yellowBright('info tekst'));
+      printer.warning('info text');
+      assert.equal(console.getLogs()[0], chalk.yellowBright('info text'));
     });
   });
 
   context('error method', () => {
     it('should print text in bright red color', () => {
-      printer.error('info tekst');
-      assert.equal(console.getLogs()[0], chalk.redBright('info tekst'));
+      printer.error('info text');
+      assert.equal(console.getLogs()[0], chalk.redBright('info text'));
     });
   });
 });
