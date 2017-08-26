@@ -3,25 +3,35 @@ const path = require('path');
 const glob = require('glob');
 
 module.exports = function Watchlist() {
-  this.compileFrom = (testsDir) => {
-    const normalizedTestsDir = path.normalize(testsDir);
-
-    if (!fs.existsSync(normalizedTestsDir)) {
-      throw new TypeError(`Test directory ${normalizedTestsDir} was not found`);
-    }
-
+  this.compileFor = (environments) => {
     const locationsToWatch = [];
-    const testsToWatch = glob.sync(`${normalizedTestsDir}/**/*Test.php`);
 
-    testsToWatch.forEach((filepath) => {
-      const sourceFilePath = path.join('./', filepath.replace(normalizedTestsDir, '').replace('Test.php', '.php'));
+    environments.forEach((environment) => {
+      const testNameSuffix = environment.testNameSuffix;
+      const extension = environment.extension;
 
-      locationsToWatch.push(globify(filepath));
-      locationsToWatch.push(globify(sourceFilePath));
+      if (!fs.existsSync(path.normalize(environment.testDir))) {
+        throw new TypeError(`Test directory ${path.normalize(environment.testDir)} was not found`);
+      }
+
+      const testsToWatch = glob.sync(`${path.normalize(environment.testDir)}/**/*${testNameSuffix}.${extension}`);
+
+      testsToWatch.forEach((filepath) => {
+        const sourceFilePath = getSourcePathFromTestPath(filepath, environment);
+
+        locationsToWatch.push(globify(filepath));
+        locationsToWatch.push(globify(sourceFilePath));
+      });
     });
 
     return locationsToWatch;
   };
+
+  function getSourcePathFromTestPath(testPath, environment) {
+    return path.join('./', testPath
+      .replace(path.normalize(environment.testDir), `/${environment.sourceDir}`)
+      .replace(`${environment.testNameSuffix}.${environment.extension}`, `.${environment.extension}`));
+  }
 
   /**
    * Converts normal filepath into glob for that filepath.
