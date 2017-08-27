@@ -1,8 +1,22 @@
-const path = require('path');
+module.exports = function CommandBuilder(environments) {
+  this.buildFor = (testFilepath) => {
+    const command = { command: '', args: [] };
 
-module.exports = function CommandBuilder() {
-  this.buildFor = testFilePath => ({
-    command: testFilePath !== '' ? path.join('vendor', 'bin', 'phpunit') : '',
-    args: [testFilePath],
-  });
+    if (environments.length === 0) {
+      return command;
+    }
+
+    environments.forEach((environment) => {
+      if (getFileExtension(testFilepath) === environment.extension) {
+        command.command = testFilepath !== '' ? environment.testRunnerCommand : '';
+        command.args = [testFilepath].concat(environment.arguments);
+      }
+    });
+
+    return command;
+  };
+
+  function getFileExtension(filepath) {
+    return filepath.split('.').pop();
+  }
 };
