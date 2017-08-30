@@ -1,7 +1,7 @@
 const assert = require('assert');
-const Configuration = require('../src/configuration');
+const ConfigurationReader = require('../src/configuration-reader');
 
-describe('configuration', () => {
+describe('ConfigurationReader', () => {
   let configurationReader;
   const defaultConfiguration = {
     environments: [
@@ -17,7 +17,7 @@ describe('configuration', () => {
   };
 
   beforeEach(() => {
-    configurationReader = new Configuration();
+    configurationReader = new ConfigurationReader();
   });
 
   context('if no configuration file given', () => {

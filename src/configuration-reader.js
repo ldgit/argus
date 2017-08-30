@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-module.exports = function Configuration() {
+module.exports = function ConfigurationReader() {
   const defaultConfiguration = {
     environments: [
       {
