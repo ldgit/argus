@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
 
-module.exports = function Watchlist() {
+module.exports = function Watchlist(printer) {
   this.compileFor = (environments) => {
     const locationsToWatch = [];
 
@@ -11,7 +11,7 @@ module.exports = function Watchlist() {
       const extension = environment.extension;
 
       if (!fs.existsSync(path.normalize(environment.testDir))) {
-        throw new TypeError(`Test directory ${path.normalize(environment.testDir)} was not found`);
+        printer.error(`Test directory ${path.normalize(environment.testDir)} was not found`);
       }
 
       const testsToWatch = glob.sync(`${path.normalize(environment.testDir)}/**/*${testNameSuffix}.${extension}`);

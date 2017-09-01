@@ -1,5 +1,6 @@
 const assert = require('assert');
 const Watchlist = require('../src/watchlist');
+const nullPrinter = require('../src/printer').createNull();
 
 describe('watchlist', () => {
   let watchlist;
@@ -7,7 +8,7 @@ describe('watchlist', () => {
 
   beforeEach(() => {
     process.chdir('./test/mock-project');
-    watchlist = new Watchlist();
+    watchlist = new Watchlist(nullPrinter);
     defaultEnvironment = {
       extension: 'php',
       testNameSuffix: 'Test',
@@ -21,8 +22,8 @@ describe('watchlist', () => {
   });
 
   const nonExistentTestDirectories = [
-    { dir: 'tset/unit' },
-    { dir: 'test/units' },
+    { dir: 'tset/unit', expectedError: 'Test directory tset/unit was not found' },
+    { dir: 'test/units', expectedError: 'Test directory test/units was not found' },
   ];
 
   const existingTestDirectories = [
@@ -37,11 +38,16 @@ describe('watchlist', () => {
   ];
 
   nonExistentTestDirectories.forEach((test) => {
-    it(`should throw error if given test directory does not exist (${test.dir})`, () => {
-      defaultEnvironment.testDir = test.args;
-      assert.throws(() => {
-        watchlist.compileFor([defaultEnvironment]);
-      }, TypeError);
+    it(`should display an error message if given test directory does not exist (${test.dir})`, () => {
+      let textSentToError;
+      nullPrinter.error = (text) => {
+        textSentToError = text;
+      };
+      defaultEnvironment.testDir = test.dir;
+
+      watchlist.compileFor([defaultEnvironment]);
+
+      assert.equal(textSentToError, test.expectedError);
     });
   });
 
@@ -76,7 +82,7 @@ describe('watchlist', () => {
     });
   });
 
-  it('should support multiple different environments', () => {
+  it('should support multiple environments', () => {
     const actualWatchlist = watchlist.compileFor([
       defaultEnvironment,
       jsEnvironmentWithDifferentSourceDir(),
