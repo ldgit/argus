@@ -25,7 +25,7 @@ describe('argus', function argusTestSuite() {
 
   afterEach(() => {
     watcher.close();
-    process.chdir(path.join('.', '..', '..', '..'));
+    process.chdir('./../../../');
   });
 
   it('should watch project source files and run console command if they change', (done) => {
