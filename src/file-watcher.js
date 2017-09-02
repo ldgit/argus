@@ -15,9 +15,7 @@ module.exports = function Watcher(printer, environments) {
       }
     });
 
-    watcher = fileWatcher.watch(filteredWatchlist, {
-      ignored: /vendor/,
-    });
+    watcher = fileWatcher.watch(filteredWatchlist);
     watcher.on('change', callback);
     watcher.on('ready', () => {
       printer.info(`Watching ${getFilesWatchedCount(watcher.getWatched())} file(s)`);
