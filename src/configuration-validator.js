@@ -5,6 +5,10 @@ module.exports = function ConfigurationValidator() {
         throw new TypeError('extension must be defined for each environment');
       }
 
+      if (environment.extension.startsWith('.')) {
+        throw new TypeError('Extension must not start with a dot');
+      }
+
       if (typeof environment.testNameSuffix === 'undefined' || environment.testNameSuffix === '') {
         throw new TypeError('testNameSuffix must be defined for each environment');
       }

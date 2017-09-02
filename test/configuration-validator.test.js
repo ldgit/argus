@@ -29,6 +29,11 @@ describe('ConfigurationValidator', () => {
     assertExtensionMissingErrorThrown(() => { configurationValidator.validate(configuration); });
   });
 
+  it('should throw error if extension starts with a dot', () => {
+    invalidEnvironment.extension = '.php';
+    assertErrorThrown(() => { configurationValidator.validate(configuration); }, /Extension must not start with a dot/);
+  });
+
   it('should throw error for empty or invalid testNameSuffix', () => {
     invalidEnvironment.testNameSuffix = '';
     assertNoTestNameSuffixErrorThrown(() => { configurationValidator.validate(configuration); });
@@ -71,5 +76,10 @@ describe('ConfigurationValidator', () => {
   function assertNoTestRunnerCommandErrorThrown(callback) {
     assert.throws(callback, TypeError);
     assert.throws(callback, /testRunnerCommand must be defined for each environment/);
+  }
+
+  function assertErrorThrown(callback, regexMessage) {
+    assert.throws(callback, TypeError);
+    assert.throws(callback, regexMessage);
   }
 });
