@@ -1,27 +1,21 @@
 const fileWatcher = require('chokidar');
 const fs = require('fs');
 
-module.exports = function Watcher(printer) {
+module.exports = function Watcher(printer, environments) {
   let watcher;
   const filteredWatchlist = [];
 
   this.watchPhpFiles = (watchlist, callback) => {
-    if (typeof watchlist === 'object') {
-      watchlist.forEach((watchlistPath) => {
-        const deglobifiedPath = watchlistPath.replace('[', '').replace(']', '');
-        if (!fs.existsSync(deglobifiedPath)) {
-          printer.warning(`File not found: "${deglobifiedPath}"`);
-        } else {
-          filteredWatchlist.push(watchlistPath);
-        }
-      });
-    } else if (!fs.existsSync(watchlist)) {
-      throw new TypeError();
-    }
+    watchlist.forEach((watchlistPath) => {
+      const deglobifiedPath = watchlistPath.replace('[', '').replace(']', '');
+      if (!fs.existsSync(deglobifiedPath)) {
+        printer.warning(`File not found: "${deglobifiedPath}"`);
+      } else {
+        filteredWatchlist.push(watchlistPath);
+      }
+    });
 
-    const fullWatchlist = typeof watchlist === 'string' ? `${watchlist}/**/*.php` : filteredWatchlist;
-
-    watcher = fileWatcher.watch(fullWatchlist, {
+    watcher = fileWatcher.watch(filteredWatchlist, {
       ignored: /vendor/,
     });
     watcher.on('change', callback);
@@ -42,8 +36,11 @@ module.exports = function Watcher(printer) {
 
   function getFilesWatchedCount(watched) {
     let filesWatchedCount = 0;
+    const supportedExtensions = environments.map(environment => environment.extension);
+
     Object.keys(watched).forEach((pathOrFile) => {
-      if (pathOrFile.endsWith('.php')) {
+      const fileExtension = pathOrFile.split('.').pop().toLowerCase();
+      if (supportedExtensions.includes(fileExtension)) {
         filesWatchedCount += 1;
       }
     });
