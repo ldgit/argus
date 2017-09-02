@@ -1,55 +1,55 @@
 const fs = require('fs');
 const path = require('path');
 
-module.exports = function TestFinder() {
-  const possibleTestDirectories = [
-    path.join('tests', 'unit'),
-    path.join('test', 'unit'),
-    path.join('tests'),
-    path.join('test'),
-  ];
-
-  this.getTestDir = () => {
-    let testDirPath = '';
-    possibleTestDirectories.every((possibleTestsDirPath) => {
-      if (fs.existsSync(possibleTestsDirPath)) {
-        testDirPath = possibleTestsDirPath;
-        return false; // ie. break
-      }
-
-      return true;
-    });
-
-    if (testDirPath === '') {
-      throw new Error('Test directory not found, looked in ', possibleTestDirectories.join(', '));
-    }
-
-    return testDirPath;
-  };
-
+module.exports = function TestFinder(environments) {
   this.findTestFor = (filePath) => {
-    let testPath = '';
+    const testPaths = [];
 
-    possibleTestDirectories.every((testsDirectoryPath) => {
+    getPossibleTestDirectories(filePath).forEach((testsDirectoryPath) => {
       const possibleTestPath = getPossibleTestPath(filePath, testsDirectoryPath);
 
       if (fs.existsSync(possibleTestPath)) {
-        testPath = possibleTestPath;
-        return false; // ie. break
+        testPaths.push(possibleTestPath);
       }
-
-      return true;
     });
 
-    return testPath;
+    return testPaths;
   };
+
+  function getPossibleTestDirectories(filePath) {
+    return getEnvironmentsForFile(filePath).map(environment => environment.testDir);
+  }
 
   function getPossibleTestPath(filePath, testsDirectoryPath) {
     if (filePath.startsWith(testsDirectoryPath)) {
       return filePath;
     }
 
-    return [path.join(testsDirectoryPath, getPathWithoutExtension(filePath)), 'Test.php'].join('');
+    const foundEnvironments = getEnvironmentsForFile(filePath);
+
+    let foundEnvironment;
+    foundEnvironments.forEach((environment) => {
+      if (environment.testDir === testsDirectoryPath) {
+        foundEnvironment = environment;
+      }
+    });
+
+    return [
+      path.join(testsDirectoryPath, getPathWithoutExtension(filePath)),
+      `${foundEnvironment.testNameSuffix}.${foundEnvironment.extension}`,
+    ].join('');
+  }
+
+  function getEnvironmentsForFile(filePath) {
+    const foundEnvironments = [];
+    const fileExtension = filePath.split('.').pop().toLowerCase();
+    environments.forEach((environment) => {
+      if (environment.extension === fileExtension) {
+        foundEnvironments.push(environment);
+      }
+    });
+
+    return foundEnvironments;
   }
 
   function getPathWithoutExtension(filePath) {
