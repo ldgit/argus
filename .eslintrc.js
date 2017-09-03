@@ -9,7 +9,8 @@ module.exports = {
     'no-use-before-define': ['error', { 'functions': false, 'classes': true }],
     'import/no-dynamic-require': 0,
     'global-require': 0,
-    'max-len': [2, 120, 2, {
+    'no-param-reassign': 0,
+    'max-len': ['warn', 120, 2, {
        'ignoreUrls': false,
        'ignoreComments': false
      }]
