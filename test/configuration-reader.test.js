@@ -77,5 +77,11 @@ describe('ConfigurationReader', () => {
         ],
       });
     });
+
+    it('should lowercase each environment extension automatically', () => {
+      const config = configurationReader.read('test/fixtures/configuration-reader.test/technically.valid.config.js');
+      assert.equal(config.environments[0].extension, 'php');
+      assert.equal(config.environments[1].extension, 'js');
+    });
   });
 });
