@@ -1,19 +1,23 @@
 module.exports = function CommandBuilder(environments) {
-  this.buildFor = (testFilepath) => {
-    const command = { command: '', args: [] };
-
-    if (environments.length === 0) {
-      return command;
+  this.buildFor = (testFilepaths) => {
+    testFilepaths = testFilepaths.filter(String);
+    if (testFilepaths.length < 1 || environments.length === 0) {
+      return [];
     }
 
-    environments.forEach((environment) => {
-      if (getFileExtension(testFilepath) === environment.extension) {
-        command.command = testFilepath !== '' ? environment.testRunnerCommand : '';
-        command.args = [testFilepath].concat(environment.arguments);
-      }
+    const commands = [];
+    testFilepaths.forEach((testFilepath) => {
+      environments.forEach((environment) => {
+        if (getFileExtension(testFilepath) === environment.extension) {
+          commands.push({
+            command: testFilepath !== '' ? environment.testRunnerCommand : '',
+            args: [testFilepath].concat(environment.arguments),
+          });
+        }
+      });
     });
 
-    return command;
+    return commands;
   };
 
   function getFileExtension(filepath) {
