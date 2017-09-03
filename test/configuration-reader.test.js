@@ -56,15 +56,15 @@ describe('ConfigurationReader', () => {
     });
   });
 
-  context('if given configuration file', () => {
+  context('if given a configuration file', () => {
     it('should validate it', () => {
       assert.throws(() => {
-        configurationReader.read('test/fixtures/invalid.config.js');
+        configurationReader.read('test/fixtures/configuration-reader.test/invalid.config.js');
       }, TypeError);
     });
 
     it('should import and return it', () => {
-      assert.deepEqual(configurationReader.read('test/fixtures/valid.config.js'), {
+      assert.deepEqual(configurationReader.read('test/fixtures/configuration-reader.test/valid.config.js'), {
         environments: [
           {
             extension: 'js',
