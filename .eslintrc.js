@@ -13,6 +13,14 @@ module.exports = {
     'max-len': ['warn', 120, 2, {
        'ignoreUrls': false,
        'ignoreComments': false
-     }]
+     }],
+     "comma-dangle": ["error", {
+        "arrays": "always-multiline",
+        "objects": "always-multiline",
+        "imports": "always-multiline",
+        "exports": "always-multiline",
+        // Dangling comma causes problems on Node versions 6 and 7
+        "functions": "never"
+    }]
   }
 };
