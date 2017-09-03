@@ -45,7 +45,7 @@ describe('command-builder', () => {
       assert.deepEqual(commandBuilder.buildFor(['tests/src/ExampleOneTest.php']), []);
       assert.deepEqual(commandBuilder.buildFor(['tests/unit/src/ExampleOneTest.php']), []);
       assert.deepEqual(
-        commandBuilder.buildFor(['tests/src/ExampleOneTest.php', 'tests/unit/src/ExampleOneTest.php']), [],
+        commandBuilder.buildFor(['tests/src/ExampleOneTest.php', 'tests/unit/src/ExampleOneTest.php']), []
       );
     });
   });
@@ -53,10 +53,11 @@ describe('command-builder', () => {
   context('given multiple filepaths', () => {
     it('should return separate commands to run for each of them', () => {
       assert.deepEqual(
-        commandBuilder.buildFor(['tests/src/FirstTest.php', 'tests/src/SecondTest.php']), [
+        commandBuilder.buildFor(['tests/src/FirstTest.php', 'tests/src/SecondTest.php']),
+        [
           { command: 'vendor/bin/phpunit', args: ['tests/src/FirstTest.php'] },
           { command: 'vendor/bin/phpunit', args: ['tests/src/SecondTest.php'] },
-        ],
+        ]
       );
     });
   });

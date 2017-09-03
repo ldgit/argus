@@ -31,10 +31,10 @@ describe('test-finder', () => {
     context('given a test file', () => {
       it('should return that same file', () => {
         assert.deepEqual(
-          testFinder.findTestsFor('tests/unit/src/ExampleTwoTest.php'), ['tests/unit/src/ExampleTwoTest.php'],
+          testFinder.findTestsFor('tests/unit/src/ExampleTwoTest.php'), ['tests/unit/src/ExampleTwoTest.php']
         );
         assert.deepEqual(
-          testFinder.findTestsFor('test/unit/src/ExampleFour.test.js'), ['test/unit/src/ExampleFour.test.js'],
+          testFinder.findTestsFor('test/unit/src/ExampleFour.test.js'), ['test/unit/src/ExampleFour.test.js']
         );
       });
     });
