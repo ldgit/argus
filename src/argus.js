@@ -1,29 +1,27 @@
-const CommandRunner = require('./command-runner');
+const printer = require('./printer').create();
+const syncCommandRunner = require('./command-runner').getSynchronousImplementation(printer);
 const FileWatcher = require('./file-watcher');
 const TestFinder = require('./test-finder');
 const CommandBuilder = require('./command-builder');
 const Watchlist = require('./watchlist');
-const spawn = require('child_process').spawn;
 const ConfigurationReader = require('./configuration-reader');
-const printer = require('./printer').create();
-
-const testFinder = new TestFinder();
 
 const argusModule = {
   factory: {
-    create: () => new argusModule.Argus(new CommandRunner(spawn, printer)),
+    create: () => new argusModule.Argus(syncCommandRunner),
   },
   Argus: function Argus(commandRunner) {
     this.run = () => {
-      const fileWatcher = new FileWatcher(printer);
       const configuration = new ConfigurationReader().read('./argus.config.js');
+      const testFinder = new TestFinder(configuration.environments);
+      const fileWatcher = new FileWatcher(printer, configuration.environments);
       const commandBuilder = new CommandBuilder(configuration.environments);
       const watchlist = (new Watchlist(printer)).compileFor(configuration.environments);
 
       fileWatcher.watchPhpFiles(watchlist, (pathToChangedFile) => {
         const testFilePaths = testFinder.findTestsFor(pathToChangedFile);
-        const command = commandBuilder.buildFor(testFilePaths);
-        commandRunner.run(command);
+        const commands = commandBuilder.buildFor(testFilePaths);
+        commandRunner.run(commands);
       });
 
       return fileWatcher;

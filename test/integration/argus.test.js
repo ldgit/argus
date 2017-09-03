@@ -9,12 +9,12 @@ describe('argus', function argusTestSuite() {
   const pathToTouchScript = path.join('.', '..', '..', 'helpers', 'touch.js');
 
   let argus;
-  let lastRunCommand = '';
+  let lastRunCommands = [];
   let watcher;
 
   function CommandRunnerMock() {
-    this.run = (command) => {
-      lastRunCommand = command;
+    this.run = (commands) => {
+      lastRunCommands = commands;
     };
   }
 
@@ -33,8 +33,8 @@ describe('argus', function argusTestSuite() {
     fork(pathToTouchScript, [path.join('.', 'src', 'PhpClass.php')]);
 
     watcher.on('change', () => {
-      assert.equal(lastRunCommand.command, 'vendor/bin/phpunit');
-      assert.deepEqual(lastRunCommand.args, ['tests/src/PhpClassTest.php']);
+      assert.equal(lastRunCommands[0].command, 'vendor/bin/phpunit');
+      assert.deepEqual(lastRunCommands[0].args, ['tests/src/PhpClassTest.php']);
       done();
     });
   });
@@ -44,8 +44,8 @@ describe('argus', function argusTestSuite() {
     fork(pathToTouchScript, [path.join('.', 'tests', 'src', 'PhpClassTest.php')]);
 
     watcher.on('change', () => {
-      assert.equal(lastRunCommand.command, 'vendor/bin/phpunit');
-      assert.deepEqual(lastRunCommand.args, ['tests/src/PhpClassTest.php']);
+      assert.equal(lastRunCommands[0].command, 'vendor/bin/phpunit');
+      assert.deepEqual(lastRunCommands[0].args, ['tests/src/PhpClassTest.php']);
       done();
     });
   });
