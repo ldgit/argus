@@ -8,7 +8,7 @@ describe('test-finder', () => {
   let phpEnvironment;
   let jsEnvironment;
 
-  context('findTestFor method, when searching for test file', () => {
+  context('findTestsFor method, when searching for test file', () => {
     beforeEach(() => {
       phpEnvironment = createEnvironment('php', 'tests/unit', 'Test');
       jsEnvironment = createEnvironment('js', 'test/unit', '.test');
@@ -22,29 +22,33 @@ describe('test-finder', () => {
     });
 
     it('should look through given environments and find appropriate test file', () => {
-      assert.deepEqual(testFinder.findTestFor('src/ExampleTwo.php'), ['tests/unit/src/ExampleTwoTest.php']);
-      assert.deepEqual(testFinder.findTestFor('src/ExampleFour.js'), ['test/unit/src/ExampleFour.test.js']);
+      assert.deepEqual(testFinder.findTestsFor('src/ExampleTwo.php'), ['tests/unit/src/ExampleTwoTest.php']);
+      assert.deepEqual(testFinder.findTestsFor('src/ExampleFour.js'), ['test/unit/src/ExampleFour.test.js']);
       phpEnvironment.testDir = 'tests';
-      assert.deepEqual(testFinder.findTestFor('src/ExampleOne.php'), ['tests/src/ExampleOneTest.php']);
+      assert.deepEqual(testFinder.findTestsFor('src/ExampleOne.php'), ['tests/src/ExampleOneTest.php']);
     });
 
     context('given a test file', () => {
       it('should return that same file', () => {
-        assert.deepEqual(testFinder.findTestFor('tests/unit/src/ExampleTwoTest.php'), ['tests/unit/src/ExampleTwoTest.php']);
-        assert.deepEqual(testFinder.findTestFor('test/unit/src/ExampleFour.test.js'), ['test/unit/src/ExampleFour.test.js']);
+        assert.deepEqual(
+          testFinder.findTestsFor('tests/unit/src/ExampleTwoTest.php'), ['tests/unit/src/ExampleTwoTest.php'],
+        );
+        assert.deepEqual(
+          testFinder.findTestsFor('test/unit/src/ExampleFour.test.js'), ['test/unit/src/ExampleFour.test.js'],
+        );
       });
     });
 
     it('should find all possible test files if given file matches multiple environments (order matters)', () => {
       environments.push(createEnvironment('php', 'tests/integration'));
-      assert.deepEqual(testFinder.findTestFor('src/ExampleTwo.php'), [
+      assert.deepEqual(testFinder.findTestsFor('src/ExampleTwo.php'), [
         'tests/unit/src/ExampleTwoTest.php',
         'tests/integration/src/ExampleTwoTest.php',
       ]);
     });
 
     it('should return empty array if test file was not found', () => {
-      assert.deepEqual(testFinder.findTestFor('nonexistent/file.php'), []);
+      assert.deepEqual(testFinder.findTestsFor('nonexistent/file.php'), []);
     });
   });
 

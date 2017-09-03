@@ -2,11 +2,12 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = function TestFinder(environments) {
-  this.findTestFor = (filePath) => {
+  this.findTestsFor = (filePath) => {
     const testPaths = [];
+    const environmentsForFile = getEnvironmentsForFile(filePath);
 
-    getPossibleTestDirectories(filePath).forEach((testsDirectoryPath) => {
-      const possibleTestPath = getPossibleTestPath(filePath, testsDirectoryPath);
+    getPossibleTestDirectories(filePath, environmentsForFile).forEach((testsDirectoryPath) => {
+      const possibleTestPath = getPossibleTestPath(filePath, testsDirectoryPath, environmentsForFile);
 
       if (fs.existsSync(possibleTestPath)) {
         testPaths.push(possibleTestPath);
@@ -16,19 +17,17 @@ module.exports = function TestFinder(environments) {
     return testPaths;
   };
 
-  function getPossibleTestDirectories(filePath) {
-    return getEnvironmentsForFile(filePath).map(environment => environment.testDir);
+  function getPossibleTestDirectories(filePath, environmentsForFile) {
+    return environmentsForFile.map(environment => environment.testDir);
   }
 
-  function getPossibleTestPath(filePath, testsDirectoryPath) {
+  function getPossibleTestPath(filePath, testsDirectoryPath, environmentsForFile) {
     if (filePath.startsWith(testsDirectoryPath)) {
       return filePath;
     }
 
-    const foundEnvironments = getEnvironmentsForFile(filePath);
-
     let foundEnvironment;
-    foundEnvironments.forEach((environment) => {
+    environmentsForFile.forEach((environment) => {
       if (environment.testDir === testsDirectoryPath) {
         foundEnvironment = environment;
       }

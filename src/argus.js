@@ -21,8 +21,8 @@ const argusModule = {
       const watchlist = (new Watchlist(printer)).compileFor(configuration.environments);
 
       fileWatcher.watchPhpFiles(watchlist, (pathToChangedFile) => {
-        const testFilePath = testFinder.findTestFor(pathToChangedFile);
-        const command = commandBuilder.buildFor(testFilePath);
+        const testFilePaths = testFinder.findTestsFor(pathToChangedFile);
+        const command = commandBuilder.buildFor(testFilePaths);
         commandRunner.run(command);
       });
 
