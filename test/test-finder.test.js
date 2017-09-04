@@ -1,8 +1,8 @@
 const assert = require('assert');
-const path = require('path');
 const TestFinder = require('../src/test-finder');
 
 describe('test-finder', () => {
+  const rootDir = process.cwd();
   let environments;
   let testFinder;
   let phpEnvironment;
@@ -18,32 +18,29 @@ describe('test-finder', () => {
     });
 
     afterEach(() => {
-      process.chdir(path.join('.', '..', '..', '..', '..'));
+      process.chdir(rootDir);
     });
 
     it('should look through given environments and find appropriate test file', () => {
-      assert.deepEqual(testFinder.findTestsFor('src/ExampleTwo.php'), ['tests/unit/src/ExampleTwoTest.php']);
-      assert.deepEqual(testFinder.findTestsFor('src/ExampleFour.js'), ['test/unit/src/ExampleFour.test.js']);
+      assertTestFound(testFinder.findTestsFor('src/ExampleTwo.php'), 'tests/unit/src/ExampleTwoTest.php', phpEnvironment);
+      assertTestFound(testFinder.findTestsFor('src/ExampleFour.js'), 'test/unit/src/ExampleFour.test.js', jsEnvironment);
       phpEnvironment.testDir = 'tests';
-      assert.deepEqual(testFinder.findTestsFor('src/ExampleOne.php'), ['tests/src/ExampleOneTest.php']);
+      assertTestFound(testFinder.findTestsFor('src/ExampleOne.php'), 'tests/src/ExampleOneTest.php', phpEnvironment);
     });
 
     context('given a test file', () => {
       it('should return that same file', () => {
-        assert.deepEqual(
-          testFinder.findTestsFor('tests/unit/src/ExampleTwoTest.php'), ['tests/unit/src/ExampleTwoTest.php']
-        );
-        assert.deepEqual(
-          testFinder.findTestsFor('test/unit/src/ExampleFour.test.js'), ['test/unit/src/ExampleFour.test.js']
-        );
+        assertTestFound(testFinder.findTestsFor('tests/unit/src/ExampleTwoTest.php'), 'tests/unit/src/ExampleTwoTest.php', phpEnvironment);
+        assertTestFound(testFinder.findTestsFor('test/unit/src/ExampleFour.test.js'), 'test/unit/src/ExampleFour.test.js', jsEnvironment);
       });
     });
 
     it('should find all possible test files if given file matches multiple environments (order matters)', () => {
-      environments.push(createEnvironment('php', 'tests/integration'));
+      const phpIntegrationEnvironment = createEnvironment('php', 'tests/integration');
+      environments.push(phpIntegrationEnvironment);
       assert.deepEqual(testFinder.findTestsFor('src/ExampleTwo.php'), [
-        'tests/unit/src/ExampleTwoTest.php',
-        'tests/integration/src/ExampleTwoTest.php',
+        { path: 'tests/unit/src/ExampleTwoTest.php', environment: phpEnvironment },
+        { path: 'tests/integration/src/ExampleTwoTest.php', environment: phpIntegrationEnvironment },
       ]);
     });
 
@@ -51,6 +48,10 @@ describe('test-finder', () => {
       assert.deepEqual(testFinder.findTestsFor('nonexistent/file.php'), []);
     });
   });
+
+  function assertTestFound(actualTests, expectedTestPath, expectedEnvironment = phpEnvironment) {
+    assert.deepEqual(actualTests, [{ path: expectedTestPath, environment: expectedEnvironment }]);
+  }
 
   function createEnvironment(type, testDirectory, testSuffix = 'Test', sourceDirectory = '') {
     return {
