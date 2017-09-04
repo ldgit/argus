@@ -5,14 +5,15 @@ const TestFinder = require('./test-finder');
 const CommandBuilder = require('./command-builder');
 const Watchlist = require('./watchlist');
 const ConfigurationReader = require('./configuration-reader');
+const CommandLineOptions = require('./command-line-options');
 
 const argusModule = {
   factory: {
-    create: () => new argusModule.Argus(syncCommandRunner),
+    create: () => new argusModule.Argus(syncCommandRunner, CommandLineOptions(process.argv)),
   },
-  Argus: function Argus(commandRunner) {
+  Argus: function Argus(commandRunner, commandLineOptions) {
     this.run = () => {
-      const configuration = new ConfigurationReader().read('./argus.config.js');
+      const configuration = new ConfigurationReader().read(commandLineOptions.config);
       const testFinder = new TestFinder(configuration.environments);
       const fileWatcher = new FileWatcher(printer, configuration.environments);
       const commandBuilder = new CommandBuilder(configuration.environments);
@@ -21,6 +22,7 @@ const argusModule = {
       fileWatcher.watchPhpFiles(watchlist, (pathToChangedFile) => {
         const testFilePaths = testFinder.findTestsFor(pathToChangedFile);
         const commands = commandBuilder.buildFor(testFilePaths);
+
         commandRunner.run(commands);
       });
 
