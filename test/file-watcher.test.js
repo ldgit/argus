@@ -29,7 +29,7 @@ describe('watcher', function watcherTest() {
   it('should not call given callback if no files changed', () => {
     let callbackWasCalled = false;
 
-    watcher.watchPhpFiles(['./mock-project/src/[E]xampleFour.php'], () => {
+    watcher.watchFiles(['./mock-project/src/[E]xampleFour.php'], () => {
       callbackWasCalled = true;
     });
 
@@ -42,7 +42,7 @@ describe('watcher', function watcherTest() {
         warnings.push(text);
       };
 
-      watcher.watchPhpFiles([
+      watcher.watchFiles([
         './mock-project/src/[E]xampleFour.php', // Exists
         './mock-project/nonexistent/[p]ath',
       ], () => {});
@@ -55,7 +55,7 @@ describe('watcher', function watcherTest() {
         infos.push(text);
       };
 
-      watcher.watchPhpFiles(['./mock-project/src/[E]xampleFour.php'], () => {});
+      watcher.watchFiles(['./mock-project/src/[E]xampleFour.php'], () => {});
 
       watcher.on('ready', () => {
         assert.equal(infos[0], 'Watching 1 file(s)');
@@ -69,7 +69,7 @@ describe('watcher', function watcherTest() {
         infos.push(text);
       };
 
-      watcher.watchPhpFiles([
+      watcher.watchFiles([
         './mock-project/src/[E]xampleOne.php',
         './mock-project/src/[E]xampleFour.js',
       ], () => {});
@@ -86,7 +86,7 @@ describe('watcher', function watcherTest() {
         infos.push(text);
       };
 
-      watcher.watchPhpFiles(['./mock-project/src/[E]xampleOne.php'], () => {});
+      watcher.watchFiles(['./mock-project/src/[E]xampleOne.php'], () => {});
 
       watcher.on('ready', () => {
         assert.equal(infos[0], 'Watching 1 file(s)');
@@ -96,7 +96,7 @@ describe('watcher', function watcherTest() {
   });
 
   it('should call given callback if a watched file changes and send changed path to callback', (done) => {
-    watcher.watchPhpFiles(['./mock-project/src/ExampleFileForFileWatcher.php'], (pathToChangedFile) => {
+    watcher.watchFiles(['./mock-project/src/ExampleFileForFileWatcher.php'], (pathToChangedFile) => {
       assert.equal('mock-project/src/ExampleFileForFileWatcher.php', pathToChangedFile);
       done();
     });
@@ -110,7 +110,7 @@ describe('watcher', function watcherTest() {
 
   it('should call given callback if a file from a watchlist changes and send changed path to callback', (done) => {
     const watchlist = ['./mock-project/src/ExampleFour.php', './mock-project/src/ExampleFileForFileWatcher.php'];
-    watcher.watchPhpFiles(watchlist, (pathToChangedFile) => {
+    watcher.watchFiles(watchlist, (pathToChangedFile) => {
       assert.equal('mock-project/src/ExampleFileForFileWatcher.php', pathToChangedFile);
       done();
     });
@@ -119,7 +119,7 @@ describe('watcher', function watcherTest() {
   });
 
   it('should watch only files in given watchlist', (done) => {
-    watcher.watchPhpFiles(['./mock-project/src/[E]xampleFour.php'], () => {
+    watcher.watchFiles(['./mock-project/src/[E]xampleFour.php'], () => {
       assert.fail('callback was called when it should not have been');
     });
 
@@ -131,7 +131,7 @@ describe('watcher', function watcherTest() {
   it('should watch files configured by environments extension property', (done) => {
     createEnvironment('js');
     const watchlist = ['./mock-project/src/ExampleFileForFileWatcher.php', './mock-project/src/ExampleFour.js'];
-    watcher.watchPhpFiles(watchlist, (pathToChangedFile) => {
+    watcher.watchFiles(watchlist, (pathToChangedFile) => {
       assert.equal('mock-project/src/ExampleFour.js', pathToChangedFile);
       done();
     });

@@ -4,7 +4,7 @@ const program = require('commander');
 module.exports = function CommandLineOptions(processArgv) {
   program
     .version(require('./../package.json').version)
-    .option('-c, --config [path]', 'Configuration file path', 'argus.config.js')
+    .option('-c, --config [path]', 'configuration file path', 'argus.config.js')
     .parse(processArgv);
 
   return {

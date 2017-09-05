@@ -5,7 +5,7 @@ module.exports = function Watcher(printer, environments) {
   let watcher;
   const filteredWatchlist = [];
 
-  this.watchPhpFiles = (watchlist, callback) => {
+  this.watchFiles = (watchlist, callback) => {
     watchlist.forEach((watchlistPath) => {
       const deglobifiedPath = watchlistPath.replace('[', '').replace(']', '');
       if (!fs.existsSync(deglobifiedPath)) {
@@ -15,7 +15,10 @@ module.exports = function Watcher(printer, environments) {
       }
     });
 
-    watcher = fileWatcher.watch(filteredWatchlist);
+    watcher = fileWatcher.watch(filteredWatchlist, {
+      atomic: true,
+      depth: 0,
+    });
     watcher.on('change', callback);
     watcher.on('ready', () => {
       printer.info(`Watching ${getFilesWatchedCount(watcher.getWatched())} file(s)`);
