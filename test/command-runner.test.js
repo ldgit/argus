@@ -55,9 +55,9 @@ describe('command-runner', () => {
 
     it('should print info message', () => {
       clock.install({ now: new Date(2017, 7, 1, 18, 5, 5) });
-      commandRunner.run([{ command: 'echo', args: ['one'] }, { command: 'echo', args: ['two'] }]);
-      assert.equal(textSentToInfo[0], '[2017-08-01 18:05:05] echo "one"');
-      assert.equal(textSentToInfo[1], '[2017-08-01 18:05:05] echo "two"');
+      commandRunner.run([{ command: 'echo', args: ['one'] }, { command: 'phpunit', args: ['-c', 'phpunit.xml'] }]);
+      assert.equal(textSentToInfo[0], '[2017-08-01 18:05:05] echo one');
+      assert.equal(textSentToInfo[1], '[2017-08-01 18:05:05] phpunit -c phpunit.xml');
     });
   });
 });

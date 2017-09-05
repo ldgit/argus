@@ -4,7 +4,7 @@ const spawnSync = require('child_process').spawnSync;
 function CommandRunner(spawn, printer) {
   this.run = (commands) => {
     commands.forEach((command) => {
-      printer.info(`[${getCurrentTime()}] ${command.command} "${command.args}"`);
+      printer.info(`[${getCurrentTime()}] ${command.command} ${command.args.join(' ')}`);
       spawn(command.command, command.args, { stdio: 'inherit' });
     });
   };
