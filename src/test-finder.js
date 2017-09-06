@@ -1,55 +1,43 @@
 const fs = require('fs');
 const path = require('path');
 
-module.exports = function TestFinder() {
-  const possibleTestDirectories = [
-    path.join('tests', 'unit'),
-    path.join('test', 'unit'),
-    path.join('tests'),
-    path.join('test'),
-  ];
+module.exports = function TestFinder(environments) {
+  this.findTestsFor = (filePath) => {
+    const testPaths = [];
+    const environmentsForFile = getEnvironmentsForFile(filePath);
 
-  this.getTestDir = () => {
-    let testDirPath = '';
-    possibleTestDirectories.every((possibleTestsDirPath) => {
-      if (fs.existsSync(possibleTestsDirPath)) {
-        testDirPath = possibleTestsDirPath;
-        return false; // ie. break
-      }
-
-      return true;
-    });
-
-    if (testDirPath === '') {
-      throw new Error('Test directory not found, looked in ', possibleTestDirectories.join(', '));
-    }
-
-    return testDirPath;
-  };
-
-  this.findTestFor = (filePath) => {
-    let testPath = '';
-
-    possibleTestDirectories.every((testsDirectoryPath) => {
-      const possibleTestPath = getPossibleTestPath(filePath, testsDirectoryPath);
+    environmentsForFile.forEach((fileEnvironment) => {
+      const possibleTestPath = getPossibleTestPath(filePath, fileEnvironment);
 
       if (fs.existsSync(possibleTestPath)) {
-        testPath = possibleTestPath;
-        return false; // ie. break
+        testPaths.push({ path: possibleTestPath, environment: fileEnvironment });
       }
-
-      return true;
     });
 
-    return testPath;
+    return testPaths;
   };
 
-  function getPossibleTestPath(filePath, testsDirectoryPath) {
-    if (filePath.startsWith(testsDirectoryPath)) {
+  function getPossibleTestPath(filePath, environment) {
+    if (filePath.startsWith(environment.testDir)) {
       return filePath;
     }
 
-    return [path.join(testsDirectoryPath, getPathWithoutExtension(filePath)), 'Test.php'].join('');
+    return [
+      path.join(environment.testDir, getPathWithoutExtension(filePath)),
+      `${environment.testNameSuffix}.${environment.extension}`,
+    ].join('');
+  }
+
+  function getEnvironmentsForFile(filePath) {
+    const foundEnvironments = [];
+    const fileExtension = filePath.split('.').pop().toLowerCase();
+    environments.forEach((environment) => {
+      if (environment.extension === fileExtension) {
+        foundEnvironments.push(environment);
+      }
+    });
+
+    return foundEnvironments;
   }
 
   function getPathWithoutExtension(filePath) {

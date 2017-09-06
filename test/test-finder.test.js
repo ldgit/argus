@@ -1,72 +1,66 @@
 const assert = require('assert');
-const path = require('path');
 const TestFinder = require('../src/test-finder');
 
 describe('test-finder', () => {
+  const rootDir = process.cwd();
+  let environments;
   let testFinder;
+  let phpEnvironment;
+  let jsEnvironment;
 
-  context('findTestFor method, when searching for test file', () => {
+  context('findTestsFor method, when searching for test file', () => {
     beforeEach(() => {
-      process.chdir(path.join('.', 'test', 'mock-project'));
-      testFinder = new TestFinder();
+      phpEnvironment = createEnvironment('php', 'tests/unit', 'Test');
+      jsEnvironment = createEnvironment('js', 'test/unit', '.test');
+      environments = [jsEnvironment, phpEnvironment];
+      process.chdir('./test/fixtures/test-finder.test/mock-project');
+      testFinder = new TestFinder(environments);
     });
 
     afterEach(() => {
-      process.chdir(path.join('.', '..', '..'));
+      process.chdir(rootDir);
     });
 
-    const testsGroup = [
-      { startingFile: 'src/ExampleOne.php', expectedTestFile: 'tests/src/ExampleOneTest.php' },
-      { startingFile: 'src/ExampleTwo.php', expectedTestFile: 'tests/unit/src/ExampleTwoTest.php' },
-      { startingFile: 'src/ExampleThree.php', expectedTestFile: 'test/src/ExampleThreeTest.php' },
-      { startingFile: 'src/ExampleFour.php', expectedTestFile: 'test/unit/src/ExampleFourTest.php' },
-      { startingFile: 'tests/src/ExampleOneTest.php', expectedTestFile: 'tests/src/ExampleOneTest.php' },
-      { startingFile: 'tests/unit/src/ExampleTwoTest.php', expectedTestFile: 'tests/unit/src/ExampleTwoTest.php' },
-      { startingFile: 'test/src/ExampleThreeTest.php', expectedTestFile: 'test/src/ExampleThreeTest.php' },
-      { startingFile: 'test/unit/src/ExampleFourTest.php', expectedTestFile: 'test/unit/src/ExampleFourTest.php' },
-    ];
+    it('should look through given environments and find appropriate test file', () => {
+      assertTestFound(testFinder.findTestsFor('src/ExampleTwo.php'), 'tests/unit/src/ExampleTwoTest.php', phpEnvironment);
+      assertTestFound(testFinder.findTestsFor('src/ExampleFour.js'), 'test/unit/src/ExampleFour.test.js', jsEnvironment);
+      phpEnvironment.testDir = 'tests';
+      assertTestFound(testFinder.findTestsFor('src/ExampleOne.php'), 'tests/src/ExampleOneTest.php', phpEnvironment);
+    });
 
-    testsGroup.forEach((test) => {
-      it(`should look for test for file "${test.startingFile}" in possible test directories`, () => {
-        assert.equal(testFinder.findTestFor(test.startingFile), test.expectedTestFile);
+    context('given a test file', () => {
+      it('should return that same file', () => {
+        assertTestFound(testFinder.findTestsFor('tests/unit/src/ExampleTwoTest.php'), 'tests/unit/src/ExampleTwoTest.php', phpEnvironment);
+        assertTestFound(testFinder.findTestsFor('test/unit/src/ExampleFour.test.js'), 'test/unit/src/ExampleFour.test.js', jsEnvironment);
       });
     });
 
-    context('and if test file was not found', () => {
-      it('should return empty path', () => {
-        assert.strictEqual(testFinder.findTestFor('nonexistent/file.php'), '');
-      });
+    it('should find all possible test files if given file matches multiple environments (order matters)', () => {
+      const phpIntegrationEnvironment = createEnvironment('php', 'tests/integration');
+      environments.push(phpIntegrationEnvironment);
+      assert.deepEqual(testFinder.findTestsFor('src/ExampleTwo.php'), [
+        { path: 'tests/unit/src/ExampleTwoTest.php', environment: phpEnvironment },
+        { path: 'tests/integration/src/ExampleTwoTest.php', environment: phpIntegrationEnvironment },
+      ]);
+    });
+
+    it('should return empty array if test file was not found', () => {
+      assert.deepEqual(testFinder.findTestsFor('nonexistent/file.php'), []);
     });
   });
 
-  context('getTestDir method', () => {
-    beforeEach(() => {
-      testFinder = new TestFinder();
-    });
+  function assertTestFound(actualTests, expectedTestPath, expectedEnvironment = phpEnvironment) {
+    assert.deepEqual(actualTests, [{ path: expectedTestPath, environment: expectedEnvironment }]);
+  }
 
-    afterEach(() => {
-      process.chdir(path.join('.', '..', '..', '..'));
-    });
-
-    const tests = [
-      { projectDir: 'project-one', expectedTestDir: 'tests' },
-      { projectDir: 'project-two', expectedTestDir: 'tests/unit' },
-      { projectDir: 'project-three', expectedTestDir: 'test/unit' },
-      { projectDir: 'project-four', expectedTestDir: 'test' },
-    ];
-
-    tests.forEach((test) => {
-      it(`should return "${test.expectedTestDir}" test directory for "${test.projectDir}"`, () => {
-        process.chdir(`./test/mock-projects-with-different-test-dirs/${test.projectDir}`);
-        assert.equal(testFinder.getTestDir(), test.expectedTestDir);
-      });
-    });
-
-    it('should return throw error if test directory not found', () => {
-      process.chdir('./test/mock-projects-with-different-test-dirs/lame-project');
-      assert.throws(() => {
-        testFinder.getTestDir();
-      }, Error);
-    });
-  });
+  function createEnvironment(type, testDirectory, testSuffix = 'Test', sourceDirectory = '') {
+    return {
+      extension: type,
+      testNameSuffix: testSuffix,
+      testDir: testDirectory,
+      sourceDir: sourceDirectory,
+      arguments: ['unimportant for these tests'],
+      testRunnerCommand: 'unimportant for these tests',
+    };
+  }
 });

@@ -1,8 +1,17 @@
-const path = require('path');
-
 module.exports = function CommandBuilder() {
-  this.buildFor = testFilePath => ({
-    command: testFilePath !== '' ? path.join('vendor', 'bin', 'phpunit') : '',
-    args: [testFilePath],
-  });
+  this.buildFor = (testFilepaths) => {
+    if (testFilepaths.length < 1) {
+      return [];
+    }
+
+    const commands = [];
+    testFilepaths.forEach((testFile) => {
+      commands.push({
+        command: testFile.path !== '' ? testFile.environment.testRunnerCommand : '',
+        args: testFile.environment.arguments.concat([testFile.path]),
+      });
+    });
+
+    return commands;
+  };
 };

@@ -1,14 +1,20 @@
 const moment = require('moment');
+const spawnSync = require('child_process').spawnSync;
 
-module.exports = function CommandRunner(spawn, printer) {
-  this.run = (command) => {
-    if (command.command !== '') {
-      printer.info(`[${getCurrentTime()}] ${command.command} "${command.args}"`);
+function CommandRunner(spawn, printer) {
+  this.run = (commands) => {
+    commands.forEach((command) => {
+      printer.info(`[${getCurrentTime()}] ${command.command} ${command.args.join(' ')}`);
       spawn(command.command, command.args, { stdio: 'inherit' });
-    }
+    });
   };
 
   function getCurrentTime() {
     return moment().format('YYYY-MM-DD HH:mm:ss');
   }
+}
+
+module.exports = {
+  class: CommandRunner,
+  getSynchronousImplementation: printer => new CommandRunner(spawnSync, printer),
 };
