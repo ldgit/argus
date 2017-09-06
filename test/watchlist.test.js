@@ -3,11 +3,12 @@ const Watchlist = require('../src/watchlist');
 const nullPrinter = require('../src/printer').createNull();
 
 describe('watchlist', () => {
+  const rootDir = process.cwd();
   let watchlist;
   let defaultEnvironment;
 
   beforeEach(() => {
-    process.chdir('./test/mock-project');
+    process.chdir('./test/fixtures/watchlist.test/mock-project');
     watchlist = new Watchlist(nullPrinter);
     defaultEnvironment = {
       extension: 'php',
@@ -18,7 +19,7 @@ describe('watchlist', () => {
   });
 
   afterEach(() => {
-    process.chdir('./../..');
+    process.chdir(rootDir);
   });
 
   const nonExistentTestDirectories = [
@@ -95,18 +96,35 @@ describe('watchlist', () => {
     ].sort());
   });
 
-  function getEnvironmentSoThatFixtureFilesDoNotConflictWithOtherTests() {
-    const newEnv = JSON.parse(JSON.stringify(defaultEnvironment));
-    newEnv.extension = 'js';
-    newEnv.testNameSuffix = '.test';
+  it('should remove duplicates', () => {
+    const integrationEnvironment = {
+      extension: 'php',
+      testNameSuffix: 'Test',
+      testDir: 'test/integration',
+      sourceDir: '',
+    };
 
-    return newEnv;
-  }
+    const actualWatchlist = watchlist.compileFor([defaultEnvironment, integrationEnvironment]);
+
+    assert.deepEqual([
+      'src/[E]xampleFour.php',
+      'test/integration/src/[E]xampleFourTest.php',
+      'test/unit/src/[E]xampleFourTest.php',
+    ], actualWatchlist.sort());
+  });
 
   function jsEnvironmentWithDifferentSourceDir() {
     const env = getEnvironmentSoThatFixtureFilesDoNotConflictWithOtherTests();
     env.sourceDir = 'src';
 
     return env;
+  }
+
+  function getEnvironmentSoThatFixtureFilesDoNotConflictWithOtherTests() {
+    const newEnv = JSON.parse(JSON.stringify(defaultEnvironment));
+    newEnv.extension = 'js';
+    newEnv.testNameSuffix = '.test';
+
+    return newEnv;
   }
 });

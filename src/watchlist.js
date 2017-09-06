@@ -24,7 +24,7 @@ module.exports = function Watchlist(printer) {
       });
     });
 
-    return locationsToWatch;
+    return removeDuplicates(locationsToWatch);
   };
 
   function getSourcePathFromTestPath(testPath, environment) {
@@ -35,8 +35,8 @@ module.exports = function Watchlist(printer) {
 
   /**
    * Converts normal filepath into glob for that filepath.
-   * 
-   * @param  {string} filepath 
+   *
+   * @param  {string} filepath
    * @return {string} first letter of the filename in the path is wrapped in squared brackets
    */
   function globify(filepath) {
@@ -49,5 +49,9 @@ module.exports = function Watchlist(printer) {
     const globifiedFilename = filename.replace(filename[0], `[${filename[0]}]`);
 
     return path.join(...pathFragments, globifiedFilename);
+  }
+
+  function removeDuplicates(array) {
+    return [...new Set(array)];
   }
 };
