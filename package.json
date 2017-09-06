@@ -10,18 +10,28 @@
     "type": "git",
     "url": "https://github.com/ldgit/argus.git"
   },
+  "keywords": [
+    "test",
+    "runner",
+    "watch",
+    "test-runner",
+    "testing",
+    "tdd",
+    "cli",
+    "convenient"
+  ],
   "bin": {
     "argus": "./index.js"
   },
   "devDependencies": {
-    "eslint": "^4.3.0",
-    "eslint-config-airbnb-base": "^11.3.1",
+    "eslint": "^4.6.1",
+    "eslint-config-airbnb-base": "^11.3.2",
     "eslint-plugin-import": "^2.7.0",
     "lolex": "^2.1.2",
-    "mocha": "^3.4.2"
+    "mocha": "^3.5.0"
   },
   "dependencies": {
-    "chalk": "^2.0.1",
+    "chalk": "^2.1.0",
     "chokidar": "^1.7.0",
     "commander": "^2.11.0",
     "glob": "^7.1.2",
