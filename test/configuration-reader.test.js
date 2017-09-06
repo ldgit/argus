@@ -83,5 +83,17 @@ describe('ConfigurationReader', () => {
       assert.equal(config.environments[0].extension, 'php');
       assert.equal(config.environments[1].extension, 'js');
     });
+
+    it('should use empty string for sourceDir if source is current directory', () => {
+      const config = configurationReader.read('test/fixtures/configuration-reader.test/technically.valid.config.js');
+      assert.equal(config.environments[0].sourceDir, '');
+      assert.equal(config.environments[1].sourceDir, '');
+      assert.equal(config.environments[2].sourceDir, '');
+    });
+
+    it('should trim source directory when reading it', () => {
+      const config = configurationReader.read('test/fixtures/configuration-reader.test/technically.valid.config.js');
+      assert.equal(config.environments[3].sourceDir, 'src');
+    });
   });
 });

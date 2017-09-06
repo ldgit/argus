@@ -17,14 +17,15 @@ module.exports = function ConfigurationReader() {
     const configuration = require(absoluteConfigPath);
     (new Validator()).validate(configuration);
 
-    lowerCaseAllExtensionProperties(configuration.environments);
+    normalizeAllEnvironments(configuration.environments);
 
     return configuration;
   };
 
-  function lowerCaseAllExtensionProperties(environments) {
+  function normalizeAllEnvironments(environments) {
     environments.forEach((environment) => {
       environment.extension = environment.extension.toLowerCase();
+      environment.sourceDir = ['.', './'].includes(environment.sourceDir.trim()) ? '' : environment.sourceDir.trim();
     });
   }
 

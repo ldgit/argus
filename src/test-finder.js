@@ -23,7 +23,7 @@ module.exports = function TestFinder(environments) {
     }
 
     return [
-      path.join(environment.testDir, getPathWithoutExtension(filePath)),
+      path.join(environment.testDir, pathWithoutExtensionAndSourceDir(filePath, environment)),
       `${environment.testNameSuffix}.${environment.extension}`,
     ].join('');
   }
@@ -40,7 +40,11 @@ module.exports = function TestFinder(environments) {
     return foundEnvironments;
   }
 
-  function getPathWithoutExtension(filePath) {
-    return filePath.split('.').slice(0, -1).join('.');
+  function pathWithoutExtensionAndSourceDir(filePath, environment) {
+    return removeSourceDirFromPath(filePath, environment).split('.').slice(0, -1).join('.');
+  }
+
+  function removeSourceDirFromPath(filePath, environment) {
+    return filePath.replace(environment.sourceDir, '');
   }
 };

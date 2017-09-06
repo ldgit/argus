@@ -28,6 +28,13 @@ describe('test-finder', () => {
       assertTestFound(testFinder.findTestsFor('src/ExampleOne.php'), 'tests/src/ExampleOneTest.php', phpEnvironment);
     });
 
+    it('should remove sourceDir from test file path', () => {
+      phpEnvironment.sourceDir = 'src';
+      phpEnvironment.testDir = 'tests';
+      assertTestFound(testFinder.findTestsFor('src/ExampleTwo.php'), 'tests/ExampleTwoTest.php', phpEnvironment);
+      assertTestFound(testFinder.findTestsFor('src/ExampleWithsrcDirInName.php'), 'tests/ExampleWithsrcDirInNameTest.php', phpEnvironment);
+    });
+
     context('given a test file', () => {
       it('should return that same file', () => {
         assertTestFound(testFinder.findTestsFor('tests/unit/src/ExampleTwoTest.php'), 'tests/unit/src/ExampleTwoTest.php', phpEnvironment);
