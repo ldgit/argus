@@ -10,7 +10,7 @@ module.exports = function Watcher(printer, configuration) {
     watchlist.forEach((watchlistPath) => {
       const deglobifiedPath = watchlistPath.replace('[', '').replace(']', '');
       if (!fs.existsSync(deglobifiedPath)) {
-        printer.warning(`File not found: "${deglobifiedPath}"`);
+        printer.notice(`File not found: "${deglobifiedPath}"`);
       } else {
         filteredWatchlist.push(watchlistPath);
       }

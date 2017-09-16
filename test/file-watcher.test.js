@@ -42,8 +42,8 @@ describe('watcher', function watcherTest() {
   });
 
   context('when given an array of "globified" file paths', () => {
-    it('should print out a warning if any file path does not exist', () => {
-      nullPrinter.warning = (text) => {
+    it('should print out a notice if any file path does not exist', () => {
+      nullPrinter.notice = (text) => {
         warnings.push(text);
       };
 

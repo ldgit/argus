@@ -7,8 +7,12 @@ const ConsolePrinter = function ConsolePrinter(console) {
     log(chalk.cyanBright(text));
   };
 
-  this.warning = (text) => {
+  this.notice = (text) => {
     log(chalk.yellowBright(text));
+  };
+
+  this.warning = (text) => {
+    log(chalk.bgYellow.black(text));
   };
 
   this.error = (text) => {
