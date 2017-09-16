@@ -15,7 +15,7 @@ const argusModule = {
     this.run = () => {
       const configuration = new ConfigurationReader().read(commandLineOptions.config);
       const testFinder = new TestFinder(configuration.environments);
-      const fileWatcher = new FileWatcher(printer, configuration.environments);
+      const fileWatcher = new FileWatcher(printer, configuration);
       const commandBuilder = new CommandBuilder();
       const watchlist = (new Watchlist(printer)).compileFor(configuration.environments);
 

@@ -1,7 +1,8 @@
 const fileWatcher = require('chokidar');
 const fs = require('fs');
 
-module.exports = function Watcher(printer, environments) {
+module.exports = function Watcher(printer, configuration) {
+  const environments = configuration.environments;
   let watcher;
   const filteredWatchlist = [];
 
@@ -22,6 +23,9 @@ module.exports = function Watcher(printer, environments) {
     watcher.on('change', callback);
     watcher.on('ready', () => {
       printer.info(`Watching ${getFilesWatchedCount(watcher.getWatched())} file(s)`);
+      if (!configuration.configFileFound) {
+        printer.warning('Configuration file not found, will use default configuration.');
+      }
     });
   };
 

@@ -7,6 +7,7 @@ const { fork } = require('child_process');
 
 describe('watcher', function watcherTest() {
   let watcher;
+  let configuration;
   let environments;
   let warnings;
   let infos;
@@ -17,8 +18,12 @@ describe('watcher', function watcherTest() {
     warnings = [];
     infos = [];
     environments = [createEnvironment('php')];
+    configuration = {
+      environments,
+      configFileFound: true,
+    };
     process.chdir(path.join('.', 'test'));
-    watcher = new Watcher(nullPrinter, environments);
+    watcher = new Watcher(nullPrinter, configuration);
   });
 
   afterEach(() => {
@@ -76,6 +81,23 @@ describe('watcher', function watcherTest() {
 
       watcher.on('ready', () => {
         assert.equal(infos[0], 'Watching 2 file(s)');
+        done();
+      });
+    });
+
+    it('should a print warning if configuration file not found, *after* warning about missing files', (done) => {
+      configuration.configFileFound = false;
+      nullPrinter.warning = (text) => {
+        warnings.push(text);
+      };
+
+      watcher.watchFiles([
+        './mock-project/src/[E]xampleOne.php', // exists
+        './mock-project/nonexistent/[p]ath',
+      ], () => {});
+
+      watcher.on('ready', () => {
+        assert.equal(warnings[1], 'Configuration file not found, will use default configuration.');
         done();
       });
     });

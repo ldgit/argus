@@ -3,24 +3,34 @@ const path = require('path');
 const Validator = require('./configuration-validator');
 
 module.exports = function ConfigurationReader() {
+  let wasConfigFileFound;
+
   this.read = (configPath) => {
     if (typeof configPath === 'undefined') {
+      wasConfigFileFound = false;
       return getDefaultConfiguration();
     }
 
     const absoluteConfigPath = path.resolve(configPath);
 
     if (!fs.existsSync(absoluteConfigPath)) {
+      wasConfigFileFound = false;
       return getDefaultConfiguration();
     }
+
+    wasConfigFileFound = true;
 
     const configuration = require(absoluteConfigPath);
     (new Validator()).validate(configuration);
 
     normalizeAllEnvironments(configuration.environments);
 
+    configuration.configFileFound = wasConfigFileFound;
+
     return configuration;
   };
+
+  this.wasConfigFileFound = () => wasConfigFileFound;
 
   function normalizeAllEnvironments(environments) {
     environments.forEach((environment) => {
@@ -31,6 +41,7 @@ module.exports = function ConfigurationReader() {
 
   function getDefaultConfiguration() {
     return {
+      configFileFound: false,
       environments: [
         {
           extension: 'php',
