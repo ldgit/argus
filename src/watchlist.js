@@ -15,12 +15,16 @@ module.exports = function Watchlist(printer) {
       }
 
       const testsToWatch = glob.sync(`${path.normalize(environment.testDir)}/**/*${testNameSuffix}.${extension}`);
-
       testsToWatch.forEach((filepath) => {
         const sourceFilePath = getSourcePathFromTestPath(filepath, environment);
 
+        if (!fs.existsSync(sourceFilePath)) {
+          printer.notice(`Source file not found for test: "${filepath}"`);
+        } else {
+          locationsToWatch.push(globify(sourceFilePath));
+        }
+
         locationsToWatch.push(globify(filepath));
-        locationsToWatch.push(globify(sourceFilePath));
       });
     });
 

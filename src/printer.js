@@ -24,6 +24,7 @@ const NullPrinter = function NullPrinter() {
   this.info = () => {};
   this.warning = () => {};
   this.error = () => {};
+  this.notice = () => {};
 };
 
 module.exports = {

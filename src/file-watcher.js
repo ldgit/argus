@@ -4,16 +4,11 @@ const fs = require('fs');
 module.exports = function Watcher(printer, configuration) {
   const environments = configuration.environments;
   let watcher;
-  const filteredWatchlist = [];
 
   this.watchFiles = (watchlist, callback) => {
-    watchlist.forEach((watchlistPath) => {
+    const filteredWatchlist = watchlist.filter((watchlistPath) => {
       const deglobifiedPath = watchlistPath.replace('[', '').replace(']', '');
-      if (!fs.existsSync(deglobifiedPath)) {
-        printer.notice(`File not found: "${deglobifiedPath}"`);
-      } else {
-        filteredWatchlist.push(watchlistPath);
-      }
+      return fs.existsSync(deglobifiedPath);
     });
 
     watcher = fileWatcher.watch(filteredWatchlist, {

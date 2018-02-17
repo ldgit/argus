@@ -38,17 +38,42 @@ describe('watchlist', () => {
     'src', './src', 'src/', './src/',
   ];
 
-  nonExistentTestDirectories.forEach((test) => {
-    it(`should display an error message if given test directory does not exist (${test.dir})`, () => {
-      let textSentToError;
-      nullPrinter.error = (text) => {
-        textSentToError = text;
-      };
-      defaultEnvironment.testDir = test.dir;
+  context('when given nonexistent directories', () => {
+    nonExistentTestDirectories.forEach((test) => {
+      it(`should display an error message (${test.dir})`, () => {
+        const errors = [];
+        nullPrinter.error = text => errors.push(text);
+        defaultEnvironment.testDir = test.dir;
+
+        watchlist.compileFor([defaultEnvironment]);
+
+        assert.equal(errors[0], test.expectedError);
+      });
+    });
+  });
+
+  context('when source file not found for test', () => {
+    beforeEach(() => {
+      defaultEnvironment.extension = 'js';
+      defaultEnvironment.testNameSuffix = '.test';
+      defaultEnvironment.testDir = 'test-nosource';
+    });
+
+    it('should print out a notice for any source file that does not exist', () => {
+      const notices = [];
+      nullPrinter.notice = text => notices.push(text);
 
       watchlist.compileFor([defaultEnvironment]);
 
-      assert.equal(textSentToError, test.expectedError);
+      assert.equal(
+        notices[0],
+        'Source file not found for test: "test-nosource/NoSourceForThis.test.js"'
+      );
+    });
+
+    it('should filter out paths that don\'t exist (so that ready event will fire correctly)', () => {
+      const actualWatchlist = watchlist.compileFor([defaultEnvironment]);
+      assert.deepEqual(actualWatchlist, ['test-nosource/[N]oSourceForThis.test.js']);
     });
   });
 
@@ -56,30 +81,30 @@ describe('watchlist', () => {
     it(`should compile watchlist of globified filepaths from given "${test.args}" test directory`, () => {
       defaultEnvironment.testDir = test.args;
       const locationsToWatch = watchlist.compileFor([defaultEnvironment]);
-      assert.deepEqual(locationsToWatch, test.expected);
+      assertListsAreEqual(locationsToWatch, test.expected);
     });
   });
 
   it('should use test name suffix to detect which tests and files to watch', () => {
     defaultEnvironment.testNameSuffix = '.foobar';
     const actualWatchlist = watchlist.compileFor([defaultEnvironment]);
-    assert.deepEqual(actualWatchlist, ['test/unit/src/[E]xampleFour.foobar.php', 'src/[E]xampleFour.php']);
+    assertListsAreEqual(actualWatchlist, ['test/unit/src/[E]xampleFour.foobar.php', 'src/[E]xampleFour.php']);
   });
 
   it('should use file extension to detect which tests and files to watch', () => {
     defaultEnvironment.extension = 'js';
     const actualWatchlist = watchlist.compileFor([defaultEnvironment]);
-    assert.deepEqual(actualWatchlist, ['test/unit/src/[E]xampleFourTest.js', 'src/[E]xampleFour.js']);
+    assertListsAreEqual(actualWatchlist, ['test/unit/src/[E]xampleFourTest.js', 'src/[E]xampleFour.js']);
   });
 
   sourceDirVarieties.forEach((sourceDir) => {
     it('should use environment source directory to detect which source files to watch', () => {
-      const env = getEnvironmentSoThatFixtureFilesDoNotConflictWithOtherTests();
+      const env = getDefaultJavascriptEnvironment();
       env.sourceDir = sourceDir;
 
       const actualWatchlist = watchlist.compileFor([env]);
 
-      assert.deepEqual(actualWatchlist, ['test/unit/[E]xampleFour.test.js', 'src/[E]xampleFour.js']);
+      assertListsAreEqual(actualWatchlist, ['test/unit/[E]xampleFour.test.js', 'src/[E]xampleFour.js']);
     });
   });
 
@@ -113,14 +138,18 @@ describe('watchlist', () => {
     ], actualWatchlist.sort());
   });
 
+  function assertListsAreEqual(actual, expected) {
+    assert.deepEqual(actual.sort(), expected.sort());
+  }
+
   function jsEnvironmentWithDifferentSourceDir() {
-    const env = getEnvironmentSoThatFixtureFilesDoNotConflictWithOtherTests();
+    const env = getDefaultJavascriptEnvironment();
     env.sourceDir = 'src';
 
     return env;
   }
 
-  function getEnvironmentSoThatFixtureFilesDoNotConflictWithOtherTests() {
+  function getDefaultJavascriptEnvironment() {
     const newEnv = JSON.parse(JSON.stringify(defaultEnvironment));
     newEnv.extension = 'js';
     newEnv.testNameSuffix = '.test';

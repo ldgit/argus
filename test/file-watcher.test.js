@@ -9,13 +9,11 @@ describe('watcher', function watcherTest() {
   let watcher;
   let configuration;
   let environments;
-  let warnings;
   let infos;
 
   this.slow(300);
 
   beforeEach(() => {
-    warnings = [];
     infos = [];
     environments = [createEnvironment('php')];
     configuration = {
@@ -42,23 +40,10 @@ describe('watcher', function watcherTest() {
   });
 
   context('when given an array of "globified" file paths', () => {
-    it('should print out a notice if any file path does not exist', () => {
-      nullPrinter.notice = (text) => {
-        warnings.push(text);
-      };
-
-      watcher.watchFiles([
-        './mock-project/src/[E]xampleFour.php', // Exists
-        './mock-project/nonexistent/[p]ath',
-      ], () => {});
-
-      assert.equal(warnings[0], 'File not found: "./mock-project/nonexistent/path"');
-    });
-
+    // Watchlist (input for watchFiles() function) also does this when it is compiled, but in this case it doesn't hurt
+    // to doublecheck.
     it('should filter out paths that don\'t exist so that ready event will fire correctly', (done) => {
-      nullPrinter.info = (text) => {
-        infos.push(text);
-      };
+      nullPrinter.info = text => infos.push(text);
 
       watcher.watchFiles(['./mock-project/src/[E]xampleFour.php'], () => {});
 
@@ -70,9 +55,7 @@ describe('watcher', function watcherTest() {
 
     it('should print out information about the number of watched files', (done) => {
       environments.push(createEnvironment('js'));
-      nullPrinter.info = (text) => {
-        infos.push(text);
-      };
+      nullPrinter.info = text => infos.push(text);
 
       watcher.watchFiles([
         './mock-project/src/[E]xampleOne.php',
@@ -85,11 +68,10 @@ describe('watcher', function watcherTest() {
       });
     });
 
-    it('should a print warning if configuration file not found, *after* warning about missing files', (done) => {
+    it('should a print warning if configuration file not found', (done) => {
       configuration.configFileFound = false;
-      nullPrinter.warning = (text) => {
-        warnings.push(text);
-      };
+      const warnings = [];
+      nullPrinter.warning = text => warnings.push(text);
 
       watcher.watchFiles([
         './mock-project/src/[E]xampleOne.php', // exists
@@ -97,16 +79,14 @@ describe('watcher', function watcherTest() {
       ], () => {});
 
       watcher.on('ready', () => {
-        assert.equal(warnings[1], 'Configuration file not found, will use default configuration.');
+        assert.equal(warnings[0], 'Configuration file not found, will use default configuration.');
         done();
       });
     });
 
     it('should not count same file twice when given multiple environments for same filetype', (done) => {
       environments.push(createEnvironment('php'));
-      nullPrinter.info = (text) => {
-        infos.push(text);
-      };
+      nullPrinter.info = text => infos.push(text);
 
       watcher.watchFiles(['./mock-project/src/[E]xampleOne.php'], () => {});
 
