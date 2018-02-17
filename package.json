@@ -41,9 +41,9 @@
     "fsevents": "^1.0.0"
   },
   "scripts": {
-    "test": "npm run lint && mocha",
+    "test": "mocha",
     "test-int": "mocha test/integration/**/*.test.js",
-    "test-all": "npm test && npm run test-int",
+    "test-all": "npm run lint && npm test && npm run test-int",
     "lint": "eslint test/ src/ ./index.js"
   },
   "engines": {
