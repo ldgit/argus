@@ -28,7 +28,7 @@
     "eslint-config-airbnb-base": "^11.3.2",
     "eslint-plugin-import": "^2.11.0",
     "lolex": "^2.5.0",
-    "mocha": "^3.5.3"
+    "mocha": "^5.1.1"
   },
   "dependencies": {
     "chalk": "^2.4.1",
