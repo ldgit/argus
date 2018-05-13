@@ -1,5 +1,5 @@
-const moment = require('moment');
 const spawnSync = require('child_process').spawnSync;
+const format = require('date-fns/format');
 
 function CommandRunner(spawn, printer) {
   this.run = (commands) => {
@@ -10,7 +10,7 @@ function CommandRunner(spawn, printer) {
   };
 
   function getCurrentTime() {
-    return moment().format('YYYY-MM-DD HH:mm:ss');
+    return format(new Date(), 'YYYY-MM-DD HH:mm:ss');
   }
 }
 

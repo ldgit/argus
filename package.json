@@ -24,18 +24,18 @@
     "argus": "./index.js"
   },
   "devDependencies": {
-    "eslint": "^4.6.1",
+    "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^11.3.2",
-    "eslint-plugin-import": "^2.7.0",
-    "lolex": "^2.1.2",
-    "mocha": "^3.5.0"
+    "eslint-plugin-import": "^2.11.0",
+    "lolex": "^2.5.0",
+    "mocha": "^3.5.3"
   },
   "dependencies": {
-    "chalk": "^2.1.0",
+    "chalk": "^2.4.1",
     "chokidar": "^1.7.0",
-    "commander": "^2.11.0",
-    "glob": "^7.1.2",
-    "moment": "^2.18.1"
+    "commander": "^2.15.1",
+    "date-fns": "^1.29.0",
+    "glob": "^7.1.2"
   },
   "optionalDependencies": {
     "fsevents": "^1.0.0"
