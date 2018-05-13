@@ -10,15 +10,8 @@ describe('argus', function argusTestSuite() {
   const pathToTouchScript = path.join(rootDir, 'test', 'helpers', 'touch.js');
 
   let argus;
-  let lastRunCommands = [];
   let watcher;
   let commandLineOptions;
-
-  function CommandRunnerMock() {
-    this.run = (commands) => {
-      lastRunCommands = commands;
-    };
-  }
 
   beforeEach(() => {
     commandLineOptions = { config: 'argus.config.js' };
@@ -30,9 +23,12 @@ describe('argus', function argusTestSuite() {
   });
 
   context('mock-project', () => {
+    let runCommandsSpy;
+
     beforeEach(() => {
       process.chdir(path.join('.', 'test', 'integration', 'fixtures', 'mock-project'));
-      argus = new Argus(new CommandRunnerMock(), commandLineOptions);
+      runCommandsSpy = createRunCommandsSpy();
+      argus = new Argus(runCommandsSpy, commandLineOptions);
     });
 
     it('should watch project source files and run console command if they change', (done) => {
@@ -40,8 +36,8 @@ describe('argus', function argusTestSuite() {
       fork(pathToTouchScript, [path.join('.', 'src', 'PhpClass.php')]);
 
       watcher.on('change', () => {
-        assert.equal(lastRunCommands[0].command, 'vendor/bin/phpunit');
-        assert.deepEqual(lastRunCommands[0].args, ['tests/src/PhpClassTest.php']);
+        assert.equal(runCommandsSpy.getLastRunCommands()[0].command, 'vendor/bin/phpunit');
+        assert.deepEqual(runCommandsSpy.getLastRunCommands()[0].args, ['tests/src/PhpClassTest.php']);
         done();
       });
     });
@@ -51,17 +47,20 @@ describe('argus', function argusTestSuite() {
       fork(pathToTouchScript, [path.join('.', 'tests', 'src', 'PhpClassTest.php')]);
 
       watcher.on('change', () => {
-        assert.equal(lastRunCommands[0].command, 'vendor/bin/phpunit');
-        assert.deepEqual(lastRunCommands[0].args, ['tests/src/PhpClassTest.php']);
+        assert.equal(runCommandsSpy.getLastRunCommands()[0].command, 'vendor/bin/phpunit');
+        assert.deepEqual(runCommandsSpy.getLastRunCommands()[0].args, ['tests/src/PhpClassTest.php']);
         done();
       });
     });
   });
 
   context('project-with-integration-tests', () => {
+    let runCommandsSpy;
+
     beforeEach(() => {
       process.chdir(path.join('.', 'test', 'integration', 'fixtures', 'project-with-integration-tests'));
-      argus = new Argus(new CommandRunnerMock(), commandLineOptions);
+      runCommandsSpy = createRunCommandsSpy();
+      argus = new Argus(runCommandsSpy, commandLineOptions);
     });
 
     it('should watch project with multiple environments for same file extension', (done) => {
@@ -69,12 +68,12 @@ describe('argus', function argusTestSuite() {
       fork(pathToTouchScript, [path.join('.', 'src', 'Class.php')]);
 
       watcher.on('change', () => {
-        assert.equal(lastRunCommands.length, 2, 'Expected only two commands to run');
-        assert.equal(lastRunCommands[0].command, 'vendor/bin/phpunit');
-        assert.deepEqual(lastRunCommands[0].args, ['tests/unit/src/ClassTest.php']);
-        assert.equal(lastRunCommands[1].command, 'vendor/bin/phpunit');
+        assert.equal(runCommandsSpy.getLastRunCommands().length, 2, 'Expected only two commands to run');
+        assert.equal(runCommandsSpy.getLastRunCommands()[0].command, 'vendor/bin/phpunit');
+        assert.deepEqual(runCommandsSpy.getLastRunCommands()[0].args, ['tests/unit/src/ClassTest.php']);
+        assert.equal(runCommandsSpy.getLastRunCommands()[1].command, 'vendor/bin/phpunit');
         assert.deepEqual(
-          lastRunCommands[1].args,
+          runCommandsSpy.getLastRunCommands()[1].args,
           ['-c', 'phpunit-integration.xml', 'tests/integration/src/ClassTest.php']
         );
         done();
@@ -82,3 +81,14 @@ describe('argus', function argusTestSuite() {
     });
   });
 });
+
+function createRunCommandsSpy() {
+  let lastRunCommands = [];
+  const runCommands = (commands) => {
+    lastRunCommands = commands;
+  };
+
+  runCommands.getLastRunCommands = () => lastRunCommands;
+
+  return runCommands;
+}

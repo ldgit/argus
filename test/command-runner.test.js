@@ -1,17 +1,17 @@
 const assert = require('assert');
 const clock = require('lolex');
-const CommandRunner = require('../src/command-runner').class;
+const spawnSync = require('child_process').spawnSync;
+const { configureRunCommands } = require('../src/command-runner');
 const nullPrinter = require('../src/printer').createNull();
-const commandRunnerSyncImpl = require('../src/command-runner').getSynchronousImplementation(nullPrinter);
 
 describe('command-runner synchronous implementation', () => {
   it('smoke test', () => {
-    commandRunnerSyncImpl.run([{ command: 'echo', args: [] }]);
+    configureRunCommands.bind(null, spawnSync, nullPrinter)([{ command: 'echo', args: [] }]);
   });
 });
 
 describe('command-runner', () => {
-  let commandRunner;
+  let runCommands;
   let spawnSpyData;
   let spawnSpyWasCalled;
   const spawnSpy = (command, args, options) => {
@@ -22,11 +22,11 @@ describe('command-runner', () => {
   beforeEach(() => {
     spawnSpyData = [];
     spawnSpyWasCalled = false;
-    commandRunner = new CommandRunner(spawnSpy, nullPrinter);
+    runCommands = configureRunCommands.bind(null, spawnSpy, nullPrinter);
   });
 
   it('should run given commands', () => {
-    commandRunner.run([
+    runCommands([
       { command: 'echo', args: ['what if this was a unit test command?'] },
       { command: 'ls', args: ['-lah'] },
     ]);
@@ -39,7 +39,7 @@ describe('command-runner', () => {
   });
 
   it('should do nothing if given empty array', () => {
-    commandRunner.run([]);
+    runCommands([]);
     assert.strictEqual(spawnSpyWasCalled, false);
   });
 
@@ -55,7 +55,7 @@ describe('command-runner', () => {
 
     it('should print info message', () => {
       clock.install({ now: new Date(2017, 7, 1, 18, 5, 5) });
-      commandRunner.run([{ command: 'echo', args: ['one'] }, { command: 'phpunit', args: ['-c', 'phpunit.xml'] }]);
+      runCommands([{ command: 'echo', args: ['one'] }, { command: 'phpunit', args: ['-c', 'phpunit.xml'] }]);
       assert.equal(textSentToInfo[0], '[2017-08-01 18:05:05] echo one');
       assert.equal(textSentToInfo[1], '[2017-08-01 18:05:05] phpunit -c phpunit.xml');
     });
