@@ -1,15 +1,15 @@
 const assert = require('assert');
-const Watchlist = require('../src/watchlist');
+const { configureCompileWatchlist } = require('../src/watchlist');
 const nullPrinter = require('../src/printer').createNull();
 
 describe('watchlist', () => {
   const rootDir = process.cwd();
-  let watchlist;
+  let compileWatchlistFor;
   let defaultEnvironment;
 
   beforeEach(() => {
     process.chdir('./test/fixtures/watchlist.test/mock-project');
-    watchlist = new Watchlist(nullPrinter);
+    compileWatchlistFor = configureCompileWatchlist.bind(null, nullPrinter);
     defaultEnvironment = {
       extension: 'php',
       testNameSuffix: 'Test',
@@ -45,7 +45,7 @@ describe('watchlist', () => {
         nullPrinter.error = text => errors.push(text);
         defaultEnvironment.testDir = test.dir;
 
-        watchlist.compileFor([defaultEnvironment]);
+        compileWatchlistFor([defaultEnvironment]);
 
         assert.equal(errors[0], test.expectedError);
       });
@@ -63,7 +63,7 @@ describe('watchlist', () => {
       const notices = [];
       nullPrinter.notice = text => notices.push(text);
 
-      watchlist.compileFor([defaultEnvironment]);
+      compileWatchlistFor([defaultEnvironment]);
 
       assert.equal(
         notices[0],
@@ -72,7 +72,7 @@ describe('watchlist', () => {
     });
 
     it('should filter out paths that don\'t exist (so that ready event will fire correctly)', () => {
-      const actualWatchlist = watchlist.compileFor([defaultEnvironment]);
+      const actualWatchlist = compileWatchlistFor([defaultEnvironment]);
       assert.deepEqual(actualWatchlist, ['test-nosource/[N]oSourceForThis.test.js']);
     });
   });
@@ -80,20 +80,20 @@ describe('watchlist', () => {
   existingTestDirectories.forEach((test) => {
     it(`should compile watchlist of globified filepaths from given "${test.args}" test directory`, () => {
       defaultEnvironment.testDir = test.args;
-      const locationsToWatch = watchlist.compileFor([defaultEnvironment]);
+      const locationsToWatch = compileWatchlistFor([defaultEnvironment]);
       assertListsAreEqual(locationsToWatch, test.expected);
     });
   });
 
   it('should use test name suffix to detect which tests and files to watch', () => {
     defaultEnvironment.testNameSuffix = '.foobar';
-    const actualWatchlist = watchlist.compileFor([defaultEnvironment]);
+    const actualWatchlist = compileWatchlistFor([defaultEnvironment]);
     assertListsAreEqual(actualWatchlist, ['test/unit/src/[E]xampleFour.foobar.php', 'src/[E]xampleFour.php']);
   });
 
   it('should use file extension to detect which tests and files to watch', () => {
     defaultEnvironment.extension = 'js';
-    const actualWatchlist = watchlist.compileFor([defaultEnvironment]);
+    const actualWatchlist = compileWatchlistFor([defaultEnvironment]);
     assertListsAreEqual(actualWatchlist, ['test/unit/src/[E]xampleFourTest.js', 'src/[E]xampleFour.js']);
   });
 
@@ -102,14 +102,14 @@ describe('watchlist', () => {
       const env = getDefaultJavascriptEnvironment();
       env.sourceDir = sourceDir;
 
-      const actualWatchlist = watchlist.compileFor([env]);
+      const actualWatchlist = compileWatchlistFor([env]);
 
       assertListsAreEqual(actualWatchlist, ['test/unit/[E]xampleFour.test.js', 'src/[E]xampleFour.js']);
     });
   });
 
   it('should support multiple environments', () => {
-    const actualWatchlist = watchlist.compileFor([
+    const actualWatchlist = compileWatchlistFor([
       defaultEnvironment,
       jsEnvironmentWithDifferentSourceDir(),
     ]);
@@ -129,7 +129,7 @@ describe('watchlist', () => {
       sourceDir: '',
     };
 
-    const actualWatchlist = watchlist.compileFor([defaultEnvironment, integrationEnvironment]);
+    const actualWatchlist = compileWatchlistFor([defaultEnvironment, integrationEnvironment]);
 
     assert.deepEqual([
       'src/[E]xampleFour.php',

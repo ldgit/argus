@@ -3,7 +3,7 @@ const syncCommandRunner = require('./command-runner').getSynchronousImplementati
 const FileWatcher = require('./file-watcher');
 const TestFinder = require('./test-finder');
 const CommandBuilder = require('./command-builder');
-const Watchlist = require('./watchlist');
+const { compileWatchlistFor } = require('./watchlist');
 const ConfigurationReader = require('./configuration-reader');
 const CommandLineOptions = require('./command-line-options');
 
@@ -17,7 +17,7 @@ const argusModule = {
       const testFinder = new TestFinder(configuration.environments);
       const fileWatcher = new FileWatcher(printer, configuration);
       const commandBuilder = new CommandBuilder();
-      const watchlist = (new Watchlist(printer)).compileFor(configuration.environments);
+      const watchlist = compileWatchlistFor(configuration.environments);
 
       fileWatcher.watchFiles(watchlist, (pathToChangedFile) => {
         const testFilePaths = testFinder.findTestsFor(pathToChangedFile);
