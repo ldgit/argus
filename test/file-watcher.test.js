@@ -1,6 +1,6 @@
 const assert = require('assert');
 const path = require('path');
-const Watcher = require('../src/file-watcher');
+const { configureCreateWatcher } = require('../src/file-watcher');
 const nullPrinter = require('../src/printer').createNull();
 
 const { fork } = require('child_process');
@@ -21,7 +21,7 @@ describe('watcher', function watcherTest() {
       configFileFound: true,
     };
     process.chdir(path.join('.', 'test'));
-    watcher = new Watcher(nullPrinter, configuration);
+    watcher = configureCreateWatcher(nullPrinter, configuration);
   });
 
   afterEach(() => {

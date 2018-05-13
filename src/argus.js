@@ -1,6 +1,5 @@
-const printer = require('./printer').create();
 const { runCommands } = require('./command-runner');
-const FileWatcher = require('./file-watcher');
+const { createWatcher } = require('./file-watcher');
 const TestFinder = require('./test-finder');
 const CommandBuilder = require('./command-builder');
 const { compileWatchlistFor } = require('./watchlist');
@@ -15,7 +14,7 @@ const argusModule = {
     this.run = () => {
       const configuration = new ConfigurationReader().read(commandLineOptions.config);
       const testFinder = new TestFinder(configuration.environments);
-      const fileWatcher = new FileWatcher(printer, configuration);
+      const fileWatcher = createWatcher(configuration);
       const commandBuilder = new CommandBuilder();
       const watchlist = compileWatchlistFor(configuration.environments);
 
