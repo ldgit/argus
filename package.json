@@ -33,7 +33,7 @@
   "dependencies": {
     "chalk": "^2.4.1",
     "chokidar": "^1.7.0",
-    "commander": "^2.15.1",
+    "commander": "2.14.*",
     "date-fns": "^1.29.0",
     "glob": "^7.1.2"
   },
