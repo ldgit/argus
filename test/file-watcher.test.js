@@ -1,7 +1,7 @@
 const assert = require('assert');
 const path = require('path');
 const { configureCreateWatcher } = require('../src/file-watcher');
-const nullPrinter = require('../src/printer').createNull();
+const { nullPrinter } = require('../src/printer');
 
 const { fork } = require('child_process');
 

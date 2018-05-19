@@ -1,6 +1,6 @@
 const spawnSync = require('child_process').spawnSync;
 const format = require('date-fns/format');
-const consolePrinter = require('../src/printer').create();
+const { consolePrinter } = require('../src/printer');
 
 function configureRunCommands(spawn, printer, commands) {
   commands.forEach((command) => {

@@ -1,6 +1,6 @@
 const assert = require('assert');
 const chalk = require('chalk');
-const Printer = require('../src/printer').Printer;
+const { createConsolePrinter } = require('../src/printer');
 
 describe('printer', () => {
   let printer;
@@ -17,7 +17,7 @@ describe('printer', () => {
 
   beforeEach(() => {
     console = new ConsoleSpy();
-    printer = new Printer(console);
+    printer = createConsolePrinter(console);
   });
 
   it('info method should print text in bright cyan color', () => {

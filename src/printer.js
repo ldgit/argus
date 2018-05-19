@@ -1,34 +1,33 @@
 const chalk = require('chalk');
 
-const ConsolePrinter = function ConsolePrinter(console) {
-  const log = console.log;
-
-  this.info = (text) => {
-    log(chalk.cyanBright(text));
+function createConsolePrinter(console) {
+  return {
+    info(text) {
+      console.log(chalk.cyanBright(text));
+    },
+    notice(text) {
+      console.log(chalk.yellowBright(text));
+    },
+    warning(text) {
+      console.log(chalk.bgYellow.black(text));
+    },
+    error(text) {
+      console.log(chalk.redBright(text));
+    },
   };
+}
 
-  this.notice = (text) => {
-    log(chalk.yellowBright(text));
+function createNullPrinter() {
+  return {
+    info: () => {},
+    warning: () => {},
+    error: () => {},
+    notice: () => {},
   };
-
-  this.warning = (text) => {
-    log(chalk.bgYellow.black(text));
-  };
-
-  this.error = (text) => {
-    log(chalk.redBright(text));
-  };
-};
-
-const NullPrinter = function NullPrinter() {
-  this.info = () => {};
-  this.warning = () => {};
-  this.error = () => {};
-  this.notice = () => {};
-};
+}
 
 module.exports = {
-  create: () => new ConsolePrinter(console),
-  createNull: () => new NullPrinter(),
-  Printer: ConsolePrinter,
+  consolePrinter: createConsolePrinter(console),
+  nullPrinter: createNullPrinter(),
+  createConsolePrinter,
 };

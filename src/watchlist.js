@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
-const consolePrinter = require('./printer').create();
+const { consolePrinter } = require('./printer');
 
 module.exports = {
   configureCompileWatchlist,

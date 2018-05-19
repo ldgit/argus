@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { configureCompileWatchlist } = require('../src/watchlist');
-const nullPrinter = require('../src/printer').createNull();
+const { nullPrinter } = require('../src/printer');
 
 describe('watchlist', () => {
   const rootDir = process.cwd();

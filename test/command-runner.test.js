@@ -2,7 +2,7 @@ const assert = require('assert');
 const clock = require('lolex');
 const spawnSync = require('child_process').spawnSync;
 const { configureRunCommands } = require('../src/command-runner');
-const nullPrinter = require('../src/printer').createNull();
+const { nullPrinter } = require('../src/printer');
 
 describe('command-runner synchronous implementation', () => {
   it('smoke test', () => {

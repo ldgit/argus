@@ -1,6 +1,6 @@
 const fileWatcher = require('chokidar');
 const fs = require('fs');
-const consolePrinter = require('./printer').create();
+const { consolePrinter } = require('./printer');
 
 module.exports = {
   createWatcher: configureCreateWatcher.bind(null, consolePrinter),
