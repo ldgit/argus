@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-const argus = require('./src/argus').factory.create();
+const { runArgus } = require('./src/argus');
 
-argus.run();
+runArgus();

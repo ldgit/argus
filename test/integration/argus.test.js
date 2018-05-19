@@ -1,7 +1,7 @@
 const assert = require('assert');
 const path = require('path');
 const fork = require('child_process').fork;
-const Argus = require('../../src/argus').Argus;
+const { configureRunArgus } = require('../../src/argus');
 
 describe('argus', function argusTestSuite() {
   this.slow(500);
@@ -9,7 +9,7 @@ describe('argus', function argusTestSuite() {
   const rootDir = process.cwd();
   const pathToTouchScript = path.join(rootDir, 'test', 'helpers', 'touch.js');
 
-  let argus;
+  let runArgus;
   let watcher;
   let commandLineOptions;
 
@@ -28,11 +28,11 @@ describe('argus', function argusTestSuite() {
     beforeEach(() => {
       process.chdir(path.join('.', 'test', 'integration', 'fixtures', 'mock-project'));
       runCommandsSpy = createRunCommandsSpy();
-      argus = new Argus(runCommandsSpy, commandLineOptions);
+      runArgus = configureRunArgus(runCommandsSpy, commandLineOptions);
     });
 
     it('should watch project source files and run console command if they change', (done) => {
-      watcher = argus.run('.');
+      watcher = runArgus('.');
       fork(pathToTouchScript, [path.join('.', 'src', 'PhpClass.php')]);
 
       watcher.on('change', () => {
@@ -43,7 +43,7 @@ describe('argus', function argusTestSuite() {
     });
 
     it('should watch project test files and run console command if they change', (done) => {
-      watcher = argus.run();
+      watcher = runArgus();
       fork(pathToTouchScript, [path.join('.', 'tests', 'src', 'PhpClassTest.php')]);
 
       watcher.on('change', () => {
@@ -60,11 +60,11 @@ describe('argus', function argusTestSuite() {
     beforeEach(() => {
       process.chdir(path.join('.', 'test', 'integration', 'fixtures', 'project-with-integration-tests'));
       runCommandsSpy = createRunCommandsSpy();
-      argus = new Argus(runCommandsSpy, commandLineOptions);
+      runArgus = configureRunArgus(runCommandsSpy, commandLineOptions);
     });
 
     it('should watch project with multiple environments for same file extension', (done) => {
-      watcher = argus.run();
+      watcher = runArgus();
       fork(pathToTouchScript, [path.join('.', 'src', 'Class.php')]);
 
       watcher.on('change', () => {
