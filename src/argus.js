@@ -4,10 +4,10 @@ const configureFindTestsFor = require('./test-finder');
 const CommandBuilder = require('./command-builder');
 const { compileWatchlistFor } = require('./watchlist');
 const ConfigurationReader = require('./configuration-reader');
-const CommandLineOptions = require('./command-line-options');
+const getCommandLineOptions = require('./command-line-options');
 
 module.exports = {
-  runArgus: configureRunArgus(runCommands, CommandLineOptions(process.argv)),
+  runArgus: configureRunArgus(runCommands, getCommandLineOptions(process.argv)),
   configureRunArgus,
 };
 

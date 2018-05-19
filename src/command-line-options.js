@@ -1,7 +1,7 @@
 const path = require('path');
 const program = require('commander');
 
-module.exports = function CommandLineOptions(processArgv) {
+module.exports = function getCommandLineOptions(processArgv) {
   program
     .version(require('./../package.json').version)
     .usage('[options]')
@@ -10,6 +10,6 @@ module.exports = function CommandLineOptions(processArgv) {
 
   return {
     config: path.resolve(program.config),
-    version: program.opts().version,
+    version: () => program.opts().version,
   };
 };
