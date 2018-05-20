@@ -1,14 +1,12 @@
 const assert = require('assert');
-const ConfigurationValidator = require('../src/configuration-validator');
+const validateConfiguration = require('../src/configuration-validator');
 
 describe('ConfigurationValidator', () => {
-  let configurationValidator;
   let invalidEnvironment;
   let validEnvironment;
   let configuration;
 
   beforeEach(() => {
-    configurationValidator = new ConfigurationValidator();
     validEnvironment = {
       extension: 'js',
       testNameSuffix: '.test',
@@ -23,39 +21,39 @@ describe('ConfigurationValidator', () => {
 
   it('should throw error for empty or invalid extension', () => {
     invalidEnvironment.extension = '';
-    assertExtensionMissingErrorThrown(() => { configurationValidator.validate(configuration); });
+    assertExtensionMissingErrorThrown(() => { validateConfiguration(configuration); });
 
     delete invalidEnvironment.extension;
-    assertExtensionMissingErrorThrown(() => { configurationValidator.validate(configuration); });
+    assertExtensionMissingErrorThrown(() => { validateConfiguration(configuration); });
   });
 
   it('should throw error if extension starts with a dot', () => {
     invalidEnvironment.extension = '.php';
-    assertErrorThrown(() => { configurationValidator.validate(configuration); }, /Extension must not start with a dot/);
+    assertErrorThrown(() => { validateConfiguration(configuration); }, /Extension must not start with a dot/);
   });
 
   it('should throw error for empty or invalid testNameSuffix', () => {
     invalidEnvironment.testNameSuffix = '';
-    assertNoTestNameSuffixErrorThrown(() => { configurationValidator.validate(configuration); });
+    assertNoTestNameSuffixErrorThrown(() => { validateConfiguration(configuration); });
 
     delete invalidEnvironment.testNameSuffix;
-    assertNoTestNameSuffixErrorThrown(() => { configurationValidator.validate(configuration); });
+    assertNoTestNameSuffixErrorThrown(() => { validateConfiguration(configuration); });
   });
 
   it('should throw error for empty or invalid testDir', () => {
     invalidEnvironment.testDir = '';
-    assertNoTestDirErrorThrown(() => { configurationValidator.validate(configuration); });
+    assertNoTestDirErrorThrown(() => { validateConfiguration(configuration); });
 
     delete invalidEnvironment.testDir;
-    assertNoTestDirErrorThrown(() => { configurationValidator.validate(configuration); });
+    assertNoTestDirErrorThrown(() => { validateConfiguration(configuration); });
   });
 
   it('should throw error for empty or invalid testRunnerCommand', () => {
     invalidEnvironment.testRunnerCommand = '';
-    assertNoTestRunnerCommandErrorThrown(() => { configurationValidator.validate(configuration); });
+    assertNoTestRunnerCommandErrorThrown(() => { validateConfiguration(configuration); });
 
     delete invalidEnvironment.testRunnerCommand;
-    assertNoTestRunnerCommandErrorThrown(() => { configurationValidator.validate(configuration); });
+    assertNoTestRunnerCommandErrorThrown(() => { validateConfiguration(configuration); });
   });
 
   function assertExtensionMissingErrorThrown(callback) {

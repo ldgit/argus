@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const Validator = require('./configuration-validator');
+const validateConfiguration = require('./configuration-validator');
 
 module.exports = function ConfigurationReader() {
   let wasConfigFileFound;
@@ -21,8 +21,7 @@ module.exports = function ConfigurationReader() {
     wasConfigFileFound = true;
 
     const configuration = require(absoluteConfigPath);
-    (new Validator()).validate(configuration);
-
+    validateConfiguration(configuration);
     normalizeAllEnvironments(configuration.environments);
 
     configuration.configFileFound = wasConfigFileFound;
