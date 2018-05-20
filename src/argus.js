@@ -3,7 +3,7 @@ const { createWatcher } = require('./file-watcher');
 const configureFindTestsFor = require('./test-finder');
 const CommandBuilder = require('./command-builder');
 const { compileWatchlistFor } = require('./watchlist');
-const ConfigurationReader = require('./configuration-reader');
+const readConfiguration = require('./configuration-reader');
 const getCommandLineOptions = require('./command-line-options');
 
 module.exports = {
@@ -16,7 +16,7 @@ function configureRunArgus(runCommandsFunction, commandLineOptions) {
 }
 
 function runArgus(runCommandsFunction, commandLineOptions) {
-  const configuration = new ConfigurationReader().read(commandLineOptions.config);
+  const configuration = readConfiguration(commandLineOptions.config);
   const findTestsFor = configureFindTestsFor(configuration.environments);
   const fileWatcher = createWatcher(configuration);
   const commandBuilder = new CommandBuilder();
