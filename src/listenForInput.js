@@ -11,7 +11,7 @@ function listenForInput(stdin, stdout) {
   });
 
   return new Promise((resolve) => {
-    rl.question('What do you think of Node.js? ', (answer) => {
+    rl.question('Press a to run all tests', (answer) => {
       resolve(answer);
     });
   });

@@ -2,8 +2,13 @@ const Writable = require('stream').Writable;
 const Readable = require('stream').Readable;
 
 class WriteableMock extends Writable {
+  constructor(options) {
+    super(options);
+    this.writtenStuff = [];
+  }
+
   _write(chunk, encoding, callback) {
-    this.writtenStuff = chunk;
+    this.writtenStuff.push(chunk);
     callback();
   }
 

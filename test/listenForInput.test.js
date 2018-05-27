@@ -18,4 +18,9 @@ describe('listenForInput', () => {
     mockStdin.push('testing\n');
     return promise;
   });
+
+  it('should list possible options', () => {
+    listenForInput().then(input => assert.equal(input, 'testing'));
+    assert.deepEqual(mockStdout.getWrittenStuff(), ['Press a to run all tests']);
+  });
 });
