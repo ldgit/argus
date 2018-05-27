@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { WriteableMock, ReadableMock } = require('./helpers/mockStdio');
-const configureListenForInput = require('./../src/listenForInput');
+const configureListenForInput = require('./../src/run-commands-on-input');
 
 describe('listenForInput', () => {
   let mockStdin;
