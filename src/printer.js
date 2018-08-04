@@ -14,6 +14,12 @@ function createConsolePrinter(console) {
     error(text) {
       console.log(chalk.redBright(text));
     },
+    message(text) {
+      console.log(chalk.white(text));
+    },
+    title(text) {
+      console.log(chalk.whiteBright.underline(text));
+    },
   };
 }
 
@@ -23,6 +29,8 @@ function createNullPrinter() {
     warning: () => {},
     error: () => {},
     notice: () => {},
+    message: () => {},
+    title: () => {},
   };
 }
 
