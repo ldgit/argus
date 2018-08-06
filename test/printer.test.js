@@ -1,6 +1,6 @@
 const assert = require('assert');
 const chalk = require('chalk');
-const { createConsolePrinter } = require('../src/printer');
+const { createConsolePrinter, format } = require('../src/printer');
 
 describe('printer', () => {
   let printer;
@@ -42,11 +42,33 @@ describe('printer', () => {
 
   it('message method should print text in white', () => {
     printer.message('message text');
-    assert.equal(consoleSpy.getLogs()[0], chalk.white('message text'));
+    assert.equal(consoleSpy.getLogs()[0], 'message text');
   });
 
   it('title method should print text underlined white text', () => {
     printer.title('message text');
     assert.equal(consoleSpy.getLogs()[0], chalk.whiteBright.underline('message text'));
+  });
+});
+
+describe('formatter', () => {
+  it('should format text as title', () => {
+    assert.equal(format.asTitle('message text'), chalk.whiteBright.underline('message text'));
+  });
+
+  it('should format text in red', () => {
+    assert.equal(format.red('message text'), chalk.redBright('message text'));
+  });
+
+  it('should format text as warning', () => {
+    assert.equal(format.asWarning('message text'), chalk.bgYellow.black('message text'));
+  });
+
+  it('should format text in blue', () => {
+    assert.equal(format.blue('message text'), chalk.cyanBright('message text'));
+  });
+
+  it('should format text in yellow', () => {
+    assert.equal(format.yellow('message text'), chalk.yellowBright('message text'));
   });
 });
