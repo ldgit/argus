@@ -1,18 +1,42 @@
-const readline = require('readline');
+const { runCommands } = require('./command-runner');
+const { format, consolePrinter } = require('../src/printer');
 
-module.exports = function configureListenForInput(stdin, stdout) {
-  return listenForInput.bind(null, stdin, stdout);
+module.exports = {
+  listenForUserInput: unconfiguredListenForUserInput.bind(
+    null, process.stdin, process.stdout, process.exit, runCommands, consolePrinter
+  ),
+  stopListeningForUserInput: unconfiguredStopListeningForUserInput.bind(null, process.stdin, process.stdout),
+  unconfiguredListenForUserInput,
+  setLastRunCommands,
 };
 
-function listenForInput(stdin, stdout) {
-  const rl = readline.createInterface({
-    input: stdin,
-    output: stdout,
-  });
+let lastRunCommands = null;
 
-  return new Promise((resolve) => {
-    rl.question('Press a to run all tests', (answer) => {
-      resolve(answer);
-    });
+function setLastRunCommands(lastRunCommandBatch) {
+  lastRunCommands = lastRunCommandBatch;
+}
+
+// eslint-disable-next-line no-shadow
+function unconfiguredListenForUserInput(stdin, stdout, processExit, runCommands, printer) {
+  stdin.setRawMode(true);
+  stdin.setEncoding('utf8');
+  stdin.resume();
+  stdin.on('data', (key) => {
+    if (key === 'l') {
+      printer.title('Commands list');
+      printer.message(`  press ${format.yellow('r')} to rerun last test batch`);
+      printer.message(`  press ${format.green('a')} to run all tests`);
+    }
+
+    if (key === 'r' && lastRunCommands !== null) {
+      runCommands(lastRunCommands);
+    }
+
+    if (key === '\u0003') {
+      processExit();
+    }
   });
+}
+
+function unconfiguredStopListeningForUserInput() {
 }

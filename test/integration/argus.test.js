@@ -2,6 +2,7 @@ const assert = require('assert');
 const path = require('path');
 const fork = require('child_process').fork;
 const { configureRunArgus } = require('../../src/argus');
+const createRunCommandsSpy = require('../helpers/run-commands-spy');
 
 describe('argus', function argusTestSuite() {
   this.slow(500);
@@ -81,14 +82,3 @@ describe('argus', function argusTestSuite() {
     });
   });
 });
-
-function createRunCommandsSpy() {
-  let lastRunCommands = [];
-  const runCommands = (commands) => {
-    lastRunCommands = commands;
-  };
-
-  runCommands.getLastRunCommands = () => lastRunCommands;
-
-  return runCommands;
-}

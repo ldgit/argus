@@ -1,13 +1,16 @@
 const chalk = require('chalk');
 
-function createNullPrinter() {
+function createPrinterSpy() {
+  const messages = [];
+
   return {
-    info: () => {},
-    warning: () => {},
-    error: () => {},
-    notice: () => {},
-    message: () => {},
-    title: () => {},
+    info: text => messages.push({ text, type: 'info' }),
+    warning: text => messages.push({ text, type: 'warning' }),
+    error: text => messages.push({ text, type: 'error' }),
+    notice: text => messages.push({ text, type: 'notice' }),
+    message: text => messages.push({ text, type: 'message' }),
+    title: text => messages.push({ text, type: 'title' }),
+    getPrintedMessages: () => messages,
   };
 }
 
@@ -26,6 +29,9 @@ const format = {
   },
   yellow(text) {
     return chalk.yellowBright(text);
+  },
+  green(text) {
+    return chalk.greenBright(text);
   },
 };
 
@@ -54,7 +60,7 @@ function createConsolePrinter(console) {
 
 module.exports = {
   consolePrinter: createConsolePrinter(console),
-  nullPrinter: createNullPrinter(),
+  createPrinterSpy,
   createConsolePrinter,
   format,
 };
