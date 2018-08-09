@@ -2,8 +2,9 @@ const assert = require('assert');
 const path = require('path');
 const { configureCreateWatcher } = require('../src/file-watcher');
 const { createPrinterSpy } = require('../src/printer');
-
 const { fork } = require('child_process');
+
+const wait = time => new Promise(resolve => setTimeout(resolve, time));
 
 describe('watcher', function watcherTest() {
   let watcher;
@@ -36,7 +37,7 @@ describe('watcher', function watcherTest() {
       callbackWasCalled = true;
     });
 
-    assert.strictEqual(callbackWasCalled, false);
+    wait(30).then(() => assert.strictEqual(callbackWasCalled, false));
   });
 
   context('when given an array of "globified" file paths', () => {
