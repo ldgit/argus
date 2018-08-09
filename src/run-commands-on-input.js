@@ -17,11 +17,25 @@ function setLastRunCommands(lastRunCommandBatch) {
 }
 
 // eslint-disable-next-line no-shadow
-function unconfiguredListenForUserInput(stdin, stdout, processExit, runCommands, printer) {
+function unconfiguredListenForUserInput(stdin, stdout, processExit, runCommands, printer, environments) {
   stdin.setRawMode(true);
   stdin.setEncoding('utf8');
   stdin.resume();
+
   stdin.on('data', (key) => {
+    if (key === 'a') {
+      const commandsToRunAllTests = environments
+        .map(environment => ({ command: environment.testRunnerCommand, args: environment.arguments }))
+        .reduce((accumulator, currentCommand) => {
+          if (!arrayContainsObject(accumulator, currentCommand)) {
+            accumulator.push(currentCommand);
+          }
+          return accumulator;
+        }, []);
+
+      runCommands(commandsToRunAllTests);
+    }
+
     if (key === 'l') {
       printer.title('Commands list');
       printer.message(`  press ${format.yellow('r')} to rerun last test batch`);
@@ -39,4 +53,8 @@ function unconfiguredListenForUserInput(stdin, stdout, processExit, runCommands,
 }
 
 function unconfiguredStopListeningForUserInput() {
+}
+
+function arrayContainsObject(array, objectNeedle) {
+  return array.map(object => JSON.stringify(object)).includes(JSON.stringify(objectNeedle));
 }
