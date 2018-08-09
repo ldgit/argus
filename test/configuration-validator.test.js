@@ -56,6 +56,11 @@ describe('ConfigurationValidator', () => {
     assertNoTestRunnerCommandErrorThrown(() => { validateConfiguration(configuration); });
   });
 
+  it('should throw error for invalid testRunnerCommand arguments', () => {
+    invalidEnvironment.arguments = '';
+    assertInvalidTestRunnerCommandArgumentsErrorThrown(() => { validateConfiguration(configuration); });
+  });
+
   function assertExtensionMissingErrorThrown(callback) {
     assert.throws(callback, TypeError);
     assert.throws(callback, /extension must be defined for each environment/);
@@ -74,6 +79,11 @@ describe('ConfigurationValidator', () => {
   function assertNoTestRunnerCommandErrorThrown(callback) {
     assert.throws(callback, TypeError);
     assert.throws(callback, /testRunnerCommand must be defined for each environment/);
+  }
+
+  function assertInvalidTestRunnerCommandArgumentsErrorThrown(callback) {
+    assert.throws(callback, TypeError);
+    assert.throws(callback, /arguments property must be an array/);
   }
 
   function assertErrorThrown(callback, regexMessage) {
