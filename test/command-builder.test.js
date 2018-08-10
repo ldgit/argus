@@ -28,7 +28,7 @@ describe('command-builder', () => {
       });
     });
 
-    it('should allow for additional configured arguments', () => {
+    it('should allow for additional arguments from environment configuration', () => {
       phpEnvironment.arguments = ['-c', 'phpunit.xml'];
       assert.deepEqual(buildForFilepaths([{ path: 'tests/src/ExampleOneTest.php', environment: phpEnvironment }])[0], {
         command: 'vendor/bin/phpunit',

@@ -1,11 +1,8 @@
-const { runCommands } = require('./command-runner');
+
 const { format, consolePrinter } = require('../src/printer');
 
 module.exports = {
-  listenForUserInput: unconfiguredListenForUserInput.bind(
-    null, process.stdin, process.stdout, process.exit, runCommands, consolePrinter
-  ),
-  stopListeningForUserInput: unconfiguredStopListeningForUserInput.bind(null, process.stdin, process.stdout),
+  listenForUserInput: unconfiguredListenForUserInput.bind(null, process.exit, consolePrinter),
   unconfiguredListenForUserInput,
   setLastRunCommands,
 };
@@ -17,7 +14,7 @@ function setLastRunCommands(lastRunCommandBatch) {
 }
 
 // eslint-disable-next-line no-shadow
-function unconfiguredListenForUserInput(stdin, stdout, processExit, runCommands, printer, environments) {
+function unconfiguredListenForUserInput(processExit, printer, runCommands, stdin, environments) {
   stdin.setRawMode(true);
   stdin.setEncoding('utf8');
   stdin.resume();
@@ -50,9 +47,6 @@ function unconfiguredListenForUserInput(stdin, stdout, processExit, runCommands,
       processExit();
     }
   });
-}
-
-function unconfiguredStopListeningForUserInput() {
 }
 
 function arrayContainsObject(array, objectNeedle) {

@@ -1,19 +1,18 @@
 const assert = require('assert');
-const { WriteableMock, ReadableMock } = require('./helpers/mockStdio');
+const { ReadableMock } = require('./helpers/mockStdio');
 const {
   listenForUserInput,
-  stopListeningForUserInput,
   unconfiguredListenForUserInput,
   setLastRunCommands,
 } = require('./../src/run-commands-on-input');
 const createRunCommandsSpy = require('./helpers/run-commands-spy');
 const { format, createPrinterSpy } = require('../src/printer');
+const { runCommands } = require('./../src/command-runner');
 
 const wait = time => new Promise(resolve => setTimeout(resolve, time));
 
 describe('configureListenForInput', () => {
   let mockStdin;
-  let mockStdout;
   let listenForInput;
   let runCommandsSpy;
   let printerSpy;
@@ -25,7 +24,6 @@ describe('configureListenForInput', () => {
     environments = [{ testRunnerCommand: 'vendor/bin/phpunit', arguments: [] }];
     mockStdin = new ReadableMock({ decodeStrings: false });
     mockStdin.pause();
-    mockStdout = new WriteableMock({ decodeStrings: false });
     runCommandsSpy = createRunCommandsSpy();
     printerSpy = createPrinterSpy();
 
@@ -39,7 +37,7 @@ describe('configureListenForInput', () => {
     });
 
     listenForInput = unconfiguredListenForUserInput.bind(
-      null, mockStdin, mockStdout, processExit, runCommandsSpy, printerSpy
+      null, processExit, printerSpy, runCommandsSpy, mockStdin
     );
   });
 
@@ -179,10 +177,9 @@ describe('configureListenForInput', () => {
 
 describe('configured user input listener', () => {
   it('can be called and closed without problems', () => {
-    listenForUserInput([]);
+    listenForUserInput(runCommands, process.stdin, []);
     assert.strictEqual(process.stdin.isPaused(), false);
     process.stdin.pause();
     assert.strictEqual(process.stdin.isPaused(), true);
-    stopListeningForUserInput();
   });
 });
