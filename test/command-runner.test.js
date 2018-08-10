@@ -68,7 +68,7 @@ describe('command-runner', () => {
       assert.equal(printerSpy.getPrintedMessages().length, 3);
       assert.deepStrictEqual(
         printerSpy.getPrintedMessages()[2],
-        { text: `Press "${format.red('l')}" to list available commands`, type: 'message' }
+        { text: `Press ${format.red('l')} to list available commands`, type: 'message' }
       );
     });
   });

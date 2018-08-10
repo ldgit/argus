@@ -13,7 +13,6 @@ function setLastRunCommands(lastRunCommandBatch) {
   lastRunCommands = lastRunCommandBatch;
 }
 
-// eslint-disable-next-line no-shadow
 function unconfiguredListenForUserInput(processExit, printer, runCommands, stdin, environments) {
   stdin.setRawMode(true);
   stdin.setEncoding('utf8');

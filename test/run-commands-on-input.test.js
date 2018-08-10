@@ -36,9 +36,7 @@ describe('configureListenForInput', () => {
       };
     });
 
-    listenForInput = unconfiguredListenForUserInput.bind(
-      null, processExit, printerSpy, runCommandsSpy, mockStdin
-    );
+    listenForInput = unconfiguredListenForUserInput.bind(null, processExit, printerSpy, runCommandsSpy, mockStdin);
   });
 
   it('should start listening for user input in raw mode', () => {
@@ -66,14 +64,17 @@ describe('configureListenForInput', () => {
 
   it('should not do anything if user gives it unrecognized command', () => {
     listenForInput(environments);
-    mockStdin.push('w');
-    assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 0, 'Should not run any commands');
+
+    return new Promise((resolve) => {
+      mockStdin.on('data', resolve);
+      mockStdin.push('w');
+    }).then(assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 0, 'Should not run any commands'));
   });
 
   it('should list available commands when user inputs "l"', () => {
     listenForInput(environments);
-
     assert.strictEqual(printerSpy.getPrintedMessages().length, 0, 'Messages should not be printed before "l" is pressed');
+
     return new Promise((resolve) => {
       mockStdin.on('data', resolve);
       mockStdin.push('l');
