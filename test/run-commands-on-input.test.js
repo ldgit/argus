@@ -73,20 +73,20 @@ describe('configureListenForInput', () => {
 
   it('should list available commands when user inputs "l"', () => {
     listenForInput(environments);
-    assert.strictEqual(printerSpy.getPrintedMessages().length, 0, 'Messages should not be printed before "l" is pressed');
+    assert.strictEqual(printerSpy.getPrintedMessages().length, 0, 'No messages printed before "l" is pressed');
 
     return new Promise((resolve) => {
       mockStdin.on('data', resolve);
       mockStdin.push('l');
     }).then(() => {
       assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 0, 'Should not run any commands in this commands');
-      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: 'Commands list', type: 'title' });
+      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: '\nCommands list', type: 'title' });
       assert.deepStrictEqual(printerSpy.getPrintedMessages()[1], {
         text: `  press ${format.yellow('r')} to rerun last test batch`,
         type: 'message',
       });
       assert.deepStrictEqual(printerSpy.getPrintedMessages()[2], {
-        text: `  press ${format.green('a')} to run all tests`,
+        text: `  press ${format.green('a')} to run all tests\n`,
         type: 'message',
       });
     });

@@ -58,8 +58,9 @@ describe('command-runner', () => {
 
     it('should print info message', () => {
       runCommands([{ command: 'echo', args: ['one'] }, { command: 'phpunit', args: ['-c', 'phpunit.xml'] }]);
-      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: '[2017-08-01 18:05:05] echo one', type: 'info' });
-      assert.deepStrictEqual(printerSpy.getPrintedMessages()[1], { text: '[2017-08-01 18:05:05] phpunit -c phpunit.xml', type: 'info' });
+      const printedMessages = printerSpy.getPrintedMessages();
+      assert.deepStrictEqual(printedMessages[0], { text: '[2017-08-01 18:05:05] echo one', type: 'info' });
+      assert.deepStrictEqual(printedMessages[1], { text: '[2017-08-01 18:05:05] phpunit -c phpunit.xml', type: 'info' });
     });
 
     it('should print info on how to list all commands', () => {
@@ -68,7 +69,7 @@ describe('command-runner', () => {
       assert.equal(printerSpy.getPrintedMessages().length, 3);
       assert.deepStrictEqual(
         printerSpy.getPrintedMessages()[2],
-        { text: `Press ${format.red('l')} to list available commands`, type: 'message' }
+        { text: `\nPress ${format.red('l')} to list available commands\n`, type: 'message' }
       );
     });
   });

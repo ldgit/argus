@@ -12,7 +12,7 @@ function runCommands(spawn, printer, commands) {
     spawn(command.command, command.args, { stdio: 'inherit' });
   });
 
-  printer.message(`Press ${format.red('l')} to list available commands`);
+  printer.message(`\nPress ${format.red('l')} to list available commands\n`);
 }
 
 function getCurrentTime() {

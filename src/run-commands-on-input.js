@@ -33,9 +33,9 @@ function unconfiguredListenForUserInput(processExit, printer, runCommands, stdin
     }
 
     if (key === 'l') {
-      printer.title('Commands list');
+      printer.title('\nCommands list');
       printer.message(`  press ${format.yellow('r')} to rerun last test batch`);
-      printer.message(`  press ${format.green('a')} to run all tests`);
+      printer.message(`  press ${format.green('a')} to run all tests\n`);
     }
 
     if (key === 'r' && lastRunCommands !== null) {
