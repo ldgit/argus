@@ -45,11 +45,11 @@ function getFilesWatchedCount(environments, watched) {
   let filesWatchedCount = 0;
   const supportedExtensions = environments.map(environment => environment.extension);
 
-  Object.keys(watched).forEach((pathOrFile) => {
-    const fileExtension = pathOrFile.split('.').pop().toLowerCase();
-    if (supportedExtensions.includes(fileExtension)) {
-      filesWatchedCount += 1;
-    }
+  // Object.values() is not supported in Node 6
+  Object.keys(watched).map(key => watched[key]).forEach((files) => {
+    filesWatchedCount += files
+      .filter(file => supportedExtensions.includes(file.split('.').pop().toLowerCase()))
+      .length;
   });
 
   return filesWatchedCount;

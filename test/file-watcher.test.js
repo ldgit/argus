@@ -33,66 +33,70 @@ describe('watcher', function watcherTest() {
   it('should not call given callback if no files changed', () => {
     let callbackWasCalled = false;
 
-    watcher.watchFiles(['./mock-project/src/[E]xampleFour.php'], () => {
+    watcher.watchFiles(['./mock-project/src/ExampleFour.php'], () => {
       callbackWasCalled = true;
     });
 
     wait(30).then(() => assert.strictEqual(callbackWasCalled, false));
   });
 
-  context('when given an array of "globified" file paths', () => {
-    // Watchlist (input for watchFiles() function) also does this when it is compiled, but in this case it doesn't hurt
-    // to doublecheck.
-    it('should filter out paths that don\'t exist so that ready event will fire correctly', (done) => {
-      watcher.watchFiles(['./mock-project/src/[E]xampleFour.php'], () => {});
+  // Watchlist (input for watchFiles() function) also does this when it is compiled, but in this case it doesn't hurt
+  // to doublecheck.
+  it('should filter out paths that don\'t exist so that ready event will fire correctly', (done) => {
+    watcher.watchFiles(['./mock-project/src/ExampleFour.php', './mock-project/src/DoesNotExist.php'], () => {});
 
-      watcher.on('ready', () => {
-        assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: 'Watching 1 file(s)', type: 'info' });
-        done();
-      });
+    watcher.on('ready', () => {
+      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: 'Watching 1 file(s)', type: 'info' });
+      done();
     });
+  });
 
-    it('should print out information about the number of watched files', (done) => {
-      environments.push(createEnvironment('js'));
+  it('should print out information about the number of watched files', (done) => {
+    environments.push(createEnvironment('js'));
 
-      watcher.watchFiles([
-        './mock-project/src/[E]xampleOne.php',
-        './mock-project/src/[E]xampleFour.js',
-      ], () => {});
+    watcher.watchFiles([
+      './mock-project/src/ExampleOne.php',
+      './mock-project/src/ExampleFour.js',
+    ], () => {});
 
-      watcher.on('ready', () => {
-        assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: 'Watching 2 file(s)', type: 'info' });
-        done();
-      });
+    watcher.on('ready', () => {
+      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: 'Watching 2 file(s)', type: 'info' });
+      done();
     });
+  });
 
-    it('should a print warning if configuration file not found', (done) => {
-      configuration.configFileFound = false;
+  it('should a print warning if configuration file not found', (done) => {
+    configuration.configFileFound = false;
 
-      watcher.watchFiles([
-        './mock-project/src/[E]xampleOne.php', // exists
-        './mock-project/nonexistent/[p]ath',
-      ], () => {});
+    watcher.watchFiles([
+      './mock-project/src/ExampleOne.php', // exists
+      './mock-project/nonexistent/path',
+    ], () => {});
 
-      watcher.on('ready', () => {
-        assert.deepStrictEqual(
-          // First message is about file watch count
-          printerSpy.getPrintedMessages()[1],
-          { text: 'Configuration file not found, will use default configuration.', type: 'warning' }
-        );
-        done();
-      });
+    watcher.on('ready', () => {
+      assert.deepStrictEqual(
+        // First message is about file watch count
+        printerSpy.getPrintedMessages()[1],
+        { text: 'Configuration file not found, will use default configuration.', type: 'warning' }
+      );
+      done();
     });
+  });
 
-    it('should not count same file twice when given multiple environments for same filetype', (done) => {
-      environments.push(createEnvironment('php'));
+  it('should not count same file twice when given multiple environments for same filetype', (done) => {
+    environments.push(createEnvironment('php'));
+    watcher.watchFiles(['./mock-project/src/ExampleOne.php'], () => {});
+    watcher.on('ready', () => {
+      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: 'Watching 1 file(s)', type: 'info' });
+      done();
+    });
+  });
 
-      watcher.watchFiles(['./mock-project/src/[E]xampleOne.php'], () => {});
-
-      watcher.on('ready', () => {
-        assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: 'Watching 1 file(s)', type: 'info' });
-        done();
-      });
+  it('should only watch files with supported extensions', (done) => {
+    watcher.watchFiles(['./mock-project/src/Example.js'], () => {});
+    watcher.on('ready', () => {
+      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: 'Watching 0 file(s)', type: 'info' });
+      done();
     });
   });
 
@@ -120,7 +124,7 @@ describe('watcher', function watcherTest() {
   });
 
   it('should watch only files in given watchlist', (done) => {
-    watcher.watchFiles(['./mock-project/src/[E]xampleFour.php'], () => {
+    watcher.watchFiles(['./mock-project/src/ExampleFour.php'], () => {
       assert.fail('callback was called when it should not have been');
     });
 

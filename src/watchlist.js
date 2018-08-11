@@ -26,10 +26,10 @@ function configureCompileWatchlist(printer, environments) {
       if (!fs.existsSync(sourceFilePath)) {
         printer.notice(`Source file not found for test: "${filepath}"`);
       } else {
-        locationsToWatch.push(globify(sourceFilePath));
+        locationsToWatch.push(sourceFilePath);
       }
 
-      locationsToWatch.push(globify(filepath));
+      locationsToWatch.push(filepath);
     });
   });
 
@@ -40,24 +40,6 @@ function getSourcePathFromTestPath(testPath, environment) {
   return path.join('./', testPath
     .replace(path.normalize(environment.testDir), `/${environment.sourceDir}`)
     .replace(`${environment.testNameSuffix}.${environment.extension}`, `.${environment.extension}`));
-}
-
-/**
- * Converts normal filepath into glob for that filepath.
- *
- * @param  {string} filepath
- * @return {string} first letter of the filename in the path is wrapped in squared brackets
- */
-function globify(filepath) {
-  return wrapFirstLetterOfTheFileNameInSquareBrackets(filepath);
-}
-
-function wrapFirstLetterOfTheFileNameInSquareBrackets(filepath) {
-  const pathFragments = filepath.split(path.sep);
-  const filename = pathFragments.pop();
-  const globifiedFilename = filename.replace(filename[0], `[${filename[0]}]`);
-
-  return path.join(...pathFragments, globifiedFilename);
 }
 
 function removeDuplicates(array) {

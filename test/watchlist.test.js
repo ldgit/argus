@@ -30,10 +30,10 @@ describe('watchlist', () => {
   ];
 
   const existingTestDirectories = [
-    { args: './test/unit', expected: ['test/unit/src/[E]xampleFourTest.php', 'src/[E]xampleFour.php'] },
-    { args: './tests/unit', expected: ['tests/unit/src/[E]xampleTwoTest.php', 'src/[E]xampleTwo.php'] },
-    { args: 'test/unit', expected: ['test/unit/src/[E]xampleFourTest.php', 'src/[E]xampleFour.php'] },
-    { args: './test/unit/', expected: ['test/unit/src/[E]xampleFourTest.php', 'src/[E]xampleFour.php'] },
+    { args: './test/unit', expected: ['test/unit/src/ExampleFourTest.php', 'src/ExampleFour.php'] },
+    { args: './tests/unit', expected: ['tests/unit/src/ExampleTwoTest.php', 'src/ExampleTwo.php'] },
+    { args: 'test/unit', expected: ['test/unit/src/ExampleFourTest.php', 'src/ExampleFour.php'] },
+    { args: './test/unit/', expected: ['test/unit/src/ExampleFourTest.php', 'src/ExampleFour.php'] },
   ];
 
   const sourceDirVarieties = [
@@ -67,12 +67,12 @@ describe('watchlist', () => {
 
     it('should filter out paths that don\'t exist (so that ready event will fire correctly)', () => {
       const actualWatchlist = compileWatchlistFor([defaultEnvironment]);
-      assert.deepEqual(actualWatchlist, ['test-nosource/[N]oSourceForThis.test.js']);
+      assert.deepEqual(actualWatchlist, ['test-nosource/NoSourceForThis.test.js']);
     });
   });
 
   existingTestDirectories.forEach((test) => {
-    it(`should compile watchlist of globified filepaths from given "${test.args}" test directory`, () => {
+    it(`should compile watchlist of filepaths from given "${test.args}" test directory`, () => {
       defaultEnvironment.testDir = test.args;
       const locationsToWatch = compileWatchlistFor([defaultEnvironment]);
       assertListsAreEqual(locationsToWatch, test.expected);
@@ -82,13 +82,13 @@ describe('watchlist', () => {
   it('should use test name suffix to detect which tests and files to watch', () => {
     defaultEnvironment.testNameSuffix = '.foobar';
     const actualWatchlist = compileWatchlistFor([defaultEnvironment]);
-    assertListsAreEqual(actualWatchlist, ['test/unit/src/[E]xampleFour.foobar.php', 'src/[E]xampleFour.php']);
+    assertListsAreEqual(actualWatchlist, ['test/unit/src/ExampleFour.foobar.php', 'src/ExampleFour.php']);
   });
 
   it('should use file extension to detect which tests and files to watch', () => {
     defaultEnvironment.extension = 'js';
     const actualWatchlist = compileWatchlistFor([defaultEnvironment]);
-    assertListsAreEqual(actualWatchlist, ['test/unit/src/[E]xampleFourTest.js', 'src/[E]xampleFour.js']);
+    assertListsAreEqual(actualWatchlist, ['test/unit/src/ExampleFourTest.js', 'src/ExampleFour.js']);
   });
 
   sourceDirVarieties.forEach((sourceDir) => {
@@ -98,7 +98,7 @@ describe('watchlist', () => {
 
       const actualWatchlist = compileWatchlistFor([env]);
 
-      assertListsAreEqual(actualWatchlist, ['test/unit/[E]xampleFour.test.js', 'src/[E]xampleFour.js']);
+      assertListsAreEqual(actualWatchlist, ['test/unit/ExampleFour.test.js', 'src/ExampleFour.js']);
     });
   });
 
@@ -108,10 +108,10 @@ describe('watchlist', () => {
       jsEnvironmentWithDifferentSourceDir(),
     ]);
     assert.deepEqual(actualWatchlist.sort(), [
-      'test/unit/[E]xampleFour.test.js',
-      'src/[E]xampleFour.js',
-      'test/unit/src/[E]xampleFourTest.php',
-      'src/[E]xampleFour.php',
+      'test/unit/ExampleFour.test.js',
+      'src/ExampleFour.js',
+      'test/unit/src/ExampleFourTest.php',
+      'src/ExampleFour.php',
     ].sort());
   });
 
@@ -126,9 +126,9 @@ describe('watchlist', () => {
     const actualWatchlist = compileWatchlistFor([defaultEnvironment, integrationEnvironment]);
 
     assert.deepEqual([
-      'src/[E]xampleFour.php',
-      'test/integration/src/[E]xampleFourTest.php',
-      'test/unit/src/[E]xampleFourTest.php',
+      'src/ExampleFour.php',
+      'test/integration/src/ExampleFourTest.php',
+      'test/unit/src/ExampleFourTest.php',
     ], actualWatchlist.sort());
   });
 
