@@ -1,33 +1,66 @@
 const chalk = require('chalk');
 
-function createConsolePrinter(console) {
+function createPrinterSpy() {
+  const messages = [];
+
   return {
-    info(text) {
-      console.log(chalk.cyanBright(text));
-    },
-    notice(text) {
-      console.log(chalk.yellowBright(text));
-    },
-    warning(text) {
-      console.log(chalk.bgYellow.black(text));
-    },
-    error(text) {
-      console.log(chalk.redBright(text));
-    },
+    info: text => messages.push({ text, type: 'info' }),
+    warning: text => messages.push({ text, type: 'warning' }),
+    error: text => messages.push({ text, type: 'error' }),
+    notice: text => messages.push({ text, type: 'notice' }),
+    message: text => messages.push({ text, type: 'message' }),
+    title: text => messages.push({ text, type: 'title' }),
+    getPrintedMessages: () => messages,
   };
 }
 
-function createNullPrinter() {
+const format = {
+  asTitle(text) {
+    return chalk.whiteBright.underline(text);
+  },
+  red(text) {
+    return chalk.redBright(text);
+  },
+  asWarning(text) {
+    return chalk.bgYellow.black(text);
+  },
+  blue(text) {
+    return chalk.cyanBright(text);
+  },
+  yellow(text) {
+    return chalk.yellowBright(text);
+  },
+  green(text) {
+    return chalk.greenBright(text);
+  },
+};
+
+function createConsolePrinter(console) {
   return {
-    info: () => {},
-    warning: () => {},
-    error: () => {},
-    notice: () => {},
+    info(text) {
+      console.log(format.blue(text));
+    },
+    notice(text) {
+      console.log(format.yellow(text));
+    },
+    warning(text) {
+      console.log(format.asWarning(text));
+    },
+    error(text) {
+      console.log(format.red(text));
+    },
+    message(text) {
+      console.log(text);
+    },
+    title(text) {
+      console.log(format.asTitle(text));
+    },
   };
 }
 
 module.exports = {
   consolePrinter: createConsolePrinter(console),
-  nullPrinter: createNullPrinter(),
+  createPrinterSpy,
   createConsolePrinter,
+  format,
 };

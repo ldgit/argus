@@ -1,12 +1,12 @@
 const assert = require('assert');
-const clock = require('lolex');
+const lolex = require('lolex');
 const spawnSync = require('child_process').spawnSync;
 const { configureRunCommands } = require('../src/command-runner');
-const { nullPrinter } = require('../src/printer');
+const { createPrinterSpy, format } = require('../src/printer');
 
 describe('command-runner synchronous implementation', () => {
   it('smoke test', () => {
-    configureRunCommands.bind(null, spawnSync, nullPrinter)([{ command: 'echo', args: [] }]);
+    configureRunCommands.bind(null, spawnSync, createPrinterSpy())([{ command: 'echo', args: [] }]);
   });
 });
 
@@ -14,6 +14,7 @@ describe('command-runner', () => {
   let runCommands;
   let spawnSpyData;
   let spawnSpyWasCalled;
+  let printerSpy;
   const spawnSpy = (command, args, options) => {
     spawnSpyWasCalled = true;
     spawnSpyData.push({ command, args, options });
@@ -22,7 +23,8 @@ describe('command-runner', () => {
   beforeEach(() => {
     spawnSpyData = [];
     spawnSpyWasCalled = false;
-    runCommands = configureRunCommands.bind(null, spawnSpy, nullPrinter);
+    printerSpy = createPrinterSpy();
+    runCommands = configureRunCommands(spawnSpy, printerSpy);
   });
 
   it('should run given commands', () => {
@@ -44,20 +46,31 @@ describe('command-runner', () => {
   });
 
   context('when running command', () => {
-    let textSentToInfo;
+    let clock;
 
     beforeEach(() => {
-      textSentToInfo = [];
-      nullPrinter.info = (text) => {
-        textSentToInfo.push(text);
-      };
+      clock = lolex.install({ now: new Date(2017, 7, 1, 18, 5, 5) });
+    });
+
+    afterEach(() => {
+      clock.uninstall();
     });
 
     it('should print info message', () => {
-      clock.install({ now: new Date(2017, 7, 1, 18, 5, 5) });
       runCommands([{ command: 'echo', args: ['one'] }, { command: 'phpunit', args: ['-c', 'phpunit.xml'] }]);
-      assert.equal(textSentToInfo[0], '[2017-08-01 18:05:05] echo one');
-      assert.equal(textSentToInfo[1], '[2017-08-01 18:05:05] phpunit -c phpunit.xml');
+      const printedMessages = printerSpy.getPrintedMessages();
+      assert.deepStrictEqual(printedMessages[0], { text: '[2017-08-01 18:05:05] echo one', type: 'info' });
+      assert.deepStrictEqual(printedMessages[1], { text: '[2017-08-01 18:05:05] phpunit -c phpunit.xml', type: 'info' });
+    });
+
+    it('should print info on how to list all commands', () => {
+      runCommands([{ command: 'echo', args: ['one'] }, { command: 'echo', args: ['two'] }]);
+
+      assert.equal(printerSpy.getPrintedMessages().length, 3);
+      assert.deepStrictEqual(
+        printerSpy.getPrintedMessages()[2],
+        { text: `\nPress ${format.red('l')} to list available commands\n`, type: 'message' }
+      );
     });
   });
 });

@@ -19,5 +19,9 @@ module.exports = function validateConfiguration(configuration) {
     if (typeof environment.testRunnerCommand === 'undefined' || environment.testRunnerCommand === '') {
       throw new TypeError('testRunnerCommand must be defined for each environment');
     }
+
+    if (!Array.isArray(environment.arguments)) {
+      throw new TypeError('arguments property must be an array');
+    }
   });
 };

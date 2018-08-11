@@ -1,15 +1,17 @@
 const assert = require('assert');
 const { configureCompileWatchlist } = require('../src/watchlist');
-const { nullPrinter } = require('../src/printer');
+const { createPrinterSpy } = require('../src/printer');
 
 describe('watchlist', () => {
   const rootDir = process.cwd();
   let compileWatchlistFor;
   let defaultEnvironment;
+  let printerSpy;
 
   beforeEach(() => {
     process.chdir('./test/fixtures/watchlist.test/mock-project');
-    compileWatchlistFor = configureCompileWatchlist.bind(null, nullPrinter);
+    printerSpy = createPrinterSpy();
+    compileWatchlistFor = configureCompileWatchlist.bind(null, printerSpy);
     defaultEnvironment = {
       extension: 'php',
       testNameSuffix: 'Test',
@@ -41,13 +43,9 @@ describe('watchlist', () => {
   context('when given nonexistent directories', () => {
     nonExistentTestDirectories.forEach((test) => {
       it(`should display an error message (${test.dir})`, () => {
-        const errors = [];
-        nullPrinter.error = text => errors.push(text);
         defaultEnvironment.testDir = test.dir;
-
         compileWatchlistFor([defaultEnvironment]);
-
-        assert.equal(errors[0], test.expectedError);
+        assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: test.expectedError, type: 'error' });
       });
     });
   });
@@ -60,14 +58,10 @@ describe('watchlist', () => {
     });
 
     it('should print out a notice for any source file that does not exist', () => {
-      const notices = [];
-      nullPrinter.notice = text => notices.push(text);
-
       compileWatchlistFor([defaultEnvironment]);
-
-      assert.equal(
-        notices[0],
-        'Source file not found for test: "test-nosource/NoSourceForThis.test.js"'
+      assert.deepStrictEqual(
+        printerSpy.getPrintedMessages()[0],
+        { text: 'Source file not found for test: "test-nosource/NoSourceForThis.test.js"', type: 'notice' }
       );
     });
 

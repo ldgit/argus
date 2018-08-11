@@ -1,27 +1,28 @@
 const assert = require('assert');
 const path = require('path');
 const { configureCreateWatcher } = require('../src/file-watcher');
-const { nullPrinter } = require('../src/printer');
-
+const { createPrinterSpy } = require('../src/printer');
 const { fork } = require('child_process');
+
+const wait = time => new Promise(resolve => setTimeout(resolve, time));
 
 describe('watcher', function watcherTest() {
   let watcher;
   let configuration;
   let environments;
-  let infos;
+  let printerSpy;
 
   this.slow(300);
 
   beforeEach(() => {
-    infos = [];
     environments = [createEnvironment('php')];
     configuration = {
       environments,
       configFileFound: true,
     };
     process.chdir(path.join('.', 'test'));
-    watcher = configureCreateWatcher(nullPrinter, configuration);
+    printerSpy = createPrinterSpy();
+    watcher = configureCreateWatcher(printerSpy, configuration);
   });
 
   afterEach(() => {
@@ -36,26 +37,23 @@ describe('watcher', function watcherTest() {
       callbackWasCalled = true;
     });
 
-    assert.strictEqual(callbackWasCalled, false);
+    wait(30).then(() => assert.strictEqual(callbackWasCalled, false));
   });
 
   context('when given an array of "globified" file paths', () => {
     // Watchlist (input for watchFiles() function) also does this when it is compiled, but in this case it doesn't hurt
     // to doublecheck.
     it('should filter out paths that don\'t exist so that ready event will fire correctly', (done) => {
-      nullPrinter.info = text => infos.push(text);
-
       watcher.watchFiles(['./mock-project/src/[E]xampleFour.php'], () => {});
 
       watcher.on('ready', () => {
-        assert.equal(infos[0], 'Watching 1 file(s)');
+        assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: 'Watching 1 file(s)', type: 'info' });
         done();
       });
     });
 
     it('should print out information about the number of watched files', (done) => {
       environments.push(createEnvironment('js'));
-      nullPrinter.info = text => infos.push(text);
 
       watcher.watchFiles([
         './mock-project/src/[E]xampleOne.php',
@@ -63,15 +61,13 @@ describe('watcher', function watcherTest() {
       ], () => {});
 
       watcher.on('ready', () => {
-        assert.equal(infos[0], 'Watching 2 file(s)');
+        assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: 'Watching 2 file(s)', type: 'info' });
         done();
       });
     });
 
     it('should a print warning if configuration file not found', (done) => {
       configuration.configFileFound = false;
-      const warnings = [];
-      nullPrinter.warning = text => warnings.push(text);
 
       watcher.watchFiles([
         './mock-project/src/[E]xampleOne.php', // exists
@@ -79,19 +75,22 @@ describe('watcher', function watcherTest() {
       ], () => {});
 
       watcher.on('ready', () => {
-        assert.equal(warnings[0], 'Configuration file not found, will use default configuration.');
+        assert.deepStrictEqual(
+          // First message is about file watch count
+          printerSpy.getPrintedMessages()[1],
+          { text: 'Configuration file not found, will use default configuration.', type: 'warning' }
+        );
         done();
       });
     });
 
     it('should not count same file twice when given multiple environments for same filetype', (done) => {
       environments.push(createEnvironment('php'));
-      nullPrinter.info = text => infos.push(text);
 
       watcher.watchFiles(['./mock-project/src/[E]xampleOne.php'], () => {});
 
       watcher.on('ready', () => {
-        assert.equal(infos[0], 'Watching 1 file(s)');
+        assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: 'Watching 1 file(s)', type: 'info' });
         done();
       });
     });
