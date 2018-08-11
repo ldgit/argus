@@ -5,7 +5,7 @@ const buildForFilepaths = require('./command-builder');
 const { compileWatchlistFor } = require('./watchlist');
 const readConfiguration = require('./configuration-reader');
 const getCommandLineOptions = require('./command-line-options');
-const { listenForUserInput, setLastRunCommands } = require('./../src/run-commands-on-input');
+const { listenForUserInput, setLastRunCommands } = require('./../src/user-input-handler');
 
 module.exports = {
   runArgus: configureRunArgus(runCommands, getCommandLineOptions(process.argv), process.stdin),
