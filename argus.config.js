@@ -7,6 +7,7 @@ module.exports = {
       sourceDir: 'src',
       arguments: [],
       testRunnerCommand: 'node_modules/.bin/mocha',
+      runAllTestsCommand: { command: 'npm', arguments: ['t'] },
     },
     {
       extension: 'js',
@@ -15,6 +16,7 @@ module.exports = {
       sourceDir: 'src',
       arguments: [],
       testRunnerCommand: 'node_modules/.bin/mocha',
+      runAllTestsCommand: { command: 'npm', arguments: ['run', 'test-int'] },
     },
   ],
 };

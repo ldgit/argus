@@ -123,6 +123,9 @@ module.exports = {
       arguments: [],
       // If you are using mocha for your Javascript tests
       testRunnerCommand: 'node_modules/.bin/mocha',
+      // You can define a custom command to run all tests (runs when you press "a" when Argus is running).
+      // Otherwise Argus will use testRunnerCommand and its arguments to run all tests.
+      runAllTestsCommand: { command: 'npm', arguments: ['t'] },
     },
   ],
 };
