@@ -21,7 +21,11 @@ function unconfiguredListenForUserInput(processExit, printer, runCommands, stdin
   stdin.on('data', (key) => {
     if (key === 'a') {
       const commandsToRunAllTests = environments
-        .map(environment => ({ command: environment.testRunnerCommand, args: environment.arguments }))
+        .map(environment =>
+          (environment.runAllTestsCommand
+            ? { command: environment.runAllTestsCommand.command, args: environment.runAllTestsCommand.arguments }
+            : { command: environment.testRunnerCommand, args: environment.arguments })
+        )
         .reduce((accumulator, currentCommand) => {
           if (!arrayContainsObject(accumulator, currentCommand)) {
             accumulator.push(currentCommand);

@@ -23,5 +23,15 @@ module.exports = function validateConfiguration(configuration) {
     if (!Array.isArray(environment.arguments)) {
       throw new TypeError('arguments property must be an array');
     }
+
+    if (
+      typeof environment.runAllTestsCommand !== 'undefined'
+      && (
+        !Array.isArray(environment.runAllTestsCommand.arguments)
+        || typeof environment.runAllTestsCommand.command !== 'string'
+      )
+    ) {
+      throw new TypeError('Invalid runAllTestsCommand property');
+    }
   });
 };

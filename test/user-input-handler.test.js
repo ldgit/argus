@@ -119,7 +119,7 @@ describe('configureListenForInput', () => {
     });
   });
 
-  it('should run all tests when user inputs "a"', () => {
+  it('should run all tests when user inputs "a" using test runner command without a filepath argument', () => {
     environments = [{ testRunnerCommand: 'vendor/bin/phpunit', arguments: [] }];
 
     listenForInput(environments);
@@ -131,6 +131,27 @@ describe('configureListenForInput', () => {
     }).then(() => {
       assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 1);
       assert.deepStrictEqual(runCommandsSpy.getLastRunCommands(), [{ command: 'vendor/bin/phpunit', args: [] }]);
+    });
+  });
+
+  it('should use runAllTestsCommand if given in environment configuration to run all tests', () => {
+    environments = [{
+      testRunnerCommand: 'should/not/use/this/comnand',
+      arguments: [],
+      runAllTestsCommand: { command: 'vendor/bin/phpunit', arguments: ['-c', 'phpunit.xml'] },
+    }];
+
+    listenForInput(environments);
+
+    return new Promise((resolve) => {
+      mockStdin.on('data', resolve);
+      mockStdin.push('a');
+    }).then(() => {
+      assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 1);
+      assert.deepStrictEqual(runCommandsSpy.getLastRunCommands(), [{
+        command: 'vendor/bin/phpunit',
+        args: ['-c', 'phpunit.xml'] },
+      ]);
     });
   });
 

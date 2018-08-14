@@ -56,6 +56,22 @@ describe('ConfigurationValidator', () => {
     assertNoTestRunnerCommandErrorThrown(() => { validateConfiguration(configuration); });
   });
 
+  [
+    '',
+    {},
+    { arguments: [] },
+    { command: 'foo' },
+    { command: {}, arguments: [] },
+    { command: '', arguments: '' },
+    { command: '', args: [] },
+  ].forEach((invalidRunAllTestCommand) => {
+    it(`should throw error for invalid runAllTestsCommand (${JSON.stringify(invalidRunAllTestCommand)})`, () => {
+      invalidEnvironment.runAllTestsCommand = invalidRunAllTestCommand;
+      assert.throws(() => validateConfiguration(configuration), TypeError);
+      assert.throws(() => validateConfiguration(configuration), /Invalid runAllTestsCommand property/);
+    });
+  });
+
   it('should throw error for invalid testRunnerCommand arguments', () => {
     invalidEnvironment.arguments = '';
     assertInvalidTestRunnerCommandArgumentsErrorThrown(() => { validateConfiguration(configuration); });
