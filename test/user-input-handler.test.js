@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { ReadableMock } = require('./helpers/mockStdio');
+const { StdinMock } = require('./helpers/mockStdio');
 const {
   listenForUserInput,
   unconfiguredListenForUserInput,
@@ -22,7 +22,7 @@ describe('configureListenForInput', () => {
 
   beforeEach(() => {
     environments = [{ testRunnerCommand: 'vendor/bin/phpunit', arguments: [] }];
-    mockStdin = new ReadableMock({ decodeStrings: false });
+    mockStdin = new StdinMock({ decodeStrings: false });
     mockStdin.pause();
     runCommandsSpy = createRunCommandsSpy();
     printerSpy = createPrinterSpy();

@@ -3,10 +3,11 @@ const lolex = require('lolex');
 const spawnSync = require('child_process').spawnSync;
 const { configureRunCommands } = require('../src/command-runner');
 const { createPrinterSpy, format } = require('../src/printer');
+const { StdinMock } = require('./helpers/mockStdio');
 
 describe('command-runner synchronous implementation', () => {
   it('smoke test', () => {
-    configureRunCommands.bind(null, spawnSync, createPrinterSpy())([{ command: 'echo', args: [] }]);
+    configureRunCommands.bind(null, spawnSync, createPrinterSpy(), process.stdin)([{ command: 'echo', args: [] }]);
   });
 });
 
@@ -15,16 +16,19 @@ describe('command-runner', () => {
   let spawnSpyData;
   let spawnSpyWasCalled;
   let printerSpy;
+  let mockStdin;
+
   const spawnSpy = (command, args, options) => {
     spawnSpyWasCalled = true;
     spawnSpyData.push({ command, args, options });
   };
 
   beforeEach(() => {
+    mockStdin = new StdinMock();
     spawnSpyData = [];
     spawnSpyWasCalled = false;
     printerSpy = createPrinterSpy();
-    runCommands = configureRunCommands(spawnSpy, printerSpy);
+    runCommands = configureRunCommands(spawnSpy, printerSpy, mockStdin);
   });
 
   it('should run given commands', () => {
@@ -71,6 +75,22 @@ describe('command-runner', () => {
         printerSpy.getPrintedMessages()[2],
         { text: `\nPress ${format.red('l')} to list available commands\n`, type: 'message' }
       );
+    });
+
+    it('should temporarily disable stdin raw mode so user can terminate the process during command execution', () => {
+      // We monkeypatch stdin.setRawMode() method to also log events to spawnSpyData array
+      const originalSetRawMode = mockStdin.setRawMode.bind(mockStdin);
+      mockStdin.setRawMode = (isRaw) => {
+        spawnSpyData.push(`raw mode set to ${isRaw}`);
+        originalSetRawMode(isRaw);
+      };
+
+      runCommands([{ command: 'npm', args: ['t'] }]);
+
+      assert.deepStrictEqual(spawnSpyData[0], 'raw mode set to false');
+      assert.strictEqual(spawnSpyData[1].command, 'npm');
+      assert.deepStrictEqual(spawnSpyData[1].args, ['t']);
+      assert.deepStrictEqual(spawnSpyData[2], 'raw mode set to true');
     });
   });
 });

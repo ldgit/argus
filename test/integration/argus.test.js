@@ -3,7 +3,7 @@ const path = require('path');
 const fork = require('child_process').fork;
 const { configureRunArgus } = require('../../src/argus');
 const createRunCommandsSpy = require('../helpers/run-commands-spy');
-const { ReadableMock } = require('./../helpers/mockStdio');
+const { StdinMock } = require('./../helpers/mockStdio');
 
 describe('argus', function argusTestSuite() {
   this.slow(500);
@@ -17,7 +17,7 @@ describe('argus', function argusTestSuite() {
   let mockStdin;
 
   beforeEach(() => {
-    mockStdin = new ReadableMock({ decodeStrings: false });
+    mockStdin = new StdinMock({ decodeStrings: false });
     commandLineOptions = { config: 'argus.config.js' };
   });
 

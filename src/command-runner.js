@@ -2,15 +2,17 @@ const spawnSync = require('child_process').spawnSync;
 const formatDate = require('date-fns/format');
 const { consolePrinter, format } = require('../src/printer');
 
-function configureRunCommands(spawn, printer) {
-  return runCommands.bind(null, spawn, printer);
+function configureRunCommands(spawn, printer, stdin) {
+  return runCommands.bind(null, spawn, printer, stdin);
 }
 
-function runCommands(spawn, printer, commands) {
+function runCommands(spawn, printer, stdin, commands) {
+  stdin.setRawMode(false);
   commands.forEach((command) => {
     printer.info(`[${getCurrentTime()}] ${command.command} ${command.args.join(' ')}`);
     spawn(command.command, command.args, { stdio: 'inherit' });
   });
+  stdin.setRawMode(true);
 
   printer.message(`\nPress ${format.red('l')} to list available commands\n`);
 }
@@ -21,5 +23,5 @@ function getCurrentTime() {
 
 module.exports = {
   configureRunCommands,
-  runCommands: configureRunCommands(spawnSync, consolePrinter),
+  runCommands: configureRunCommands(spawnSync, consolePrinter, process.stdin),
 };
