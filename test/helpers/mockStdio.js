@@ -1,8 +1,7 @@
 const Writable = require('stream').Writable;
 const Readable = require('stream').Readable;
 
-// stdout
-class WriteableMock extends Writable {
+class StdoutMock extends Writable {
   constructor(options) {
     super(options);
     this.writtenStuff = [];
@@ -18,8 +17,7 @@ class WriteableMock extends Writable {
   }
 }
 
-// stdin
-class ReadableMock extends Readable {
+class StdinMock extends Readable {
   constructor(options) {
     super(options);
     this.rawMode = false;
@@ -47,4 +45,4 @@ class ReadableMock extends Readable {
   }
 }
 
-module.exports = { WriteableMock, ReadableMock };
+module.exports = { StdoutMock, StdinMock };
