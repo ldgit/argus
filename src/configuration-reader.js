@@ -26,5 +26,8 @@ function normalizeAllEnvironments(environments) {
   environments.forEach((environment) => {
     environment.extension = environment.extension.toLowerCase();
     environment.sourceDir = ['.', './'].includes(environment.sourceDir.trim()) ? '' : environment.sourceDir.trim();
+    if (typeof environment.testRunnerCommand.arguments === 'undefined') {
+      environment.testRunnerCommand.arguments = [];
+    }
   });
 }

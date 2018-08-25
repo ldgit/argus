@@ -28,8 +28,7 @@ describe('readConfiguration', () => {
           testNameSuffix: '.test',
           testDir: 'test/unit',
           sourceDir: 'src',
-          arguments: ['-v'],
-          testRunnerCommand: 'node_modules/.bin/mocha',
+          testRunnerCommand: { command: 'node_modules/.bin/mocha', arguments: ['-v'] },
         },
       ]);
     });
@@ -38,6 +37,13 @@ describe('readConfiguration', () => {
       const config = readConfiguration('test/fixtures/configuration-reader.test/technically.valid.config.js');
       assert.equal(config.environments[0].extension, 'php');
       assert.equal(config.environments[1].extension, 'js');
+    });
+
+    it('should assign empty array to arguments property for testRunnerCommand if missing', () => {
+      const config = readConfiguration('test/fixtures/configuration-reader.test/no-test-command-arguments.config.js');
+      assert.deepStrictEqual(config.environments[0].testRunnerCommand.arguments, []);
+      assert.deepStrictEqual(config.environments[1].testRunnerCommand.arguments, ['t', '--']);
+      assert.deepStrictEqual(config.environments[2].testRunnerCommand.arguments, []);
     });
 
     it('should use empty string for sourceDir if source is current directory', () => {

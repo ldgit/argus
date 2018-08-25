@@ -13,15 +13,19 @@ module.exports = function validateConfiguration(configuration) {
     }
 
     if (typeof environment.testDir === 'undefined' || environment.testDir === '') {
-      throw new TypeError('testNameSuffix must be defined for each environment');
+      throw new TypeError('Invalid test directory (environment.testDir)');
     }
 
     if (typeof environment.testRunnerCommand === 'undefined' || environment.testRunnerCommand === '') {
       throw new TypeError('testRunnerCommand must be defined for each environment');
     }
 
-    if (!Array.isArray(environment.arguments)) {
-      throw new TypeError('arguments property must be an array');
+    if (typeof environment.testRunnerCommand !== 'object'
+      || typeof environment.testRunnerCommand.command !== 'string'
+      || (typeof environment.testRunnerCommand.arguments !== 'undefined'
+      && !Array.isArray(environment.testRunnerCommand.arguments))
+    ) {
+      throw new TypeError('testRunnerCommand must be defined for each environment');
     }
 
     if (

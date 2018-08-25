@@ -6,8 +6,8 @@ module.exports = function buildForFilepaths(testFilepaths) {
   const commands = [];
   testFilepaths.forEach((testFile) => {
     commands.push({
-      command: testFile.path !== '' ? testFile.environment.testRunnerCommand : '',
-      args: testFile.environment.arguments.concat([testFile.path]),
+      command: testFile.environment.testRunnerCommand.command,
+      args: testFile.environment.testRunnerCommand.arguments.concat([testFile.path]),
     });
   });
 
