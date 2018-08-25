@@ -25,9 +25,6 @@ function configureCreateWatcher(printer, configuration) {
       watcher.on('change', callback);
       watcher.on('ready', () => {
         printer.info(`Watching ${getFilesWatchedCount(environments, watcher.getWatched())} file(s)`);
-        if (!configuration.configFileFound) {
-          printer.warning('Configuration file not found, will use default configuration.');
-        }
       });
     },
     on(event, callback) {

@@ -18,7 +18,6 @@ describe('watcher', function watcherTest() {
     environments = [createEnvironment('php')];
     configuration = {
       environments,
-      configFileFound: true,
     };
     process.chdir(path.join('.', 'test'));
     printerSpy = createPrinterSpy();
@@ -61,24 +60,6 @@ describe('watcher', function watcherTest() {
 
     watcher.on('ready', () => {
       assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: 'Watching 2 file(s)', type: 'info' });
-      done();
-    });
-  });
-
-  it('should a print warning if configuration file not found', (done) => {
-    configuration.configFileFound = false;
-
-    watcher.watchFiles([
-      './mock-project/src/ExampleOne.php', // exists
-      './mock-project/nonexistent/path',
-    ], () => {});
-
-    watcher.on('ready', () => {
-      assert.deepStrictEqual(
-        // First message is about file watch count
-        printerSpy.getPrintedMessages()[1],
-        { text: 'Configuration file not found, will use default configuration.', type: 'warning' }
-      );
       done();
     });
   });

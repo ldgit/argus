@@ -1,30 +1,23 @@
 const fs = require('fs');
 const path = require('path');
 const validateConfiguration = require('./configuration-validator');
-const getDefaultConfiguration = require('./default-configuration');
 
 module.exports = function readConfiguration(configPath) {
-  let wasConfigFileFound;
-
-  if (typeof configPath === 'undefined') {
-    wasConfigFileFound = false;
-    return getDefaultConfiguration();
+  if (typeof configPath !== 'string') {
+    throw TypeError('Invalid configuration file path');
   }
 
   const absoluteConfigPath = path.resolve(configPath);
 
   if (!fs.existsSync(absoluteConfigPath)) {
-    wasConfigFileFound = false;
-    return getDefaultConfiguration();
+    throw new TypeError(
+      `Configuration file not found at ${absoluteConfigPath}. You must provide a configuration file.`
+    );
   }
-
-  wasConfigFileFound = true;
 
   const configuration = require(absoluteConfigPath);
   validateConfiguration(configuration);
   normalizeAllEnvironments(configuration.environments);
-
-  configuration.configFileFound = wasConfigFileFound;
 
   return configuration;
 };
