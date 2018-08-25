@@ -1,8 +1,8 @@
 const assert = require('assert');
 const path = require('path');
+const { fork } = require('child_process');
 const { configureCreateWatcher } = require('../src/file-watcher');
 const { createPrinterSpy } = require('../src/printer');
-const { fork } = require('child_process');
 
 const wait = time => new Promise(resolve => setTimeout(resolve, time));
 

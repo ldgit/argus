@@ -1,5 +1,4 @@
-const Writable = require('stream').Writable;
-const Readable = require('stream').Readable;
+const { Writable, Readable } = require('stream');
 
 class StdoutMock extends Writable {
   constructor(options) {

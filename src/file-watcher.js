@@ -8,7 +8,7 @@ module.exports = {
 };
 
 function configureCreateWatcher(printer, configuration) {
-  const environments = configuration.environments;
+  const { environments } = configuration;
   let watcher;
 
   return {

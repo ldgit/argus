@@ -150,8 +150,8 @@ describe('configureListenForInput', () => {
       assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 1);
       assert.deepStrictEqual(runCommandsSpy.getLastRunCommands(), [{
         command: 'vendor/bin/phpunit',
-        args: ['-c', 'phpunit.xml'] },
-      ]);
+        args: ['-c', 'phpunit.xml'],
+      }]);
     });
   });
 

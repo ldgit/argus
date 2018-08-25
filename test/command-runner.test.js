@@ -1,6 +1,6 @@
 const assert = require('assert');
 const lolex = require('lolex');
-const spawnSync = require('child_process').spawnSync;
+const { spawnSync } = require('child_process');
 const { configureRunCommands } = require('../src/command-runner');
 const { createPrinterSpy, format } = require('../src/printer');
 const { StdinMock } = require('./helpers/mockStdio');

@@ -1,6 +1,6 @@
 const assert = require('assert');
 const path = require('path');
-const fork = require('child_process').fork;
+const { fork } = require('child_process');
 const { configureRunArgus } = require('../../src/argus');
 const createRunCommandsSpy = require('../helpers/run-commands-spy');
 const { StdinMock } = require('./../helpers/mockStdio');
