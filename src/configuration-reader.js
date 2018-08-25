@@ -11,23 +11,26 @@ module.exports = function readConfiguration(configPath) {
 
   if (!fs.existsSync(absoluteConfigPath)) {
     throw new TypeError(
-      `Configuration file not found at ${absoluteConfigPath}. You must provide a configuration file.`
+      `Configuration file not found at ${absoluteConfigPath}. You must provide a configuration file.`,
     );
   }
 
+  // eslint-disable-next-line import/no-dynamic-require, global-require
   const configuration = require(absoluteConfigPath);
   validateConfiguration(configuration);
-  normalizeAllEnvironments(configuration.environments);
+  configuration.environments = configuration.environments.map(normalizeEnvironment);
 
   return configuration;
 };
 
-function normalizeAllEnvironments(environments) {
-  environments.forEach((environment) => {
-    environment.extension = environment.extension.toLowerCase();
-    environment.sourceDir = ['.', './'].includes(environment.sourceDir.trim()) ? '' : environment.sourceDir.trim();
-    if (typeof environment.testRunnerCommand.arguments === 'undefined') {
-      environment.testRunnerCommand.arguments = [];
-    }
+function normalizeEnvironment(environment) {
+  const normalizedEnvironment = Object.assign(environment, {
+    extension: environment.extension.toLowerCase(),
+    sourceDir: ['.', './'].includes(environment.sourceDir.trim()) ? '' : environment.sourceDir.trim(),
   });
+  if (typeof normalizedEnvironment.testRunnerCommand.arguments === 'undefined') {
+    normalizedEnvironment.testRunnerCommand.arguments = [];
+  }
+
+  return normalizedEnvironment;
 }

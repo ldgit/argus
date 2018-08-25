@@ -99,7 +99,7 @@ describe('argus', function argusTestSuite() {
         assert.equal(runCommandsSpy.getLastRunCommands()[1].command, 'vendor/bin/phpunit');
         assert.deepEqual(
           runCommandsSpy.getLastRunCommands()[1].args,
-          ['-c', 'phpunit-integration.xml', 'tests/integration/src/ClassTest.php']
+          ['-c', 'phpunit-integration.xml', 'tests/integration/src/ClassTest.php'],
         );
         done();
       });

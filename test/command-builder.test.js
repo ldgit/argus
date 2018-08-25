@@ -50,7 +50,7 @@ describe('command-builder', () => {
         [
           { command: 'vendor/bin/phpunit', args: ['tests/src/FirstTest.php'] },
           { command: 'vendor/bin/phpunit', args: ['tests/src/SecondTest.php'] },
-        ]
+        ],
       );
     });
   });

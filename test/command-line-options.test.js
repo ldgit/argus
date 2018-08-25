@@ -1,5 +1,6 @@
 const assert = require('assert');
 const getCommandLineOptions = require('../src/command-line-options');
+const { version } = require('./../package.json');
 
 describe('command line options', () => {
   let processArgv;
@@ -32,7 +33,7 @@ describe('command line options', () => {
   });
 
   it('should use same version as package json', () => {
-    const expectedVersion = require('./../package.json').version;
+    const expectedVersion = version;
     const commandLineOptions = getCommandLineOptions(processArgv);
     assert.equal(commandLineOptions.version(), expectedVersion);
   });
