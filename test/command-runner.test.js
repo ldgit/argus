@@ -7,7 +7,7 @@ const { StdinMock } = require('./helpers/mockStdio');
 
 describe('command-runner synchronous implementation', () => {
   it('smoke test', () => {
-    configureRunCommands.bind(null, spawnSync, createPrinterSpy(), process.stdin)([{ command: 'echo', args: [] }]);
+    configureRunCommands(spawnSync, createPrinterSpy(), process.stdin)([{ command: 'echo', args: [] }]);
   });
 });
 

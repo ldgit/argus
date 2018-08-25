@@ -1,6 +1,7 @@
 const assert = require('assert');
-const buildForFilepaths = require('../src/command-builder');
+const { buildForFilepaths } = require('../src/command-builder');
 
+/* buildCommandsToRunAllTests() function is tested through user-input-handler tests */
 describe('command-builder', () => {
   let phpEnvironment;
 

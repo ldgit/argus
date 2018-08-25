@@ -21,7 +21,9 @@ describe('configureListenForInput', () => {
   let environments;
 
   beforeEach(() => {
-    environments = [{ testRunnerCommand: 'vendor/bin/phpunit', arguments: [] }];
+    environments = [
+      { testRunnerCommand: { command: 'vendor/bin/phpunit', arguments: [] } },
+    ];
     mockStdin = new StdinMock({ decodeStrings: false });
     mockStdin.pause();
     runCommandsSpy = createRunCommandsSpy();
@@ -120,7 +122,7 @@ describe('configureListenForInput', () => {
   });
 
   it('should run all tests when user inputs "a" using test runner command without a filepath argument', () => {
-    environments = [{ testRunnerCommand: 'vendor/bin/phpunit', arguments: [] }];
+    environments = [{ testRunnerCommand: { command: 'vendor/bin/phpunit', arguments: [] } }];
 
     listenForInput(environments);
 
@@ -136,8 +138,7 @@ describe('configureListenForInput', () => {
 
   it('should use runAllTestsCommand if given in environment configuration to run all tests', () => {
     environments = [{
-      testRunnerCommand: 'should/not/use/this/comnand',
-      arguments: [],
+      testRunnerCommand: { command: 'should/not/use/this/comnand', arguments: [] },
       runAllTestsCommand: { command: 'vendor/bin/phpunit', arguments: ['-c', 'phpunit.xml'] },
     }];
 
@@ -157,9 +158,9 @@ describe('configureListenForInput', () => {
 
   it('should run all tests when user inputs "a" (multiple environments)', () => {
     environments = [
-      { testRunnerCommand: 'vendor/bin/phpunit', arguments: [] },
-      { testRunnerCommand: 'vendor/bin/phpunit', arguments: [] },
-      { testRunnerCommand: 'mocha', arguments: [] },
+      { testRunnerCommand: { command: 'vendor/bin/phpunit', arguments: [] } },
+      { testRunnerCommand: { command: 'vendor/bin/phpunit', arguments: [] } },
+      { testRunnerCommand: { command: 'mocha', arguments: [] } },
     ];
 
     listenForInput(environments);
@@ -177,9 +178,9 @@ describe('configureListenForInput', () => {
 
   it('should run all tests when user inputs "a" (multiple of same type, but with additional arguments)', () => {
     environments = [
-      { testRunnerCommand: 'vendor/bin/phpunit', arguments: ['-c', 'phpunit.xml'] },
-      { testRunnerCommand: 'vendor/bin/phpunit', arguments: ['-c', 'phpunit-integration.xml'] },
-      { testRunnerCommand: 'mocha', arguments: [] },
+      { testRunnerCommand: { command: 'vendor/bin/phpunit', arguments: ['-c', 'phpunit.xml'] } },
+      { testRunnerCommand: { command: 'vendor/bin/phpunit', arguments: ['-c', 'phpunit-integration.xml'] } },
+      { testRunnerCommand: { command: 'mocha', arguments: [] } },
     ];
 
     listenForInput(environments);

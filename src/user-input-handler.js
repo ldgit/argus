@@ -1,5 +1,5 @@
-
 const { format, consolePrinter } = require('../src/printer');
+const { buildCommandsToRunAllTests } = require('../src/command-builder');
 
 module.exports = {
   listenForUserInput: unconfiguredListenForUserInput.bind(null, process.exit, consolePrinter),
@@ -20,19 +20,7 @@ function unconfiguredListenForUserInput(processExit, printer, runCommands, stdin
 
   stdin.on('data', (key) => {
     if (key === 'a') {
-      const commandsToRunAllTests = environments
-        .map(environment => (environment.runAllTestsCommand
-          ? { command: environment.runAllTestsCommand.command, args: environment.runAllTestsCommand.arguments }
-          : { command: environment.testRunnerCommand, args: environment.arguments }
-        ))
-        .reduce((accumulator, currentCommand) => {
-          if (!arrayContainsObject(accumulator, currentCommand)) {
-            accumulator.push(currentCommand);
-          }
-          return accumulator;
-        }, []);
-
-      runCommands(commandsToRunAllTests);
+      runCommands(buildCommandsToRunAllTests(environments));
     }
 
     if (key === 'l') {
@@ -49,8 +37,4 @@ function unconfiguredListenForUserInput(processExit, printer, runCommands, stdin
       processExit();
     }
   });
-}
-
-function arrayContainsObject(array, objectNeedle) {
-  return array.map(object => JSON.stringify(object)).includes(JSON.stringify(objectNeedle));
 }

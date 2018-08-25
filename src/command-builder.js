@@ -1,4 +1,4 @@
-module.exports = function buildForFilepaths(testFilepaths) {
+function buildForFilepaths(testFilepaths) {
   if (testFilepaths.length < 1) {
     return [];
   }
@@ -12,4 +12,24 @@ module.exports = function buildForFilepaths(testFilepaths) {
   });
 
   return commands;
-};
+}
+
+function buildCommandsToRunAllTests(environments) {
+  return environments
+    .map(environment => (environment.runAllTestsCommand
+      ? { command: environment.runAllTestsCommand.command, args: environment.runAllTestsCommand.arguments }
+      : { command: environment.testRunnerCommand.command, args: environment.testRunnerCommand.arguments }
+    ))
+    .reduce((accumulator, currentCommand) => {
+      if (!arrayContainsObject(accumulator, currentCommand)) {
+        accumulator.push(currentCommand);
+      }
+      return accumulator;
+    }, []);
+}
+
+function arrayContainsObject(array, objectNeedle) {
+  return array.map(object => JSON.stringify(object)).includes(JSON.stringify(objectNeedle));
+}
+
+module.exports = { buildForFilepaths, buildCommandsToRunAllTests };

@@ -2,6 +2,7 @@ const assert = require('assert');
 const path = require('path');
 const { fork } = require('child_process');
 const { configureRunArgus } = require('../../src/argus');
+const { runCommands } = require('../../src/command-runner');
 const createRunCommandsSpy = require('../helpers/run-commands-spy');
 const { StdinMock } = require('./../helpers/mockStdio');
 
@@ -41,7 +42,7 @@ describe('argus', function argusTestSuite() {
       fork(pathToTouchScript, [path.join('.', 'src', 'PhpClass.php')]);
 
       watcher.on('change', () => {
-        assert.equal(runCommandsSpy.getLastRunCommands()[0].command, 'vendor/bin/phpunit');
+        assert.equal(runCommandsSpy.getLastRunCommands()[0].command, 'echo');
         assert.deepEqual(runCommandsSpy.getLastRunCommands()[0].args, ['tests/src/PhpClassTest.php']);
         done();
       });
@@ -52,7 +53,7 @@ describe('argus', function argusTestSuite() {
       fork(pathToTouchScript, [path.join('.', 'tests', 'src', 'PhpClassTest.php')]);
 
       watcher.on('change', () => {
-        assert.equal(runCommandsSpy.getLastRunCommands()[0].command, 'vendor/bin/phpunit');
+        assert.equal(runCommandsSpy.getLastRunCommands()[0].command, 'echo');
         assert.deepEqual(runCommandsSpy.getLastRunCommands()[0].args, ['tests/src/PhpClassTest.php']);
         done();
       });
@@ -65,7 +66,7 @@ describe('argus', function argusTestSuite() {
       return new Promise((resolve) => {
         watcher.on('change', () => {
           assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 1);
-          assert.equal(runCommandsSpy.getLastRunCommands()[0].command, 'vendor/bin/phpunit');
+          assert.equal(runCommandsSpy.getLastRunCommands()[0].command, 'echo');
           assert.deepEqual(runCommandsSpy.getLastRunCommands()[0].args, ['tests/src/PhpClassTest.php']);
 
           mockStdin.on('data', resolve);
@@ -73,8 +74,18 @@ describe('argus', function argusTestSuite() {
         });
       }).then(() => {
         assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 2);
-        assert.equal(runCommandsSpy.getLastRunCommands()[0].command, 'vendor/bin/phpunit');
+        assert.equal(runCommandsSpy.getLastRunCommands()[0].command, 'echo');
         assert.deepEqual(runCommandsSpy.getLastRunCommands()[0].args, ['tests/src/PhpClassTest.php']);
+      });
+    });
+
+    it('should run ok when user inputs "a" (smoke test)', () => {
+      runArgus = configureRunArgus(runCommands, commandLineOptions, mockStdin);
+      watcher = runArgus();
+
+      return new Promise((resolve) => {
+        mockStdin.on('data', resolve);
+        mockStdin.push('a');
       });
     });
   });

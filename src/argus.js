@@ -1,7 +1,7 @@
 const { runCommands } = require('./command-runner');
 const { createWatcher } = require('./file-watcher');
 const configureFindTestsFor = require('./test-finder');
-const buildForFilepaths = require('./command-builder');
+const { buildForFilepaths } = require('./command-builder');
 const { compileWatchlistFor } = require('./watchlist');
 const readConfiguration = require('./configuration-reader');
 const getCommandLineOptions = require('./command-line-options');
