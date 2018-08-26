@@ -19,17 +19,17 @@ function unconfiguredListenForUserInput(processExit, printer, runCommands, stdin
   stdin.resume();
 
   stdin.on('data', (key) => {
-    if (key === 'a') {
+    if (key.toLowerCase() === 'a') {
       runCommands(buildCommandsToRunAllTests(environments));
     }
 
-    if (key === 'l') {
+    if (key.toLowerCase() === 'l') {
       printer.title('\nCommands list');
       printer.message(`  press ${format.yellow('r')} to rerun last test batch`);
       printer.message(`  press ${format.green('a')} to run all tests\n`);
     }
 
-    if (key === 'r' && lastRunCommands !== null) {
+    if (key.toLowerCase() === 'r' && lastRunCommands !== null) {
       runCommands(lastRunCommands);
     }
 
