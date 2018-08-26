@@ -61,7 +61,7 @@ describe('watchlist', () => {
       compileWatchlistFor([defaultEnvironment]);
       assert.deepStrictEqual(
         printerSpy.getPrintedMessages()[0],
-        { text: 'Source file not found for test: "test-nosource/NoSourceForThis.test.js"', type: 'notice' }
+        { text: 'Source file not found for test: "test-nosource/NoSourceForThis.test.js"', type: 'notice' },
       );
     });
 

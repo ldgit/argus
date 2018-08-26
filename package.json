@@ -1,7 +1,7 @@
 {
   "name": "argus-test-runner",
   "version": "1.4.1",
-  "description": "Watches for changes in PHP files and executes automatic tests",
+  "description": "Watches for changes in your source and test files and executes automatic tests",
   "main": "index.js",
   "author": "Danko Lučić",
   "license": "MIT",
@@ -24,9 +24,10 @@
     "argus": "./index.js"
   },
   "devDependencies": {
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb-base": "^11.3.2",
-    "eslint-plugin-import": "^2.13.0",
+    "chai": "^4.1.2",
+    "eslint": "^5.4.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
     "lolex": "^2.7.1",
     "mocha": "^5.2.0"
   },

@@ -1,5 +1,5 @@
-
 const { format, consolePrinter } = require('../src/printer');
+const { buildCommandsToRunAllTests } = require('../src/command-builder');
 
 module.exports = {
   listenForUserInput: unconfiguredListenForUserInput.bind(null, process.exit, consolePrinter),
@@ -19,30 +19,17 @@ function unconfiguredListenForUserInput(processExit, printer, runCommands, stdin
   stdin.resume();
 
   stdin.on('data', (key) => {
-    if (key === 'a') {
-      const commandsToRunAllTests = environments
-        .map(environment =>
-          (environment.runAllTestsCommand
-            ? { command: environment.runAllTestsCommand.command, args: environment.runAllTestsCommand.arguments }
-            : { command: environment.testRunnerCommand, args: environment.arguments })
-        )
-        .reduce((accumulator, currentCommand) => {
-          if (!arrayContainsObject(accumulator, currentCommand)) {
-            accumulator.push(currentCommand);
-          }
-          return accumulator;
-        }, []);
-
-      runCommands(commandsToRunAllTests);
+    if (key.toLowerCase() === 'a') {
+      runCommands(buildCommandsToRunAllTests(environments));
     }
 
-    if (key === 'l') {
+    if (key.toLowerCase() === 'l') {
       printer.title('\nCommands list');
       printer.message(`  press ${format.yellow('r')} to rerun last test batch`);
       printer.message(`  press ${format.green('a')} to run all tests\n`);
     }
 
-    if (key === 'r' && lastRunCommands !== null) {
+    if (key.toLowerCase() === 'r' && lastRunCommands !== null) {
       runCommands(lastRunCommands);
     }
 
@@ -50,8 +37,4 @@ function unconfiguredListenForUserInput(processExit, printer, runCommands, stdin
       processExit();
     }
   });
-}
-
-function arrayContainsObject(array, objectNeedle) {
-  return array.map(object => JSON.stringify(object)).includes(JSON.stringify(objectNeedle));
 }

@@ -1,13 +1,13 @@
 const assert = require('assert');
 const lolex = require('lolex');
-const spawnSync = require('child_process').spawnSync;
+const { spawnSync } = require('child_process');
 const { configureRunCommands } = require('../src/command-runner');
 const { createPrinterSpy, format } = require('../src/printer');
 const { StdinMock } = require('./helpers/mockStdio');
 
 describe('command-runner synchronous implementation', () => {
   it('smoke test', () => {
-    configureRunCommands.bind(null, spawnSync, createPrinterSpy(), process.stdin)([{ command: 'echo', args: [] }]);
+    configureRunCommands(spawnSync, createPrinterSpy(), process.stdin)([{ command: 'echo', args: [] }]);
   });
 });
 
@@ -73,7 +73,7 @@ describe('command-runner', () => {
       assert.equal(printerSpy.getPrintedMessages().length, 3);
       assert.deepStrictEqual(
         printerSpy.getPrintedMessages()[2],
-        { text: `\nPress ${format.red('l')} to list available commands\n`, type: 'message' }
+        { text: `\nPress ${format.red('l')} to list available commands\n`, type: 'message' },
       );
     });
 

@@ -1,11 +1,15 @@
 const assert = require('assert');
-const buildForFilepaths = require('../src/command-builder');
+const { buildForFilepaths } = require('../src/command-builder');
 
+/* buildCommandsToRunAllTests() function is tested through user-input-handler tests */
 describe('command-builder', () => {
   let phpEnvironment;
 
   beforeEach(() => {
-    phpEnvironment = { extension: 'php', testRunnerCommand: 'vendor/bin/phpunit', arguments: [] };
+    phpEnvironment = {
+      extension: 'php',
+      testRunnerCommand: { command: 'vendor/bin/phpunit', arguments: [] },
+    };
   });
 
   context('given a path to a test file', () => {
@@ -21,7 +25,7 @@ describe('command-builder', () => {
     });
 
     it('should allow for modification of test run command through given environment', () => {
-      phpEnvironment.testRunnerCommand = 'phpunit';
+      phpEnvironment.testRunnerCommand.command = 'phpunit';
       assert.deepEqual(buildForFilepaths([{ path: 'tests/src/ExampleOneTest.php', environment: phpEnvironment }])[0], {
         command: 'phpunit',
         args: ['tests/src/ExampleOneTest.php'],
@@ -29,7 +33,7 @@ describe('command-builder', () => {
     });
 
     it('should allow for additional arguments from environment configuration', () => {
-      phpEnvironment.arguments = ['-c', 'phpunit.xml'];
+      phpEnvironment.testRunnerCommand.arguments = ['-c', 'phpunit.xml'];
       assert.deepEqual(buildForFilepaths([{ path: 'tests/src/ExampleOneTest.php', environment: phpEnvironment }])[0], {
         command: 'vendor/bin/phpunit',
         args: ['-c', 'phpunit.xml', 'tests/src/ExampleOneTest.php'],
@@ -47,7 +51,7 @@ describe('command-builder', () => {
         [
           { command: 'vendor/bin/phpunit', args: ['tests/src/FirstTest.php'] },
           { command: 'vendor/bin/phpunit', args: ['tests/src/SecondTest.php'] },
-        ]
+        ],
       );
     });
   });

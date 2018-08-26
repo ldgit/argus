@@ -5,8 +5,7 @@ module.exports = {
       testNameSuffix: '.test',
       testDir: 'test/unit',
       sourceDir: 'src',
-      arguments: ['-v'],
-      testRunnerCommand: 'node_modules/.bin/mocha',
+      testRunnerCommand: { command: 'node_modules/.bin/mocha', arguments: ['-v'] },
     },
   ],
 };

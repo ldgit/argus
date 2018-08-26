@@ -1,21 +1,24 @@
 const assert = require('assert');
+const { expect } = require('chai');
 const readConfiguration = require('../src/configuration-reader');
-const getDefaultConfiguration = require('../src/default-configuration');
 
 describe('readConfiguration', () => {
-  it('should use default php configuration (to avoid BC breaks) if no configuration file given', () => {
-    assert.deepEqual(readConfiguration(), getDefaultConfiguration());
+  [undefined, {}, [], 0].forEach((nonStringFilePath) => {
+    it(`should exit with error message if given configuration file path is not a string ${JSON.stringify(nonStringFilePath)}`, () => {
+      expect(() => readConfiguration(nonStringFilePath)).to.throw(TypeError, 'Invalid configuration file path');
+    });
   });
 
-  it('should use default php configuration if given configuration file does not exist', () => {
-    assert.deepEqual(readConfiguration('some/file/that/does/not/exist.js'), getDefaultConfiguration());
+  it('should exit with error message if given configuration file does not exist', () => {
+    const readConfigurationFromNonExistingFile = () => readConfiguration('some/file/that/does/not/exist.js');
+    expect(readConfigurationFromNonExistingFile).to.throw(TypeError, /some\/file\/that\/does\/not\/exist.js/);
   });
 
   context('if given a configuration file', () => {
     it('should validate it', () => {
-      assert.throws(() => {
+      expect(() => {
         readConfiguration('test/fixtures/configuration-reader.test/invalid.config.js');
-      }, TypeError);
+      }).to.throw(TypeError);
     });
 
     it('should import and return it', () => {
@@ -25,8 +28,7 @@ describe('readConfiguration', () => {
           testNameSuffix: '.test',
           testDir: 'test/unit',
           sourceDir: 'src',
-          arguments: ['-v'],
-          testRunnerCommand: 'node_modules/.bin/mocha',
+          testRunnerCommand: { command: 'node_modules/.bin/mocha', arguments: ['-v'] },
         },
       ]);
     });
@@ -35,6 +37,13 @@ describe('readConfiguration', () => {
       const config = readConfiguration('test/fixtures/configuration-reader.test/technically.valid.config.js');
       assert.equal(config.environments[0].extension, 'php');
       assert.equal(config.environments[1].extension, 'js');
+    });
+
+    it('should assign empty array to arguments property for testRunnerCommand if missing', () => {
+      const config = readConfiguration('test/fixtures/configuration-reader.test/no-test-command-arguments.config.js');
+      assert.deepStrictEqual(config.environments[0].testRunnerCommand.arguments, []);
+      assert.deepStrictEqual(config.environments[1].testRunnerCommand.arguments, ['t', '--']);
+      assert.deepStrictEqual(config.environments[2].testRunnerCommand.arguments, []);
     });
 
     it('should use empty string for sourceDir if source is current directory', () => {
@@ -47,20 +56,6 @@ describe('readConfiguration', () => {
     it('should trim source directory when reading it', () => {
       const config = readConfiguration('test/fixtures/configuration-reader.test/technically.valid.config.js');
       assert.equal(config.environments[3].sourceDir, 'src');
-    });
-  });
-
-  context('configFileFound property', () => {
-    it('should be set to true if file was found, false otherwise', () => {
-      // Deliberately put all assertions inside one test to ensure that the state was correctly mantained
-      let config = readConfiguration('test/fixtures/configuration-reader.test/valid.config.js');
-      assert.strictEqual(config.configFileFound, true);
-      config = readConfiguration('test/fixtures/configuration-reader.test/nonexistent.config.js');
-      assert.strictEqual(config.configFileFound, false);
-      config = readConfiguration('test/fixtures/configuration-reader.test/valid.config.js');
-      assert.strictEqual(config.configFileFound, true);
-      config = readConfiguration();
-      assert.strictEqual(config.configFileFound, false);
     });
   });
 });

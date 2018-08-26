@@ -12,8 +12,7 @@ function configureCompileWatchlist(printer, environments) {
   const locationsToWatch = [];
 
   environments.forEach((environment) => {
-    const testNameSuffix = environment.testNameSuffix;
-    const extension = environment.extension;
+    const { testNameSuffix, extension } = environment;
 
     if (!fs.existsSync(path.normalize(environment.testDir))) {
       printer.error(`Test directory ${path.normalize(environment.testDir)} was not found`);
