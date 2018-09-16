@@ -25,11 +25,13 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "coveralls": "^3.0.2",
     "eslint": "^5.4.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "lolex": "^2.7.1",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "nyc": "^13.0.1"
   },
   "dependencies": {
     "chalk": "^2.4.1",
@@ -41,11 +43,20 @@
   "optionalDependencies": {
     "fsevents": "^1.0.0"
   },
+  "nyc": {
+    "exclude": [
+      "coverage/**",
+      "test/**",
+      "**/node_modules/**",
+      "*.config.js"
+    ]
+  },
   "scripts": {
     "test": "mocha",
     "test-int": "mocha test/integration/**/*.test.js",
     "test-all": "npm run lint && npm test && npm run test-int",
-    "lint": "eslint test/ src/ ./index.js"
+    "lint": "eslint test/ src/ ./index.js",
+    "coverage": "nyc --all npm t && nyc report --reporter=text-lcov | coveralls"
   },
   "engines": {
     "node": ">= 6"
