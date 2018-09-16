@@ -1,7 +1,9 @@
 Argus test runner
 =================
 
-[![npm](https://img.shields.io/npm/v/argus-test-runner.svg)](https://www.npmjs.com/package/argus-test-runner) [![Build Status](https://travis-ci.org/ldgit/argus.svg?branch=master)](https://travis-ci.org/ldgit/argus)
+[![npm](https://img.shields.io/npm/v/argus-test-runner.svg)](https://www.npmjs.com/package/argus-test-runner) 
+[![Travis (.org)](https://img.shields.io/travis/ldgit/argus.svg)](https://travis-ci.org/ldgit/argus)
+[![Coveralls github](https://img.shields.io/coveralls/github/ldgit/argus.svg)](https://coveralls.io/github/ldgit/argus)
 
 Watches your files and executes automated tests for them when they change.
 
