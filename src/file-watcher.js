@@ -1,13 +1,14 @@
-const fileWatcher = require('chokidar');
 const fs = require('fs');
+const fileWatcher = require('chokidar');
+const _ = require('lodash');
 const { consolePrinter } = require('./printer');
 
 module.exports = {
-  createWatcher: configureCreateWatcher.bind(null, consolePrinter),
+  createWatcher: configureCreateWatcher.bind(null, consolePrinter, _.debounce),
   configureCreateWatcher,
 };
 
-function configureCreateWatcher(printer, configuration) {
+function configureCreateWatcher(printer, debounce, configuration) {
   const { environments } = configuration;
   let watcher;
 
@@ -22,7 +23,9 @@ function configureCreateWatcher(printer, configuration) {
         atomic: true,
         depth: 0,
       });
-      watcher.on('change', callback);
+
+      // We debounce the change callback to avoid occasional double trigger
+      watcher.on('change', debounce(callback, 100));
       watcher.on('ready', () => {
         printer.info(`Watching ${getFilesWatchedCount(environments, watcher.getWatched())} file(s)`);
       });

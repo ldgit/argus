@@ -21,7 +21,7 @@ describe('watcher', function watcherTest() {
     };
     process.chdir(path.join('.', 'test'));
     printerSpy = createPrinterSpy();
-    watcher = configureCreateWatcher(printerSpy, configuration);
+    watcher = configureCreateWatcher(printerSpy, debounceDummy, configuration);
   });
 
   afterEach(() => {
@@ -136,3 +136,7 @@ describe('watcher', function watcherTest() {
     };
   }
 });
+
+function debounceDummy(func) {
+  return func;
+}
