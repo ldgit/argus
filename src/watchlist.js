@@ -28,7 +28,7 @@ function configureCompileWatchlist(printer, environments) {
         locationsToWatch.push(sourceFilePath);
       }
 
-      locationsToWatch.push(filepath);
+      locationsToWatch.push(path.join(filepath));
     });
   });
 
@@ -36,9 +36,12 @@ function configureCompileWatchlist(printer, environments) {
 }
 
 function getSourcePathFromTestPath(testPath, environment) {
-  return path.join('./', testPath
-    .replace(path.normalize(environment.testDir), `/${environment.sourceDir}`)
-    .replace(`${environment.testNameSuffix}.${environment.extension}`, `.${environment.extension}`));
+  return path.join(
+    './',
+    path.normalize(testPath)
+      .replace(path.normalize(environment.testDir), path.normalize(`/${environment.sourceDir}`))
+      .replace(`${environment.testNameSuffix}.${environment.extension}`, `.${environment.extension}`),
+  );
 }
 
 function removeDuplicates(array) {
