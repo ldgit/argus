@@ -1,5 +1,5 @@
-const { spawnSync } = require('child_process');
 const formatDate = require('date-fns/format');
+const crossSpawn = require('cross-spawn');
 const { consolePrinter, format } = require('../src/printer');
 
 function configureRunCommands(spawn, printer, stdin) {
@@ -23,5 +23,5 @@ function getCurrentTime() {
 
 module.exports = {
   configureRunCommands,
-  runCommands: configureRunCommands(spawnSync, consolePrinter, process.stdin),
+  runCommands: configureRunCommands(crossSpawn.sync, consolePrinter, process.stdin),
 };
