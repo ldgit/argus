@@ -22,7 +22,7 @@ function findTestsFor(environments, filePath) {
 
 function getPossibleTestPath(filePath, environment) {
   if (filePath.startsWith(environment.testDir)) {
-    return filePath;
+    return path.join(filePath);
   }
 
   return [

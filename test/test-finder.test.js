@@ -1,4 +1,5 @@
 const assert = require('assert');
+const path = require('path');
 const configureFindTestsFor = require('../src/test-finder');
 
 describe('test-finder', () => {
@@ -45,10 +46,13 @@ describe('test-finder', () => {
     it('should find all possible test files if given file matches multiple environments (order matters)', () => {
       const phpIntegrationEnvironment = createEnvironment('php', 'tests/integration');
       environments.push(phpIntegrationEnvironment);
-      assert.deepEqual(findTestsFor('src/ExampleTwo.php'), [
-        { path: 'tests/unit/src/ExampleTwoTest.php', environment: phpEnvironment },
-        { path: 'tests/integration/src/ExampleTwoTest.php', environment: phpIntegrationEnvironment },
-      ]);
+      assert.deepEqual(
+        findTestsFor('src/ExampleTwo.php'),
+        [
+          { path: path.join('tests/unit/src/ExampleTwoTest.php'), environment: phpEnvironment },
+          { path: path.join('tests/integration/src/ExampleTwoTest.php'), environment: phpIntegrationEnvironment },
+        ],
+      );
     });
 
     it('should return empty array if test file was not found', () => {
@@ -57,7 +61,7 @@ describe('test-finder', () => {
   });
 
   function assertTestFound(actualTests, expectedTestPath, expectedEnvironment = phpEnvironment) {
-    assert.deepEqual(actualTests, [{ path: expectedTestPath, environment: expectedEnvironment }]);
+    assert.deepEqual(actualTests, [{ path: path.join(expectedTestPath), environment: expectedEnvironment }]);
   }
 
   function createEnvironment(type, testDirectory, testSuffix = 'Test', sourceDirectory = '') {
