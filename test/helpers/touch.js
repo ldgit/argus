@@ -1,3 +1,4 @@
-const { spawnSync } = require('child_process');
+const path = require('path');
+const touch = require('touch');
 
-spawnSync('touch', [process.argv[2]]);
+touch(path.join(process.argv[2]));
