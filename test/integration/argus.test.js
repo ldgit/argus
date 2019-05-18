@@ -40,29 +40,31 @@ describe('argus', function argusTestSuite() {
       runArgus = configureRunArgus(runCommandsSpy, commandLineOptions, mockStdin);
     });
 
-    it('should watch project source files and run console command if they change', (done) => {
+    it('should watch project source files and run console command if they change', () => {
       watcher = runArgus('.');
       fork(pathToTouchScript, [path.join('.', 'src', 'PhpClass.php')]);
 
-      watcher.on('change', () => {
-        waitForDebounce().then(() => {
-          assert.equal(runCommandsSpy.getLastRunCommands()[0].command, 'echo');
-          assert.deepEqual(runCommandsSpy.getLastRunCommands()[0].args, ['tests/src/PhpClassTest.php']);
-          done();
+      return new Promise((resolve) => {
+        watcher.on('change', () => {
+          waitForDebounce().then(() => resolve(runCommandsSpy.getLastRunCommands()[0]));
         });
+      }).then(({ command, args }) => {
+        assert.equal(command, 'echo');
+        assert.deepEqual(args, ['tests/src/PhpClassTest.php'].map(filepath => path.join(filepath)));
       });
-    });
+    }).timeout(500);
 
-    it('should watch project test files and run console command if they change', (done) => {
+    it('should watch project test files and run console command if they change', () => {
       watcher = runArgus();
       fork(pathToTouchScript, [path.join('.', 'tests', 'src', 'PhpClassTest.php')]);
 
-      watcher.on('change', () => {
-        waitForDebounce().then(() => {
-          assert.equal(runCommandsSpy.getLastRunCommands()[0].command, 'echo');
-          assert.deepEqual(runCommandsSpy.getLastRunCommands()[0].args, ['tests/src/PhpClassTest.php']);
-          done();
+      return new Promise((resolve) => {
+        watcher.on('change', () => {
+          waitForDebounce().then(() => resolve(runCommandsSpy.getLastRunCommands()[0]));
         });
+      }).then(({ command, args }) => {
+        assert.equal(command, 'echo');
+        assert.deepEqual(args, ['tests/src/PhpClassTest.php'].map(filepath => path.join(filepath)));
       });
     });
 
@@ -74,17 +76,21 @@ describe('argus', function argusTestSuite() {
         watcher.on('change', () => {
           waitForDebounce().then(() => {
             assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 1);
-            assert.equal(runCommandsSpy.getLastRunCommands()[0].command, 'echo');
-            assert.deepEqual(runCommandsSpy.getLastRunCommands()[0].args, ['tests/src/PhpClassTest.php']);
-
-            mockStdin.on('data', resolve);
-            mockStdin.push('r');
+            resolve(runCommandsSpy.getLastRunCommands()[0]);
           });
+        });
+      }).then(({ command, args }) => {
+        assert.equal(command, 'echo');
+        assert.deepEqual(args, ['tests/src/PhpClassTest.php'].map(filepath => path.join(filepath)));
+
+        return new Promise((resolve) => {
+          mockStdin.on('data', resolve);
+          mockStdin.push('r');
         });
       }).then(() => {
         assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 2);
         assert.equal(runCommandsSpy.getLastRunCommands()[0].command, 'echo');
-        assert.deepEqual(runCommandsSpy.getLastRunCommands()[0].args, ['tests/src/PhpClassTest.php']);
+        assert.deepEqual(runCommandsSpy.getLastRunCommands()[0].args, ['tests/src/PhpClassTest.php'].map(filepath => path.join(filepath)));
       });
     });
 
@@ -108,22 +114,29 @@ describe('argus', function argusTestSuite() {
       runArgus = configureRunArgus(runCommandsSpy, commandLineOptions, mockStdin);
     });
 
-    it('should watch project with multiple environments for same file extension', (done) => {
+    it('should watch project with multiple environments for same file extension', () => {
       watcher = runArgus();
       fork(pathToTouchScript, [path.join('.', 'src', 'Class.php')]);
 
-      watcher.on('change', () => {
-        waitForDebounce().then(() => {
-          assert.equal(runCommandsSpy.getLastRunCommands().length, 2, 'Expected only two commands to run');
-          assert.equal(runCommandsSpy.getLastRunCommands()[0].command, 'vendor/bin/phpunit');
-          assert.deepEqual(runCommandsSpy.getLastRunCommands()[0].args, ['tests/unit/src/ClassTest.php']);
-          assert.equal(runCommandsSpy.getLastRunCommands()[1].command, 'vendor/bin/phpunit');
-          assert.deepEqual(
-            runCommandsSpy.getLastRunCommands()[1].args,
-            ['-c', 'phpunit-integration.xml', 'tests/integration/src/ClassTest.php'],
-          );
-          done();
+      return new Promise((resolve) => {
+        watcher.on('change', () => {
+          waitForDebounce().then(() => {
+            resolve({
+              commandCount: runCommandsSpy.getLastRunCommands().length,
+              firstCommand: runCommandsSpy.getLastRunCommands()[0],
+              secondCommand: runCommandsSpy.getLastRunCommands()[1],
+            });
+          });
         });
+      }).then(({ commandCount, firstCommand, secondCommand }) => {
+        assert.equal(commandCount, 2, 'Expected only two commands to run');
+        assert.equal(firstCommand.command, 'vendor/bin/phpunit');
+        assert.deepEqual(firstCommand.args, ['tests/unit/src/ClassTest.php'].map(filepath => path.join(filepath)));
+        assert.equal(secondCommand.command, 'vendor/bin/phpunit');
+        assert.deepEqual(
+          secondCommand.args,
+          ['-c', 'phpunit-integration.xml', 'tests/integration/src/ClassTest.php'].map(filepath => path.join(filepath)),
+        );
       });
     });
   });
