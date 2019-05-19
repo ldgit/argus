@@ -31,7 +31,7 @@
     "eslint-plugin-import": "^2.17.2",
     "lolex": "^4.0.1",
     "mocha": "^6.1.4",
-    "nyc": "^13.3.0",
+    "nyc": "^14.1.1",
     "touch": "^3.1.0"
   },
   "dependencies": {
@@ -51,7 +51,8 @@
       "coverage/**",
       "test/**",
       "**/node_modules/**",
-      "*.config.js"
+      "*.config.js",
+      ".eslintrc.js"
     ]
   },
   "scripts": {
