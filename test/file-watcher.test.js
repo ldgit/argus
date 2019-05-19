@@ -36,7 +36,7 @@ describe('watcher', function watcherTest() {
       callbackWasCalled = true;
     });
 
-    wait(30).then(() => assert.strictEqual(callbackWasCalled, false));
+    return wait(30).then(() => assert.strictEqual(callbackWasCalled, false));
   });
 
   // Watchlist (input for watchFiles() function) also does this when it is compiled, but in this case it doesn't hurt
