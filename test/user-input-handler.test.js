@@ -8,8 +8,7 @@ const {
 const createRunCommandsSpy = require('./helpers/run-commands-spy');
 const { format, createPrinterSpy } = require('../src/printer');
 const { runCommands } = require('./../src/command-runner');
-
-const wait = time => new Promise(resolve => setTimeout(resolve, time));
+const wait = require('./helpers/wait');
 
 describe('configureListenForInput', () => {
   let mockStdin;
