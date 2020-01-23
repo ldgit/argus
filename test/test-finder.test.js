@@ -58,6 +58,18 @@ describe('test-finder', () => {
     it('should return empty array if test file was not found', () => {
       assert.deepEqual(findTestsFor('nonexistent/file.php'), []);
     });
+
+    it('should normalize dir separators when looking for test files', () => {
+      phpEnvironment.testDir = 'tests/unit';
+      assert.deepEqual(findTestsFor('tests\\unit\\src\\ExampleTwoTest.php'), [
+        { path: path.join('tests/unit/src/ExampleTwoTest.php'), environment: phpEnvironment },
+      ]);
+
+      phpEnvironment.testDir = 'tests\\unit';
+      assert.deepEqual(findTestsFor('tests/unit/src/ExampleTwoTest.php'), [
+        { path: path.join('tests/unit/src/ExampleTwoTest.php'), environment: phpEnvironment },
+      ]);
+    });
   });
 
   function assertTestFound(actualTests, expectedTestPath, expectedEnvironment = phpEnvironment) {
