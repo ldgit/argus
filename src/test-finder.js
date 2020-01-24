@@ -21,11 +21,11 @@ function findTestsFor(environments, filePath) {
 }
 
 function getPossibleTestPath(filePath, environment) {
-  const normalizedFilePath = path.normalize(filePath);
-  const normalizedTestDir = path.normalize(environment.testDir);
+  const normalizedFilePath = path.normalize(filePath).replace(/\\/g, '/');
+  const normalizedTestDir = path.normalize(environment.testDir).replace(/\\/g, '/');
 
   if (normalizedFilePath.startsWith(normalizedTestDir)) {
-    return path.join(filePath);
+    return path.join(normalizedFilePath);
   }
 
   return [
