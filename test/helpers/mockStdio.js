@@ -6,6 +6,7 @@ class StdoutMock extends Writable {
     this.writtenStuff = [];
   }
 
+  // eslint-disable-next-line no-underscore-dangle
   _write(chunk, encoding, callback) {
     this.writtenStuff.push(chunk);
     callback();
@@ -24,7 +25,7 @@ class StdinMock extends Readable {
     this.encoding = 'not utf 8';
   }
 
-  /* eslint-disable-next-line class-methods-use-this */
+  /* eslint-disable-next-line class-methods-use-this, no-underscore-dangle */
   _read() {}
 
   setRawMode(isRaw) {
