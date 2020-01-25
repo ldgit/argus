@@ -33,6 +33,7 @@ describe('test-finder', () => {
         'test/unit/src/ExampleFour.test.js',
         jsEnvironment,
       );
+
       phpEnvironment.testDir = 'tests';
       assertTestFound(
         findTestsFor('src/ExampleOne.php'),

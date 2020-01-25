@@ -56,11 +56,10 @@ describe('ConfigurationValidator', () => {
     { arguments: [] },
     { command: 'mocha', arguments: '' },
     { command: {}, arguments: [] },
-  ].forEach(invalidTestRunnerCommand => {
-    it(`should throw error for invalid testRunnerCommand (${JSON.stringify(
-      invalidTestRunnerCommand,
-    )})`, () => {
-      invalidEnvironment.testRunnerCommand = invalidTestRunnerCommand;
+  ].forEach(incorrectCommand => {
+    // prettier-ignore
+    it(`should throw error for incorrect testRunnerCommand (${JSON.stringify(incorrectCommand)})`, () => {
+      invalidEnvironment.testRunnerCommand = incorrectCommand;
       assertNoTestRunnerCommandErrorThrown(() => validateConfiguration(configuration));
     });
   });
@@ -90,9 +89,8 @@ describe('ConfigurationValidator', () => {
     { command: '', arguments: '' },
     { command: '', args: [] },
   ].forEach(invalidRunAllTestCommand => {
-    it(`should throw error for invalid runAllTestsCommand (${JSON.stringify(
-      invalidRunAllTestCommand,
-    )})`, () => {
+    // prettier-ignore
+    it(`should throw error for invalid runAllTestsCommand (${JSON.stringify(invalidRunAllTestCommand)})`, () => {
       invalidEnvironment.runAllTestsCommand = invalidRunAllTestCommand;
       assert.throws(() => validateConfiguration(configuration), TypeError);
       assert.throws(
