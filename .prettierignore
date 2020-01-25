@@ -1,0 +1,4 @@
+.nyc_output/
+*.code-workspace
+test/mock-project
+test/integration/fixtures

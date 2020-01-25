@@ -1,5 +1,5 @@
 module.exports = function validateConfiguration(configuration) {
-  configuration.environments.forEach((environment) => {
+  configuration.environments.forEach(environment => {
     if (typeof environment.extension === 'undefined' || environment.extension === '') {
       throw new TypeError('extension must be defined for each environment');
     }
@@ -16,24 +16,26 @@ module.exports = function validateConfiguration(configuration) {
       throw new TypeError('Invalid test directory (environment.testDir)');
     }
 
-    if (typeof environment.testRunnerCommand === 'undefined' || environment.testRunnerCommand === '') {
-      throw new TypeError('testRunnerCommand must be defined for each environment');
-    }
-
-    if (typeof environment.testRunnerCommand !== 'object'
-      || typeof environment.testRunnerCommand.command !== 'string'
-      || (typeof environment.testRunnerCommand.arguments !== 'undefined'
-      && !Array.isArray(environment.testRunnerCommand.arguments))
+    if (
+      typeof environment.testRunnerCommand === 'undefined' ||
+      environment.testRunnerCommand === ''
     ) {
       throw new TypeError('testRunnerCommand must be defined for each environment');
     }
 
     if (
-      typeof environment.runAllTestsCommand !== 'undefined'
-      && (
-        !Array.isArray(environment.runAllTestsCommand.arguments)
-        || typeof environment.runAllTestsCommand.command !== 'string'
-      )
+      typeof environment.testRunnerCommand !== 'object' ||
+      typeof environment.testRunnerCommand.command !== 'string' ||
+      (typeof environment.testRunnerCommand.arguments !== 'undefined' &&
+        !Array.isArray(environment.testRunnerCommand.arguments))
+    ) {
+      throw new TypeError('testRunnerCommand must be defined for each environment');
+    }
+
+    if (
+      typeof environment.runAllTestsCommand !== 'undefined' &&
+      (!Array.isArray(environment.runAllTestsCommand.arguments) ||
+        typeof environment.runAllTestsCommand.command !== 'string')
     ) {
       throw new TypeError('Invalid runAllTestsCommand property');
     }

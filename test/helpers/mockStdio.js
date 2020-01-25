@@ -1,3 +1,5 @@
+/* eslint-disable max-classes-per-file */
+
 const { Writable, Readable } = require('stream');
 
 class StdoutMock extends Writable {

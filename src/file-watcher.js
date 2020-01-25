@@ -14,7 +14,7 @@ function configureCreateWatcher(printer, debounce, configuration) {
 
   return {
     watchFiles(watchlist, callback) {
-      const filteredWatchlist = watchlist.filter((watchlistPath) => {
+      const filteredWatchlist = watchlist.filter(watchlistPath => {
         const deglobifiedPath = watchlistPath.replace('[', '').replace(']', '');
         return fs.existsSync(deglobifiedPath);
       });
@@ -27,7 +27,9 @@ function configureCreateWatcher(printer, debounce, configuration) {
       // We debounce the change callback to avoid occasional double trigger
       watcher.on('change', debounce(callback, 100));
       watcher.on('ready', () => {
-        printer.info(`Watching ${getFilesWatchedCount(environments, watcher.getWatched())} file(s)`);
+        printer.info(
+          `Watching ${getFilesWatchedCount(environments, watcher.getWatched())} file(s)`,
+        );
       });
     },
     on(event, callback) {
@@ -45,10 +47,15 @@ function getFilesWatchedCount(environments, watched) {
   let filesWatchedCount = 0;
   const supportedExtensions = environments.map(environment => environment.extension);
 
-  Object.values(watched).forEach((files) => {
-    filesWatchedCount += files
-      .filter(file => supportedExtensions.includes(file.split('.').pop().toLowerCase()))
-      .length;
+  Object.values(watched).forEach(files => {
+    filesWatchedCount += files.filter(file =>
+      supportedExtensions.includes(
+        file
+          .split('.')
+          .pop()
+          .toLowerCase(),
+      ),
+    ).length;
   });
 
   return filesWatchedCount;

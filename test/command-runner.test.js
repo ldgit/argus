@@ -8,7 +8,11 @@ const wait = require('./helpers/wait');
 
 describe('command-runner synchronous implementation', () => {
   it('smoke test', () => {
-    configureRunCommands(spawnSync, createPrinterSpy(), process.stdin)([{ command: 'echo', args: [] }]);
+    configureRunCommands(
+      spawnSync,
+      createPrinterSpy(),
+      process.stdin,
+    )([{ command: 'echo', args: [] }]);
   });
 });
 
@@ -60,22 +64,34 @@ describe('command-runner', () => {
     afterEach(() => clock.uninstall());
 
     it('when running command should print info message', () => {
-      runCommands([{ command: 'echo', args: ['one'] }, { command: 'phpunit', args: ['-c', 'phpunit.xml'] }]);
+      runCommands([
+        { command: 'echo', args: ['one'] },
+        { command: 'phpunit', args: ['-c', 'phpunit.xml'] },
+      ]);
       const printedMessages = printerSpy.getPrintedMessages();
-      assert.deepStrictEqual(printedMessages[0], { text: '[2017-08-01 18:05:05] echo one', type: 'info' });
-      assert.deepStrictEqual(printedMessages[1], { text: '[2017-08-01 18:05:05] phpunit -c phpunit.xml', type: 'info' });
+      assert.deepStrictEqual(printedMessages[0], {
+        text: '[2017-08-01 18:05:05] echo one',
+        type: 'info',
+      });
+      assert.deepStrictEqual(printedMessages[1], {
+        text: '[2017-08-01 18:05:05] phpunit -c phpunit.xml',
+        type: 'info',
+      });
     });
   });
 
   context('when running command', () => {
     it('should print info on how to list all commands', () => {
-      runCommands([{ command: 'echo', args: ['one'] }, { command: 'echo', args: ['two'] }]);
+      runCommands([
+        { command: 'echo', args: ['one'] },
+        { command: 'echo', args: ['two'] },
+      ]);
 
       assert.equal(printerSpy.getPrintedMessages().length, 3);
-      assert.deepStrictEqual(
-        printerSpy.getPrintedMessages()[2],
-        { text: `\nPress ${format.red('l')} to list available commands\n`, type: 'message' },
-      );
+      assert.deepStrictEqual(printerSpy.getPrintedMessages()[2], {
+        text: `\nPress ${format.red('l')} to list available commands\n`,
+        type: 'message',
+      });
     });
 
     it('should not temporarily disable stdin raw mode on windows OS because this leads to weird behaviour (unable to rerun, list commands, etc.)', () => {
@@ -89,7 +105,7 @@ describe('command-runner', () => {
       // We monkeypatch stdin.setRawMode() method to also log events to spawnSpyData array. We do this so we can assert
       // that setRawMode was called exactly before and after spawn function was called.
       const originalSetRawMode = mockStdin.setRawMode.bind(mockStdin);
-      mockStdin.setRawMode = (isRaw) => {
+      mockStdin.setRawMode = isRaw => {
         spawnSpyData.push(`raw mode set to ${isRaw}`);
         originalSetRawMode(isRaw);
       };

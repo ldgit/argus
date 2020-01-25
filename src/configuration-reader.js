@@ -26,7 +26,9 @@ module.exports = function readConfiguration(configPath) {
 function normalizeEnvironment(environment) {
   const normalizedEnvironment = Object.assign(environment, {
     extension: environment.extension.toLowerCase(),
-    sourceDir: ['.', './'].includes(environment.sourceDir.trim()) ? '' : environment.sourceDir.trim(),
+    sourceDir: ['.', './'].includes(environment.sourceDir.trim())
+      ? ''
+      : environment.sourceDir.trim(),
   });
   if (typeof normalizedEnvironment.testRunnerCommand.arguments === 'undefined') {
     normalizedEnvironment.testRunnerCommand.arguments = [];

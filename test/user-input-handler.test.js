@@ -20,9 +20,7 @@ describe('configureListenForInput', () => {
   let environments;
 
   beforeEach(() => {
-    environments = [
-      { testRunnerCommand: { command: 'vendor/bin/phpunit', arguments: [] } },
-    ];
+    environments = [{ testRunnerCommand: { command: 'vendor/bin/phpunit', arguments: [] } }];
     mockStdin = new StdinMock({ decodeStrings: false });
     mockStdin.pause();
     runCommandsSpy = createRunCommandsSpy();
@@ -30,14 +28,20 @@ describe('configureListenForInput', () => {
 
     processExitCalled = false;
     let processExit;
-    processExitCalledPromise = new Promise((resolve) => {
+    processExitCalledPromise = new Promise(resolve => {
       processExit = () => {
         processExitCalled = true;
         resolve();
       };
     });
 
-    listenForInput = unconfiguredListenForUserInput.bind(null, processExit, printerSpy, runCommandsSpy, mockStdin);
+    listenForInput = unconfiguredListenForUserInput.bind(
+      null,
+      processExit,
+      printerSpy,
+      runCommandsSpy,
+      mockStdin,
+    );
   });
 
   it('should start listening for user input in raw mode', () => {
@@ -66,23 +70,40 @@ describe('configureListenForInput', () => {
   it('should not do anything if user gives it unrecognized command', () => {
     listenForInput(environments);
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       mockStdin.on('data', resolve);
       mockStdin.push('w');
-    }).then(assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 0, 'Should not run any commands'));
+    }).then(
+      assert.strictEqual(
+        runCommandsSpy.getCommandsBatchRunCount(),
+        0,
+        'Should not run any commands',
+      ),
+    );
   });
 
-  ['l', 'L'].forEach((userInput) => {
+  ['l', 'L'].forEach(userInput => {
     it(`should list available commands when user inputs "${userInput}"`, () => {
       listenForInput(environments);
-      assert.strictEqual(printerSpy.getPrintedMessages().length, 0, 'No messages printed before "l" is pressed');
+      assert.strictEqual(
+        printerSpy.getPrintedMessages().length,
+        0,
+        'No messages printed before "l" is pressed',
+      );
 
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         mockStdin.on('data', resolve);
         mockStdin.push(userInput);
       }).then(() => {
-        assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 0, 'Should not run any commands in this commands');
-        assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: '\nCommands list', type: 'title' });
+        assert.strictEqual(
+          runCommandsSpy.getCommandsBatchRunCount(),
+          0,
+          'Should not run any commands in this commands',
+        );
+        assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], {
+          text: '\nCommands list',
+          type: 'title',
+        });
         assert.deepStrictEqual(printerSpy.getPrintedMessages()[1], {
           text: `  press ${format.yellow('r')} to rerun last test batch`,
           type: 'message',
@@ -95,11 +116,11 @@ describe('configureListenForInput', () => {
     });
   });
 
-  ['r', 'R'].forEach((userInput) => {
+  ['r', 'R'].forEach(userInput => {
     it(`should not do anything if ordered to run last test batch (${userInput}), but no tests have run yet`, () => {
       listenForInput(environments);
 
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         mockStdin.on('data', resolve);
         mockStdin.push(userInput);
       }).then(() => {
@@ -108,64 +129,82 @@ describe('configureListenForInput', () => {
     });
   });
 
-  ['r', 'R'].forEach((userInput) => {
+  ['r', 'R'].forEach(userInput => {
     it(`should rerun last batch of commands when user inputs "${userInput}"`, () => {
       const commands = [{ command: 'echo', args: ['a unit test command?'] }];
       listenForInput(environments);
       setLastRunCommands(commands);
-      assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 0, 'No commands should be run before user input.');
+      assert.strictEqual(
+        runCommandsSpy.getCommandsBatchRunCount(),
+        0,
+        'No commands should be run before user input.',
+      );
 
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         mockStdin.on('data', resolve);
         mockStdin.push(userInput);
       }).then(() => {
         assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 1);
         assert.deepStrictEqual(runCommandsSpy.getLastRunCommands(), commands);
-        assert.strictEqual(printerSpy.getPrintedMessages().length, 0, 'No messages should be printed on the screen');
+        assert.strictEqual(
+          printerSpy.getPrintedMessages().length,
+          0,
+          'No messages should be printed on the screen',
+        );
       });
     });
   });
 
-  ['a', 'A'].forEach((userInput) => {
+  ['a', 'A'].forEach(userInput => {
     it(`should run all tests when user inputs "${userInput}" using test runner command without a filepath argument`, () => {
       environments = [{ testRunnerCommand: { command: 'vendor/bin/phpunit', arguments: [] } }];
 
       listenForInput(environments);
 
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         mockStdin.on('data', resolve);
-        assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 0, 'Command must run only on user input');
+        assert.strictEqual(
+          runCommandsSpy.getCommandsBatchRunCount(),
+          0,
+          'Command must run only on user input',
+        );
         mockStdin.push(userInput);
       }).then(() => {
         assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 1);
-        assert.deepStrictEqual(runCommandsSpy.getLastRunCommands(), [{ command: 'vendor/bin/phpunit', args: [] }]);
+        assert.deepStrictEqual(runCommandsSpy.getLastRunCommands(), [
+          { command: 'vendor/bin/phpunit', args: [] },
+        ]);
       });
     });
   });
 
-  ['a', 'A'].forEach((userInput) => {
+  ['a', 'A'].forEach(userInput => {
     it(`should use runAllTestsCommand if given in environment configuration to run all tests (${userInput})`, () => {
-      environments = [{
-        testRunnerCommand: { command: 'should/not/use/this/comnand', arguments: [] },
-        runAllTestsCommand: { command: 'vendor/bin/phpunit', arguments: ['-c', 'phpunit.xml'] },
-      }];
+      environments = [
+        {
+          testRunnerCommand: { command: 'should/not/use/this/comnand', arguments: [] },
+          runAllTestsCommand: { command: 'vendor/bin/phpunit', arguments: ['-c', 'phpunit.xml'] },
+        },
+      ];
 
       listenForInput(environments);
 
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         mockStdin.on('data', resolve);
         mockStdin.push(userInput);
       }).then(() => {
         assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 1);
-        assert.deepStrictEqual(runCommandsSpy.getLastRunCommands(), [{
-          command: 'vendor/bin/phpunit',
-          args: ['-c', 'phpunit.xml'],
-        }]);
+        assert.deepStrictEqual(runCommandsSpy.getLastRunCommands(), [
+          {
+            command: 'vendor/bin/phpunit',
+            args: ['-c', 'phpunit.xml'],
+          },
+        ]);
       });
     });
   });
 
-  ['a', 'A'].forEach((userInput) => {
+  ['a', 'A'].forEach(userInput => {
     it(`should run all tests when user inputs "${userInput}" (multiple environments)`, () => {
       environments = [
         { testRunnerCommand: { command: 'vendor/bin/phpunit', arguments: [] } },
@@ -175,7 +214,7 @@ describe('configureListenForInput', () => {
 
       listenForInput(environments);
 
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         mockStdin.on('data', resolve);
         mockStdin.push(userInput);
       }).then(() => {
@@ -187,17 +226,22 @@ describe('configureListenForInput', () => {
     });
   });
 
-  ['a', 'A'].forEach((userInput) => {
+  ['a', 'A'].forEach(userInput => {
     it(`should run all tests when user inputs "${userInput}" (multiple of same type, but with additional arguments)`, () => {
       environments = [
         { testRunnerCommand: { command: 'vendor/bin/phpunit', arguments: ['-c', 'phpunit.xml'] } },
-        { testRunnerCommand: { command: 'vendor/bin/phpunit', arguments: ['-c', 'phpunit-integration.xml'] } },
+        {
+          testRunnerCommand: {
+            command: 'vendor/bin/phpunit',
+            arguments: ['-c', 'phpunit-integration.xml'],
+          },
+        },
         { testRunnerCommand: { command: 'mocha', arguments: [] } },
       ];
 
       listenForInput(environments);
 
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         mockStdin.on('data', resolve);
         mockStdin.push(userInput);
       }).then(() => {

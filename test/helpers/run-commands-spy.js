@@ -4,7 +4,7 @@ function createRunCommandsSpy() {
   let lastRunCommands = [];
   let totalCommandsBatchesRunCount = 0;
 
-  const runCommands = (commands) => {
+  const runCommands = commands => {
     lastRunCommands = commands;
     totalCommandsBatchesRunCount += 1;
   };

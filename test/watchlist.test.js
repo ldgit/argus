@@ -34,19 +34,23 @@ describe('watchlist', () => {
     { args: './test/unit', expected: ['test/unit/src/ExampleFourTest.php', 'src/ExampleFour.php'] },
     { args: './tests/unit', expected: ['tests/unit/src/ExampleTwoTest.php', 'src/ExampleTwo.php'] },
     { args: 'test/unit', expected: ['test/unit/src/ExampleFourTest.php', 'src/ExampleFour.php'] },
-    { args: './test/unit/', expected: ['test/unit/src/ExampleFourTest.php', 'src/ExampleFour.php'] },
+    {
+      args: './test/unit/',
+      expected: ['test/unit/src/ExampleFourTest.php', 'src/ExampleFour.php'],
+    },
   ];
 
-  const sourceDirVarieties = [
-    'src', './src', 'src/', './src/',
-  ];
+  const sourceDirVarieties = ['src', './src', 'src/', './src/'];
 
   context('when given nonexistent directories', () => {
-    nonExistentTestDirectories.forEach((test) => {
+    nonExistentTestDirectories.forEach(test => {
       it(`should display an error message (${test.dir})`, () => {
         defaultEnvironment.testDir = test.dir;
         compileWatchlistFor([defaultEnvironment]);
-        assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: test.expectedError, type: 'error' });
+        assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], {
+          text: test.expectedError,
+          type: 'error',
+        });
       });
     });
   });
@@ -60,19 +64,19 @@ describe('watchlist', () => {
 
     it('should print out a notice for any source file that does not exist', () => {
       compileWatchlistFor([defaultEnvironment]);
-      assert.deepStrictEqual(
-        printerSpy.getPrintedMessages()[0],
-        { text: 'Source file not found for test: "test-nosource/NoSourceForThis.test.js"', type: 'notice' },
-      );
+      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], {
+        text: 'Source file not found for test: "test-nosource/NoSourceForThis.test.js"',
+        type: 'notice',
+      });
     });
 
-    it('should filter out paths that don\'t exist (so that ready event will fire correctly)', () => {
+    it("should filter out paths that don't exist (so that ready event will fire correctly)", () => {
       const actualWatchlist = compileWatchlistFor([defaultEnvironment]);
       assert.deepEqual(actualWatchlist, [path.join('test-nosource/NoSourceForThis.test.js')]);
     });
   });
 
-  existingTestDirectories.forEach((test) => {
+  existingTestDirectories.forEach(test => {
     it(`should compile watchlist of filepaths from given "${test.args}" test directory`, () => {
       defaultEnvironment.testDir = test.args;
       const locationsToWatch = compileWatchlistFor([defaultEnvironment]);
@@ -83,16 +87,22 @@ describe('watchlist', () => {
   it('should use test name suffix to detect which tests and files to watch', () => {
     defaultEnvironment.testNameSuffix = '.foobar';
     const actualWatchlist = compileWatchlistFor([defaultEnvironment]);
-    assertListsAreEqual(actualWatchlist, ['test/unit/src/ExampleFour.foobar.php', 'src/ExampleFour.php']);
+    assertListsAreEqual(actualWatchlist, [
+      'test/unit/src/ExampleFour.foobar.php',
+      'src/ExampleFour.php',
+    ]);
   });
 
   it('should use file extension to detect which tests and files to watch', () => {
     defaultEnvironment.extension = 'js';
     const actualWatchlist = compileWatchlistFor([defaultEnvironment]);
-    assertListsAreEqual(actualWatchlist, ['test/unit/src/ExampleFourTest.js', 'src/ExampleFour.js']);
+    assertListsAreEqual(actualWatchlist, [
+      'test/unit/src/ExampleFourTest.js',
+      'src/ExampleFour.js',
+    ]);
   });
 
-  sourceDirVarieties.forEach((sourceDir) => {
+  sourceDirVarieties.forEach(sourceDir => {
     it('should use environment source directory to detect which source files to watch', () => {
       const env = getDefaultJavascriptEnvironment();
       env.sourceDir = sourceDir;

@@ -8,7 +8,7 @@ describe('printer', () => {
 
   function ConsoleSpy() {
     const logs = [];
-    this.log = (text) => {
+    this.log = text => {
       logs.push(text);
     };
 

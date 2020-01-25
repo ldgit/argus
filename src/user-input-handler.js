@@ -18,7 +18,7 @@ function unconfiguredListenForUserInput(processExit, printer, runCommands, stdin
   stdin.setEncoding('utf8');
   stdin.resume();
 
-  stdin.on('data', (key) => {
+  stdin.on('data', key => {
     if (key.toLowerCase() === 'a') {
       runCommands(buildCommandsToRunAllTests(environments));
     }

@@ -26,12 +26,14 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "coveralls": "^3.0.9",
-    "eslint": "^5.16.0",
-    "eslint-config-airbnb-base": "^13.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.9.0",
     "eslint-plugin-import": "^2.20.0",
     "lolex": "^5.1.2",
     "mocha": "^7.0.0",
     "nyc": "^15.0.0",
+    "prettier": "^1.19.1",
     "touch": "^3.1.0"
   },
   "dependencies": {
@@ -60,9 +62,24 @@
     "test-int": "mocha test/integration/**/*.test.js",
     "test-all": "npm run lint && npm test && npm run test-int",
     "lint": "eslint test/ src/ ./index.js",
-    "coverage": "nyc --all npm t && nyc report --reporter=text-lcov | coveralls"
+    "coverage": "nyc --all npm t && nyc report --reporter=text-lcov | coveralls",
+    "prettier": "prettier --check \"./**/*.{js,md}\""
   },
   "engines": {
     "node": ">= 12"
+  },
+  "prettier": {
+    "arrowParens": "avoid",
+    "bracketSpacing": true,
+    "insertPragma": false,
+    "printWidth": 100,
+    "proseWrap": "preserve",
+    "quoteProps": "as-needed",
+    "requirePragma": false,
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "all",
+    "useTabs": false
   }
 }

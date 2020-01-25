@@ -11,7 +11,7 @@ function runCommands(spawn, printer, stdin, platform, commands) {
     stdin.setRawMode(false);
   }
 
-  commands.forEach((command) => {
+  commands.forEach(command => {
     printer.info(`[${getCurrentTime()}] ${command.command} ${command.args.join(' ')}`);
     spawn(command.command, command.args, { stdio: 'inherit' });
   });
@@ -29,5 +29,10 @@ function getCurrentTime() {
 
 module.exports = {
   configureRunCommands,
-  runCommands: configureRunCommands(crossSpawn.sync, consolePrinter, process.stdin, process.platform),
+  runCommands: configureRunCommands(
+    crossSpawn.sync,
+    consolePrinter,
+    process.stdin,
+    process.platform,
+  ),
 };

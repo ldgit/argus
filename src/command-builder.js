@@ -4,7 +4,7 @@ function buildForFilepaths(testFilepaths) {
   }
 
   const commands = [];
-  testFilepaths.forEach((testFile) => {
+  testFilepaths.forEach(testFile => {
     commands.push({
       command: testFile.environment.testRunnerCommand.command,
       args: testFile.environment.testRunnerCommand.arguments.concat([testFile.path]),
@@ -16,10 +16,17 @@ function buildForFilepaths(testFilepaths) {
 
 function buildCommandsToRunAllTests(environments) {
   return environments
-    .map(environment => (environment.runAllTestsCommand
-      ? { command: environment.runAllTestsCommand.command, args: environment.runAllTestsCommand.arguments }
-      : { command: environment.testRunnerCommand.command, args: environment.testRunnerCommand.arguments }
-    ))
+    .map(environment =>
+      environment.runAllTestsCommand
+        ? {
+            command: environment.runAllTestsCommand.command,
+            args: environment.runAllTestsCommand.arguments,
+          }
+        : {
+            command: environment.testRunnerCommand.command,
+            args: environment.testRunnerCommand.arguments,
+          },
+    )
     .reduce((accumulator, currentCommand) => {
       if (!arrayContainsObject(accumulator, currentCommand)) {
         accumulator.push(currentCommand);

@@ -41,23 +41,32 @@ describe('watcher', function watcherTest() {
 
   // Watchlist (input for watchFiles() function) also does this when it is compiled, but in this case it doesn't hurt
   // to doublecheck.
-  it('should filter out paths that don\'t exist so that ready event will fire correctly', () => {
-    watcher.watchFiles(['./mock-project/src/ExampleFour.php', './mock-project/src/DoesNotExist.php'], () => {});
+  it("should filter out paths that don't exist so that ready event will fire correctly", () => {
+    watcher.watchFiles(
+      ['./mock-project/src/ExampleFour.php', './mock-project/src/DoesNotExist.php'],
+      () => {},
+    );
     return new Promise(resolve => watcher.on('ready', resolve)).then(() => {
-      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: 'Watching 1 file(s)', type: 'info' });
+      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], {
+        text: 'Watching 1 file(s)',
+        type: 'info',
+      });
     });
   });
 
   it('should print out information about the number of watched files', () => {
     environments.push(createEnvironment('js'));
 
-    watcher.watchFiles([
-      './mock-project/src/ExampleOne.php',
-      './mock-project/src/ExampleFour.js',
-    ], () => {});
+    watcher.watchFiles(
+      ['./mock-project/src/ExampleOne.php', './mock-project/src/ExampleFour.js'],
+      () => {},
+    );
 
     return new Promise(resolve => watcher.on('ready', resolve)).then(() => {
-      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: 'Watching 2 file(s)', type: 'info' });
+      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], {
+        text: 'Watching 2 file(s)',
+        type: 'info',
+      });
     });
   });
 
@@ -66,25 +75,34 @@ describe('watcher', function watcherTest() {
     watcher.watchFiles(['./mock-project/src/ExampleOne.php'], () => {});
 
     return new Promise(resolve => watcher.on('ready', resolve)).then(() => {
-      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], { text: 'Watching 1 file(s)', type: 'info' });
+      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], {
+        text: 'Watching 1 file(s)',
+        type: 'info',
+      });
     });
   });
 
   it('should only watch files with supported extensions', () => {
     watcher.watchFiles(['./mock-project/src/Example.js'], () => {});
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       watcher.on('ready', resolve);
     }).then(() => {
-      expect(printerSpy.getPrintedMessages()[0]).to.eql({ text: 'Watching 0 file(s)', type: 'info' });
+      expect(printerSpy.getPrintedMessages()[0]).to.eql({
+        text: 'Watching 0 file(s)',
+        type: 'info',
+      });
     });
   });
 
   it('should call given callback if a watched file changes and send changed path to callback', () => {
-    const afterFileChanged = new Promise((resolve) => {
-      watcher.watchFiles(['./mock-project/src/ExampleFileForFileWatcher.php'], (pathToChangedFile) => {
-        resolve(pathToChangedFile);
-      });
+    const afterFileChanged = new Promise(resolve => {
+      watcher.watchFiles(
+        ['./mock-project/src/ExampleFileForFileWatcher.php'],
+        pathToChangedFile => {
+          resolve(pathToChangedFile);
+        },
+      );
     });
 
     // This seems to be the only option that triggers "on file change" callback. Watcher does not
@@ -93,22 +111,25 @@ describe('watcher', function watcherTest() {
     // by a different node.js process for this test to work.
     fork('helpers/touch.js', ['./mock-project/src/ExampleFileForFileWatcher.php']);
 
-    return afterFileChanged.then((pathToChangedFile) => {
+    return afterFileChanged.then(pathToChangedFile => {
       expectPath(pathToChangedFile).toEqual('mock-project/src/ExampleFileForFileWatcher.php');
     });
   });
 
   it('should call given callback if a file from a watchlist changes and send changed path to callback', () => {
-    const watchlist = ['./mock-project/src/ExampleFour.php', './mock-project/src/ExampleFileForFileWatcher.php'];
-    const afterFileChanged = new Promise((resolve) => {
-      watcher.watchFiles(watchlist, (pathToChangedFile) => {
+    const watchlist = [
+      './mock-project/src/ExampleFour.php',
+      './mock-project/src/ExampleFileForFileWatcher.php',
+    ];
+    const afterFileChanged = new Promise(resolve => {
+      watcher.watchFiles(watchlist, pathToChangedFile => {
         resolve(pathToChangedFile);
       });
     });
 
     fork('helpers/touch.js', ['./mock-project/src/ExampleFileForFileWatcher.php']);
 
-    return afterFileChanged.then((pathToChangedFile) => {
+    return afterFileChanged.then(pathToChangedFile => {
       expectPath(pathToChangedFile).toEqual('mock-project/src/ExampleFileForFileWatcher.php');
     });
   });
@@ -118,23 +139,26 @@ describe('watcher', function watcherTest() {
       assert.fail('callback was called when it should not have been');
     });
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       fork('helpers/touch.js', ['./mock-project/src/Example.js']).on('exit', resolve);
     });
   });
 
   it('should watch files configured by environments extension property', () => {
     createEnvironment('js');
-    const watchlist = ['./mock-project/src/ExampleFileForFileWatcher.php', './mock-project/src/ExampleFour.js'];
-    const afterFileChanged = new Promise((resolve) => {
-      watcher.watchFiles(watchlist, (pathToChangedFile) => {
+    const watchlist = [
+      './mock-project/src/ExampleFileForFileWatcher.php',
+      './mock-project/src/ExampleFour.js',
+    ];
+    const afterFileChanged = new Promise(resolve => {
+      watcher.watchFiles(watchlist, pathToChangedFile => {
         resolve(pathToChangedFile);
       });
     });
 
     fork('helpers/touch.js', ['./mock-project/src/ExampleFour.js']);
 
-    return afterFileChanged.then((pathToChangedFile) => {
+    return afterFileChanged.then(pathToChangedFile => {
       expectPath(pathToChangedFile).toEqual('mock-project/src/ExampleFour.js');
     });
   });

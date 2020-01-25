@@ -25,13 +25,17 @@ describe('command line options', () => {
   it('should normalize given absolute config path', () => {
     processArgv.push('-c', '/some///weird//path/to/argus.config.js');
     const commandLineOptions = getCommandLineOptions(processArgv);
-    expect(commandLineOptions.config).to.equal(path.resolve(path.join('/some/weird/path/to/argus.config.js')));
+    expect(commandLineOptions.config).to.equal(
+      path.resolve(path.join('/some/weird/path/to/argus.config.js')),
+    );
   });
 
   it('should normalize given relative config path', () => {
     processArgv.push('-c', './weird//path///argus.config.js');
     const commandLineOptions = getCommandLineOptions(processArgv);
-    expect(commandLineOptions.config).to.contain(path.join(process.cwd(), '/weird/path/argus.config.js'));
+    expect(commandLineOptions.config).to.contain(
+      path.join(process.cwd(), '/weird/path/argus.config.js'),
+    );
   });
 
   it('should use same version as package json', () => {

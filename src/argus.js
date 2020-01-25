@@ -24,7 +24,7 @@ function runArgus(runCommandsFunction, commandLineOptions, stdin) {
 
   listenForUserInput(runCommandsFunction, stdin, configuration.environments);
 
-  fileWatcher.watchFiles(watchlist, (pathToChangedFile) => {
+  fileWatcher.watchFiles(watchlist, pathToChangedFile => {
     const testFilePaths = findTestsFor(pathToChangedFile);
     const commands = buildForFilepaths(testFilePaths);
 

@@ -29,7 +29,10 @@ describe('ConfigurationValidator', () => {
 
   it('should throw error if extension starts with a dot', () => {
     invalidEnvironment.extension = '.php';
-    expect(() => validateConfiguration(configuration)).to.throw(TypeError, /Extension must not start with a dot/);
+    expect(() => validateConfiguration(configuration)).to.throw(
+      TypeError,
+      /Extension must not start with a dot/,
+    );
   });
 
   it('should throw error for empty or invalid testNameSuffix', () => {
@@ -53,8 +56,10 @@ describe('ConfigurationValidator', () => {
     { arguments: [] },
     { command: 'mocha', arguments: '' },
     { command: {}, arguments: [] },
-  ].forEach((invalidTestRunnerCommand) => {
-    it(`should throw error for invalid testRunnerCommand (${JSON.stringify(invalidTestRunnerCommand)})`, () => {
+  ].forEach(invalidTestRunnerCommand => {
+    it(`should throw error for invalid testRunnerCommand (${JSON.stringify(
+      invalidTestRunnerCommand,
+    )})`, () => {
       invalidEnvironment.testRunnerCommand = invalidTestRunnerCommand;
       assertNoTestRunnerCommandErrorThrown(() => validateConfiguration(configuration));
     });
@@ -69,7 +74,7 @@ describe('ConfigurationValidator', () => {
     { command: 'mocha' },
     { command: 'mocha', arguments: [] },
     { command: 'npm', arguments: ['t', '--'] },
-  ].forEach((validTestRunnerCommand) => {
+  ].forEach(validTestRunnerCommand => {
     it(`should allow valid test runner command (${JSON.stringify(validTestRunnerCommand)})`, () => {
       invalidEnvironment.testRunnerCommand = validTestRunnerCommand;
       validateConfiguration(configuration);
@@ -84,11 +89,16 @@ describe('ConfigurationValidator', () => {
     { command: {}, arguments: [] },
     { command: '', arguments: '' },
     { command: '', args: [] },
-  ].forEach((invalidRunAllTestCommand) => {
-    it(`should throw error for invalid runAllTestsCommand (${JSON.stringify(invalidRunAllTestCommand)})`, () => {
+  ].forEach(invalidRunAllTestCommand => {
+    it(`should throw error for invalid runAllTestsCommand (${JSON.stringify(
+      invalidRunAllTestCommand,
+    )})`, () => {
       invalidEnvironment.runAllTestsCommand = invalidRunAllTestCommand;
       assert.throws(() => validateConfiguration(configuration), TypeError);
-      assert.throws(() => validateConfiguration(configuration), /Invalid runAllTestsCommand property/);
+      assert.throws(
+        () => validateConfiguration(configuration),
+        /Invalid runAllTestsCommand property/,
+      );
     });
   });
 

@@ -1,54 +1,58 @@
-Argus test runner
-=================
+# Argus test runner
 
-[![npm](https://img.shields.io/npm/v/argus-test-runner.svg)](https://www.npmjs.com/package/argus-test-runner) 
+[![npm](https://img.shields.io/npm/v/argus-test-runner.svg)](https://www.npmjs.com/package/argus-test-runner)
 [![Travis (.org)](https://img.shields.io/travis/ldgit/argus.svg)](https://travis-ci.org/ldgit/argus)
 [![Coveralls github](https://img.shields.io/coveralls/github/ldgit/argus.svg)](https://coveralls.io/github/ldgit/argus)
 
 Watches your files and executes automated tests for them when they change.
 
 ## Note
+
 These are the docs for **2.0.0** version. For **1.4.1** version documentation see [here](../1.4.1/README.md).
 
 ## Requirements
-* [Node.js](https://nodejs.org/en/) v8.* or greater
-* npm 5 or greater
+
+- [Node.js](https://nodejs.org/en/) v8.\* or greater
+- npm 5 or greater
 
 ## Installation
 
 ### Global installation
-1. ```npm install -g argus-test-runner```
-15. Navigate to your project root 
-20. Create a configuration file named `argus.config.js` (see [configuration examples](#configuration-file-examples))
-30. Type ```argus``` to start watching
-50. Type ```argus -h``` for usage information
+
+1. `npm install -g argus-test-runner`
+2. Navigate to your project root
+3. Create a configuration file named `argus.config.js` (see [configuration examples](#configuration-file-examples))
+4. Type `argus` to start watching
+5. Type `argus -h` for usage information
 
 ### Local installation
-1. If you already have a package.json in your project, you can also install argus-test-runner locally
-20. Navigate to your project root and type ```npm install --save-dev argus-test-runner```
-25. Create a configuration file named `argus.config.js` (see [configuration examples](#configuration-file-examples))
-30. Start Argus with ```./node_modules/.bin/argus```
-40. You can also add an npm script for convenience in your package.json:
-    ```json
-        "devDependencies": {
-          "argus-test-runner": "^2.0.0"
-        },
-        "scripts": {
-          "argus": "argus"
-        }
-    ```
-    and run ```npm run argus```
 
-To stop watching files just press ```Ctrl + C```
+1. If you already have a package.json in your project, you can also install argus-test-runner locally
+2. Navigate to your project root and type `npm install --save-dev argus-test-runner`
+3. Create a configuration file named `argus.config.js` (see [configuration examples](#configuration-file-examples))
+4. Start Argus with `./node_modules/.bin/argus`
+5. You can also add an npm script for convenience in your package.json:
+   ```json
+       "devDependencies": {
+         "argus-test-runner": "^2.0.0"
+       },
+       "scripts": {
+         "argus": "argus"
+       }
+   ```
+   and run `npm run argus`
+
+To stop watching files just press `Ctrl + C`
 
 ## Configuration
 
-You must configure argus-test-runner by creating a configuration file. By default, ```argus``` looks for the configuration file named ```argus.config.js``` in the directory in which it is run, but you can specify a different location via ```-c``` console parameter, for example ```argus -c ../my.custom.argus.config.js```.
-Configuration files are written in *Javascript*.
+You must configure argus-test-runner by creating a configuration file. By default, `argus` looks for the configuration file named `argus.config.js` in the directory in which it is run, but you can specify a different location via `-c` console parameter, for example `argus -c ../my.custom.argus.config.js`.
+Configuration files are written in _Javascript_.
 
 ### Configuration file examples:
 
 #### Just PHPUnit unit tests:
+
 ```javascript
 module.exports = {
   environments: [
@@ -67,6 +71,7 @@ module.exports = {
 ```
 
 #### PHPUnit unit and integration tests:
+
 ```javascript
 module.exports = {
   environments: [
@@ -86,13 +91,17 @@ module.exports = {
       sourceDir: 'src',
       // If you are using a different configuration file for your integration tests, you can specify it in the
       // arguments list
-      testRunnerCommand: { command: 'vendor/bin/phpunit', arguments: ['-c', 'phpunit-integration.xml'] },
+      testRunnerCommand: {
+        command: 'vendor/bin/phpunit',
+        arguments: ['-c', 'phpunit-integration.xml'],
+      },
     },
   ],
 };
 ```
 
 #### PHPUnit unit tests and Javascript unit tests:
+
 ```javascript
 module.exports = {
   environments: [
