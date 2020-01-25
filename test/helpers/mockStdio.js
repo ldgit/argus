@@ -20,6 +20,7 @@ class StdinMock extends Readable {
   constructor(options) {
     super(options);
     this.rawMode = false;
+    this.rawModeCalled = false;
     this.encoding = 'not utf 8';
   }
 
@@ -27,6 +28,7 @@ class StdinMock extends Readable {
   _read() {}
 
   setRawMode(isRaw) {
+    this.rawModeCalled = true;
     this.rawMode = isRaw;
   }
 

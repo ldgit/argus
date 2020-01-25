@@ -4,6 +4,7 @@ const { spawnSync } = require('child_process');
 const { configureRunCommands } = require('../src/command-runner');
 const { createPrinterSpy, format } = require('../src/printer');
 const { StdinMock } = require('./helpers/mockStdio');
+const wait = require('./helpers/wait');
 
 describe('command-runner synchronous implementation', () => {
   it('smoke test', () => {
@@ -28,7 +29,7 @@ describe('command-runner', () => {
     spawnSpyData = [];
     spawnSpyWasCalled = false;
     printerSpy = createPrinterSpy();
-    runCommands = configureRunCommands(spawnSpy, printerSpy, mockStdin);
+    runCommands = configureRunCommands(spawnSpy, printerSpy, mockStdin, 'linux');
   });
 
   it('should run given commands', () => {
@@ -49,24 +50,24 @@ describe('command-runner', () => {
     assert.strictEqual(spawnSpyWasCalled, false);
   });
 
-  context('when running command', () => {
+  context('time sensitive stuff', () => {
     let clock;
 
     beforeEach(() => {
       clock = lolex.install({ now: new Date(2017, 7, 1, 18, 5, 5) });
     });
 
-    afterEach(() => {
-      clock.uninstall();
-    });
+    afterEach(() => clock.uninstall());
 
-    it('should print info message', () => {
+    it('when running command should print info message', () => {
       runCommands([{ command: 'echo', args: ['one'] }, { command: 'phpunit', args: ['-c', 'phpunit.xml'] }]);
       const printedMessages = printerSpy.getPrintedMessages();
       assert.deepStrictEqual(printedMessages[0], { text: '[2017-08-01 18:05:05] echo one', type: 'info' });
       assert.deepStrictEqual(printedMessages[1], { text: '[2017-08-01 18:05:05] phpunit -c phpunit.xml', type: 'info' });
     });
+  });
 
+  context('when running command', () => {
     it('should print info on how to list all commands', () => {
       runCommands([{ command: 'echo', args: ['one'] }, { command: 'echo', args: ['two'] }]);
 
@@ -77,8 +78,16 @@ describe('command-runner', () => {
       );
     });
 
-    it('should temporarily disable stdin raw mode so user can terminate the process during command execution', () => {
-      // We monkeypatch stdin.setRawMode() method to also log events to spawnSpyData array
+    it('should not temporarily disable stdin raw mode on windows OS because this leads to weird behaviour (unable to rerun, list commands, etc.)', () => {
+      runCommands = configureRunCommands(spawnSpy, printerSpy, mockStdin, 'win32');
+      runCommands([{ command: 'npm', args: ['t'] }]);
+      return wait(10).then(() => assert.strictEqual(mockStdin.rawModeCalled, false));
+    });
+
+    it('should temporarily disable stdin raw mode on non-windows OS so user can terminate the process during command execution', () => {
+      runCommands = configureRunCommands(spawnSpy, printerSpy, mockStdin, 'linux');
+      // We monkeypatch stdin.setRawMode() method to also log events to spawnSpyData array. We do this so we can assert
+      // that setRawMode was called exactly before and after spawn function was called.
       const originalSetRawMode = mockStdin.setRawMode.bind(mockStdin);
       mockStdin.setRawMode = (isRaw) => {
         spawnSpyData.push(`raw mode set to ${isRaw}`);

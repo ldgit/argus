@@ -1,4 +1,5 @@
 const assert = require('assert');
+const path = require('path');
 const { configureCompileWatchlist } = require('../src/watchlist');
 const { createPrinterSpy } = require('../src/printer');
 
@@ -9,7 +10,7 @@ describe('watchlist', () => {
   let printerSpy;
 
   beforeEach(() => {
-    process.chdir('./test/fixtures/watchlist.test/mock-project');
+    process.chdir(path.join('./test/fixtures/watchlist.test/mock-project'));
     printerSpy = createPrinterSpy();
     compileWatchlistFor = configureCompileWatchlist.bind(null, printerSpy);
     defaultEnvironment = {
@@ -25,8 +26,8 @@ describe('watchlist', () => {
   });
 
   const nonExistentTestDirectories = [
-    { dir: 'tset/unit', expectedError: 'Test directory tset/unit was not found' },
-    { dir: 'test/units', expectedError: 'Test directory test/units was not found' },
+    { dir: 'tset/unit', expectedError: `Test directory ${path.join('tset/unit')} was not found` },
+    { dir: 'test/units', expectedError: `Test directory ${path.join('test/units')} was not found` },
   ];
 
   const existingTestDirectories = [
@@ -67,7 +68,7 @@ describe('watchlist', () => {
 
     it('should filter out paths that don\'t exist (so that ready event will fire correctly)', () => {
       const actualWatchlist = compileWatchlistFor([defaultEnvironment]);
-      assert.deepEqual(actualWatchlist, ['test-nosource/NoSourceForThis.test.js']);
+      assert.deepEqual(actualWatchlist, [path.join('test-nosource/NoSourceForThis.test.js')]);
     });
   });
 
@@ -107,12 +108,12 @@ describe('watchlist', () => {
       defaultEnvironment,
       jsEnvironmentWithDifferentSourceDir(),
     ]);
-    assert.deepEqual(actualWatchlist.sort(), [
+    assertListsAreEqual(actualWatchlist, [
       'test/unit/ExampleFour.test.js',
       'src/ExampleFour.js',
       'test/unit/src/ExampleFourTest.php',
       'src/ExampleFour.php',
-    ].sort());
+    ]);
   });
 
   it('should remove duplicates', () => {
@@ -125,15 +126,15 @@ describe('watchlist', () => {
 
     const actualWatchlist = compileWatchlistFor([defaultEnvironment, integrationEnvironment]);
 
-    assert.deepEqual([
+    assertListsAreEqual(actualWatchlist, [
       'src/ExampleFour.php',
       'test/integration/src/ExampleFourTest.php',
       'test/unit/src/ExampleFourTest.php',
-    ], actualWatchlist.sort());
+    ]);
   });
 
   function assertListsAreEqual(actual, expected) {
-    assert.deepEqual(actual.sort(), expected.sort());
+    assert.deepEqual(actual.sort(), expected.map(filePath => path.join(filePath)).sort());
   }
 
   function jsEnvironmentWithDifferentSourceDir() {
