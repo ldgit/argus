@@ -24,7 +24,7 @@ function runCommands(spawn, printer, stdin, platform, commands) {
 }
 
 function getCurrentTime() {
-  return formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss');
+  return formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss');
 }
 
 module.exports = {
