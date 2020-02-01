@@ -46,7 +46,9 @@ describe('configureListenForInput', () => {
 
   it('should start listening for user input in raw mode', () => {
     listenForInput(environments);
+    // eslint-disable-next-line no-unused-expressions
     expect(mockStdin.isInRawMode()).to.be.true;
+    // eslint-disable-next-line no-unused-expressions
     expect(mockStdin.isPaused()).to.be.false;
   });
 
@@ -246,8 +248,10 @@ describe('configureListenForInput', () => {
 describe('configured user input listener', () => {
   it('can be called and closed without problems', () => {
     listenForUserInput(runCommands, process.stdin, []);
+    // eslint-disable-next-line no-unused-expressions
     expect(process.stdin.isPaused()).to.be.false;
     process.stdin.pause();
+    // eslint-disable-next-line no-unused-expressions
     expect(process.stdin.isPaused()).to.be.true;
   });
 });
