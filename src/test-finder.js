@@ -6,18 +6,12 @@ module.exports = function configureFindTestsFor(environments) {
 };
 
 function findTestsFor(environments, filePath) {
-  const testPaths = [];
-  const environmentsForFile = getEnvironmentsForFile(filePath, environments);
-
-  environmentsForFile.forEach(fileEnvironment => {
-    const possibleTestPath = getPossibleTestPath(filePath, fileEnvironment);
-
-    if (fs.existsSync(possibleTestPath)) {
-      testPaths.push({ path: possibleTestPath, environment: fileEnvironment });
-    }
-  });
-
-  return testPaths;
+  return getEnvironmentsForFile(filePath, environments)
+    .map(fileEnvironment => ({
+      path: getPossibleTestPath(filePath, fileEnvironment),
+      environment: fileEnvironment,
+    }))
+    .filter(testPath => fs.existsSync(testPath.path));
 }
 
 function getPossibleTestPath(filePath, environment) {

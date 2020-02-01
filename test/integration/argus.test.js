@@ -1,4 +1,4 @@
-const assert = require('assert');
+const { expect } = require('chai');
 const path = require('path');
 const { fork } = require('child_process');
 const { configureRunArgus } = require('../../src/argus');
@@ -49,11 +49,8 @@ describe('argus', function argusTestSuite() {
           waitForDebounce().then(() => resolve(runCommandsSpy.getLastRunCommands()[0]));
         });
       }).then(({ command, args }) => {
-        assert.equal(command, 'echo');
-        assert.deepEqual(
-          args,
-          ['tests/src/PhpClassTest.php'].map(filepath => path.join(filepath)),
-        );
+        expect(command).to.equal('echo');
+        expect(args).to.eql(['tests/src/PhpClassTest.php'].map(filepath => path.join(filepath)));
       });
     }).timeout(500);
 
@@ -66,11 +63,8 @@ describe('argus', function argusTestSuite() {
           waitForDebounce().then(() => resolve(runCommandsSpy.getLastRunCommands()[0]));
         });
       }).then(({ command, args }) => {
-        assert.equal(command, 'echo');
-        assert.deepEqual(
-          args,
-          ['tests/src/PhpClassTest.php'].map(filepath => path.join(filepath)),
-        );
+        expect(command).to.equal('echo');
+        expect(args).to.eql(['tests/src/PhpClassTest.php'].map(filepath => path.join(filepath)));
       });
     });
 
@@ -81,17 +75,14 @@ describe('argus', function argusTestSuite() {
       return new Promise(resolve => {
         watcher.on('change', () => {
           waitForDebounce().then(() => {
-            assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 1);
+            expect(runCommandsSpy.getCommandsBatchRunCount()).to.equal(1);
             resolve(runCommandsSpy.getLastRunCommands()[0]);
           });
         });
       })
         .then(({ command, args }) => {
-          assert.equal(command, 'echo');
-          assert.deepEqual(
-            args,
-            ['tests/src/PhpClassTest.php'].map(filepath => path.join(filepath)),
-          );
+          expect(command).to.equal('echo');
+          expect(args).to.eql(['tests/src/PhpClassTest.php'].map(filepath => path.join(filepath)));
 
           return new Promise(resolve => {
             mockStdin.on('data', resolve);
@@ -99,10 +90,9 @@ describe('argus', function argusTestSuite() {
           });
         })
         .then(() => {
-          assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 2);
-          assert.equal(runCommandsSpy.getLastRunCommands()[0].command, 'echo');
-          assert.deepEqual(
-            runCommandsSpy.getLastRunCommands()[0].args,
+          expect(runCommandsSpy.getCommandsBatchRunCount()).to.equal(2);
+          expect(runCommandsSpy.getLastRunCommands()[0].command).to.equal('echo');
+          expect(runCommandsSpy.getLastRunCommands()[0].args).to.eql(
             ['tests/src/PhpClassTest.php'].map(filepath => path.join(filepath)),
           );
         });
@@ -145,15 +135,13 @@ describe('argus', function argusTestSuite() {
           });
         });
       }).then(({ commandCount, firstCommand, secondCommand }) => {
-        assert.equal(commandCount, 2, 'Expected only two commands to run');
-        assert.equal(firstCommand.command, 'vendor/bin/phpunit');
-        assert.deepEqual(
-          firstCommand.args,
+        expect(commandCount).to.equal(2, 'Expected only two commands to run');
+        expect(firstCommand.command).to.equal('vendor/bin/phpunit');
+        expect(firstCommand.args).to.eql(
           ['tests/unit/src/ClassTest.php'].map(filepath => path.join(filepath)),
         );
-        assert.equal(secondCommand.command, 'vendor/bin/phpunit');
-        assert.deepEqual(
-          secondCommand.args,
+        expect(secondCommand.command).to.equal('vendor/bin/phpunit');
+        expect(secondCommand.args).to.eql(
           ['-c', 'phpunit-integration.xml', 'tests/integration/src/ClassTest.php'].map(filepath =>
             path.join(filepath),
           ),

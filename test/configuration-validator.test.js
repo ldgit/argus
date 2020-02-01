@@ -1,4 +1,3 @@
-const assert = require('assert');
 const { expect } = require('chai');
 const validateConfiguration = require('../src/configuration-validator');
 
@@ -92,11 +91,7 @@ describe('ConfigurationValidator', () => {
     // prettier-ignore
     it(`should throw error for invalid runAllTestsCommand (${JSON.stringify(invalidRunAllTestCommand)})`, () => {
       invalidEnvironment.runAllTestsCommand = invalidRunAllTestCommand;
-      assert.throws(() => validateConfiguration(configuration), TypeError);
-      assert.throws(
-        () => validateConfiguration(configuration),
-        /Invalid runAllTestsCommand property/,
-      );
+      expect(() => validateConfiguration(configuration)).to.throw(TypeError, /Invalid runAllTestsCommand property/);
     });
   });
 

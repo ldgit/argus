@@ -1,4 +1,3 @@
-const assert = require('assert');
 const { expect } = require('chai');
 const path = require('path');
 const { fork } = require('child_process');
@@ -36,7 +35,7 @@ describe('watcher', function watcherTest() {
       callbackWasCalled = true;
     });
 
-    return wait(30).then(() => assert.strictEqual(callbackWasCalled, false));
+    return wait(30).then(() => expect(callbackWasCalled).to.be.false);
   });
 
   // Watchlist (input for watchFiles() function) also does this when it is compiled, but in this case it doesn't hurt
@@ -47,7 +46,7 @@ describe('watcher', function watcherTest() {
       () => {},
     );
     return new Promise(resolve => watcher.on('ready', resolve)).then(() => {
-      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], {
+      expect(printerSpy.getPrintedMessages()[0]).to.eql({
         text: 'Watching 1 file(s)',
         type: 'info',
       });
@@ -63,7 +62,7 @@ describe('watcher', function watcherTest() {
     );
 
     return new Promise(resolve => watcher.on('ready', resolve)).then(() => {
-      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], {
+      expect(printerSpy.getPrintedMessages()[0]).to.eql({
         text: 'Watching 2 file(s)',
         type: 'info',
       });
@@ -75,7 +74,7 @@ describe('watcher', function watcherTest() {
     watcher.watchFiles(['./mock-project/src/ExampleOne.php'], () => {});
 
     return new Promise(resolve => watcher.on('ready', resolve)).then(() => {
-      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], {
+      expect(printerSpy.getPrintedMessages()[0]).to.eql({
         text: 'Watching 1 file(s)',
         type: 'info',
       });
@@ -136,7 +135,7 @@ describe('watcher', function watcherTest() {
 
   it('should watch only files in given watchlist', () => {
     watcher.watchFiles(['./mock-project/src/ExampleFour.php'], () => {
-      assert.fail('callback was called when it should not have been');
+      expect.fail('callback was called when it should not have been');
     });
 
     return new Promise(resolve => {

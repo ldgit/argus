@@ -1,4 +1,4 @@
-const assert = require('assert');
+const { expect } = require('chai');
 const path = require('path');
 const { configureCompileWatchlist } = require('../src/watchlist');
 const { createPrinterSpy } = require('../src/printer');
@@ -43,12 +43,12 @@ describe('watchlist', () => {
   const sourceDirVarieties = ['src', './src', 'src/', './src/'];
 
   context('when given nonexistent directories', () => {
-    nonExistentTestDirectories.forEach(test => {
-      it(`should display an error message (${test.dir})`, () => {
-        defaultEnvironment.testDir = test.dir;
+    nonExistentTestDirectories.forEach(({ dir, expectedError }) => {
+      it(`should display an error message (${dir})`, () => {
+        defaultEnvironment.testDir = dir;
         compileWatchlistFor([defaultEnvironment]);
-        assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], {
-          text: test.expectedError,
+        expect(printerSpy.getPrintedMessages()[0]).to.eql({
+          text: expectedError,
           type: 'error',
         });
       });
@@ -64,7 +64,7 @@ describe('watchlist', () => {
 
     it('should print out a notice for any source file that does not exist', () => {
       compileWatchlistFor([defaultEnvironment]);
-      assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], {
+      expect(printerSpy.getPrintedMessages()[0]).to.eql({
         text: 'Source file not found for test: "test-nosource/NoSourceForThis.test.js"',
         type: 'notice',
       });
@@ -72,7 +72,7 @@ describe('watchlist', () => {
 
     it("should filter out paths that don't exist (so that ready event will fire correctly)", () => {
       const actualWatchlist = compileWatchlistFor([defaultEnvironment]);
-      assert.deepEqual(actualWatchlist, [path.join('test-nosource/NoSourceForThis.test.js')]);
+      expect(actualWatchlist).to.eql([path.join('test-nosource/NoSourceForThis.test.js')]);
     });
   });
 
@@ -144,7 +144,7 @@ describe('watchlist', () => {
   });
 
   function assertListsAreEqual(actual, expected) {
-    assert.deepEqual(actual.sort(), expected.map(filePath => path.join(filePath)).sort());
+    expect(actual.sort()).to.eql(expected.map(filePath => path.join(filePath)).sort());
   }
 
   function jsEnvironmentWithDifferentSourceDir() {

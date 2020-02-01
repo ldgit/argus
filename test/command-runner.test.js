@@ -1,4 +1,4 @@
-const assert = require('assert');
+const { expect } = require('chai');
 const lolex = require('lolex');
 const { spawnSync } = require('child_process');
 const { configureRunCommands } = require('../src/command-runner');
@@ -41,17 +41,18 @@ describe('command-runner', () => {
       { command: 'echo', args: ['what if this was a unit test command?'] },
       { command: 'ls', args: ['-lah'] },
     ]);
-    assert.equal(spawnSpyData[0].command, 'echo');
-    assert.equal(spawnSpyData[1].command, 'ls');
-    assert.deepEqual(spawnSpyData[0].args, ['what if this was a unit test command?']);
-    assert.deepEqual(spawnSpyData[1].args, ['-lah']);
-    assert.equal(spawnSpyData[0].options.stdio, 'inherit');
-    assert.equal(spawnSpyData[1].options.stdio, 'inherit');
+    expect(spawnSpyData[0].command).to.equal('echo');
+    expect(spawnSpyData[1].command).to.equal('ls');
+    expect(spawnSpyData[0].args).to.eql(['what if this was a unit test command?']);
+    expect(spawnSpyData[1].args).to.eql(['-lah']);
+    expect(spawnSpyData[0].options.stdio).to.equal('inherit');
+    expect(spawnSpyData[1].options.stdio).to.equal('inherit');
   });
 
   it('should do nothing if given empty array', () => {
     runCommands([]);
-    assert.strictEqual(spawnSpyWasCalled, false);
+    // eslint-disable-next-line no-unused-expressions
+    expect(spawnSpyWasCalled).to.be.false;
   });
 
   context('time sensitive stuff', () => {
@@ -69,11 +70,11 @@ describe('command-runner', () => {
         { command: 'phpunit', args: ['-c', 'phpunit.xml'] },
       ]);
       const printedMessages = printerSpy.getPrintedMessages();
-      assert.deepStrictEqual(printedMessages[0], {
+      expect(printedMessages[0]).to.eql({
         text: '[2017-08-01 18:05:05] echo one',
         type: 'info',
       });
-      assert.deepStrictEqual(printedMessages[1], {
+      expect(printedMessages[1]).to.eql({
         text: '[2017-08-01 18:05:05] phpunit -c phpunit.xml',
         type: 'info',
       });
@@ -87,8 +88,8 @@ describe('command-runner', () => {
         { command: 'echo', args: ['two'] },
       ]);
 
-      assert.equal(printerSpy.getPrintedMessages().length, 3);
-      assert.deepStrictEqual(printerSpy.getPrintedMessages()[2], {
+      expect(printerSpy.getPrintedMessages().length).to.equal(3);
+      expect(printerSpy.getPrintedMessages()[2]).to.eql({
         text: `\nPress ${format.red('l')} to list available commands\n`,
         type: 'message',
       });
@@ -97,7 +98,7 @@ describe('command-runner', () => {
     it('should not temporarily disable stdin raw mode on windows OS because this leads to weird behaviour (unable to rerun, list commands, etc.)', () => {
       runCommands = configureRunCommands(spawnSpy, printerSpy, mockStdin, 'win32');
       runCommands([{ command: 'npm', args: ['t'] }]);
-      return wait(10).then(() => assert.strictEqual(mockStdin.rawModeCalled, false));
+      return wait(20).then(() => expect(mockStdin.rawModeCalled).to.be.false);
     });
 
     it('should temporarily disable stdin raw mode on non-windows OS so user can terminate the process during command execution', () => {
@@ -112,10 +113,10 @@ describe('command-runner', () => {
 
       runCommands([{ command: 'npm', args: ['t'] }]);
 
-      assert.deepStrictEqual(spawnSpyData[0], 'raw mode set to false');
-      assert.strictEqual(spawnSpyData[1].command, 'npm');
-      assert.deepStrictEqual(spawnSpyData[1].args, ['t']);
-      assert.deepStrictEqual(spawnSpyData[2], 'raw mode set to true');
+      expect(spawnSpyData[0]).to.equal('raw mode set to false');
+      expect(spawnSpyData[1].command).to.equal('npm');
+      expect(spawnSpyData[1].args).to.eql(['t']);
+      expect(spawnSpyData[2]).to.equal('raw mode set to true');
     });
   });
 });

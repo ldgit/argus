@@ -1,4 +1,4 @@
-const assert = require('assert');
+const { expect } = require('chai');
 const { StdinMock } = require('./helpers/mockStdio');
 const {
   listenForUserInput,
@@ -46,13 +46,13 @@ describe('configureListenForInput', () => {
 
   it('should start listening for user input in raw mode', () => {
     listenForInput(environments);
-    assert.strictEqual(mockStdin.isInRawMode(), true);
-    assert.strictEqual(mockStdin.isPaused(), false);
+    expect(mockStdin.isInRawMode()).to.be.true;
+    expect(mockStdin.isPaused()).to.be.false;
   });
 
   it('should use utf8 encoding', () => {
     listenForInput(environments);
-    assert.strictEqual(mockStdin.getEncoding(), 'utf8');
+    expect(mockStdin.getEncoding()).to.equal('utf8');
   });
 
   it('should stop the program if given ctrl+c command', () => {
@@ -64,7 +64,7 @@ describe('configureListenForInput', () => {
   it('should not stop the program otherwise', () => {
     listenForInput(environments);
     mockStdin.push('not important');
-    return wait(30).then(() => assert.strictEqual(processExitCalled, false));
+    return wait(40).then(() => expect(processExitCalled).to.be.false);
   });
 
   it('should not do anything if user gives it unrecognized command', () => {
@@ -73,20 +73,15 @@ describe('configureListenForInput', () => {
     return new Promise(resolve => {
       mockStdin.on('data', resolve);
       mockStdin.push('w');
-    }).then(
-      assert.strictEqual(
-        runCommandsSpy.getCommandsBatchRunCount(),
-        0,
-        'Should not run any commands',
-      ),
+    }).then(() =>
+      expect(runCommandsSpy.getCommandsBatchRunCount()).to.equal(0, 'Should not run any commands'),
     );
   });
 
   ['l', 'L'].forEach(userInput => {
     it(`should list available commands when user inputs "${userInput}"`, () => {
       listenForInput(environments);
-      assert.strictEqual(
-        printerSpy.getPrintedMessages().length,
+      expect(printerSpy.getPrintedMessages().length).to.equal(
         0,
         'No messages printed before "l" is pressed',
       );
@@ -95,20 +90,19 @@ describe('configureListenForInput', () => {
         mockStdin.on('data', resolve);
         mockStdin.push(userInput);
       }).then(() => {
-        assert.strictEqual(
-          runCommandsSpy.getCommandsBatchRunCount(),
+        expect(runCommandsSpy.getCommandsBatchRunCount()).to.equal(
           0,
           'Should not run any commands in this commands',
         );
-        assert.deepStrictEqual(printerSpy.getPrintedMessages()[0], {
+        expect(printerSpy.getPrintedMessages()[0]).to.eql({
           text: '\nCommands list',
           type: 'title',
         });
-        assert.deepStrictEqual(printerSpy.getPrintedMessages()[1], {
+        expect(printerSpy.getPrintedMessages()[1]).to.eql({
           text: `  press ${format.yellow('r')} to rerun last test batch`,
           type: 'message',
         });
-        assert.deepStrictEqual(printerSpy.getPrintedMessages()[2], {
+        expect(printerSpy.getPrintedMessages()[2]).to.eql({
           text: `  press ${format.green('a')} to run all tests\n`,
           type: 'message',
         });
@@ -124,7 +118,7 @@ describe('configureListenForInput', () => {
         mockStdin.on('data', resolve);
         mockStdin.push(userInput);
       }).then(() => {
-        assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 0, 'No commands yet');
+        expect(runCommandsSpy.getCommandsBatchRunCount()).to.equal(0, 'No commands yet');
       });
     });
   });
@@ -134,8 +128,7 @@ describe('configureListenForInput', () => {
       const commands = [{ command: 'echo', args: ['a unit test command?'] }];
       listenForInput(environments);
       setLastRunCommands(commands);
-      assert.strictEqual(
-        runCommandsSpy.getCommandsBatchRunCount(),
+      expect(runCommandsSpy.getCommandsBatchRunCount()).to.equal(
         0,
         'No commands should be run before user input.',
       );
@@ -144,10 +137,9 @@ describe('configureListenForInput', () => {
         mockStdin.on('data', resolve);
         mockStdin.push(userInput);
       }).then(() => {
-        assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 1);
-        assert.deepStrictEqual(runCommandsSpy.getLastRunCommands(), commands);
-        assert.strictEqual(
-          printerSpy.getPrintedMessages().length,
+        expect(runCommandsSpy.getCommandsBatchRunCount()).to.equal(1);
+        expect(runCommandsSpy.getLastRunCommands()).to.eql(commands);
+        expect(printerSpy.getPrintedMessages().length).to.equal(
           0,
           'No messages should be printed on the screen',
         );
@@ -163,15 +155,14 @@ describe('configureListenForInput', () => {
 
       return new Promise(resolve => {
         mockStdin.on('data', resolve);
-        assert.strictEqual(
-          runCommandsSpy.getCommandsBatchRunCount(),
+        expect(runCommandsSpy.getCommandsBatchRunCount()).to.equal(
           0,
           'Command must run only on user input',
         );
         mockStdin.push(userInput);
       }).then(() => {
-        assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 1);
-        assert.deepStrictEqual(runCommandsSpy.getLastRunCommands(), [
+        expect(runCommandsSpy.getCommandsBatchRunCount()).to.equal(1);
+        expect(runCommandsSpy.getLastRunCommands()).to.eql([
           { command: 'vendor/bin/phpunit', args: [] },
         ]);
       });
@@ -193,12 +184,9 @@ describe('configureListenForInput', () => {
         mockStdin.on('data', resolve);
         mockStdin.push(userInput);
       }).then(() => {
-        assert.strictEqual(runCommandsSpy.getCommandsBatchRunCount(), 1);
-        assert.deepStrictEqual(runCommandsSpy.getLastRunCommands(), [
-          {
-            command: 'vendor/bin/phpunit',
-            args: ['-c', 'phpunit.xml'],
-          },
+        expect(runCommandsSpy.getCommandsBatchRunCount()).to.equal(1);
+        expect(runCommandsSpy.getLastRunCommands()).to.eql([
+          { command: 'vendor/bin/phpunit', args: ['-c', 'phpunit.xml'] },
         ]);
       });
     });
@@ -218,7 +206,7 @@ describe('configureListenForInput', () => {
         mockStdin.on('data', resolve);
         mockStdin.push(userInput);
       }).then(() => {
-        assert.deepStrictEqual(runCommandsSpy.getLastRunCommands(), [
+        expect(runCommandsSpy.getLastRunCommands()).to.eql([
           { command: 'vendor/bin/phpunit', args: [] },
           { command: 'mocha', args: [] },
         ]);
@@ -245,7 +233,7 @@ describe('configureListenForInput', () => {
         mockStdin.on('data', resolve);
         mockStdin.push(userInput);
       }).then(() => {
-        assert.deepStrictEqual(runCommandsSpy.getLastRunCommands(), [
+        expect(runCommandsSpy.getLastRunCommands()).to.eql([
           { command: 'vendor/bin/phpunit', args: ['-c', 'phpunit.xml'] },
           { command: 'vendor/bin/phpunit', args: ['-c', 'phpunit-integration.xml'] },
           { command: 'mocha', args: [] },
@@ -258,8 +246,8 @@ describe('configureListenForInput', () => {
 describe('configured user input listener', () => {
   it('can be called and closed without problems', () => {
     listenForUserInput(runCommands, process.stdin, []);
-    assert.strictEqual(process.stdin.isPaused(), false);
+    expect(process.stdin.isPaused()).to.be.false;
     process.stdin.pause();
-    assert.strictEqual(process.stdin.isPaused(), true);
+    expect(process.stdin.isPaused()).to.be.true;
   });
 });

@@ -1,4 +1,3 @@
-const assert = require('assert');
 const { expect } = require('chai');
 const path = require('path');
 const getCommandLineOptions = require('../src/command-line-options');
@@ -13,13 +12,13 @@ describe('command line options', () => {
 
   it('should return default configuration file if no config file specified', () => {
     const commandLineOptions = getCommandLineOptions(processArgv);
-    assert.equal(commandLineOptions.config, path.join(process.cwd(), 'argus.config.js'));
+    expect(commandLineOptions.config).to.equal(path.join(process.cwd(), 'argus.config.js'));
   });
 
   it('should get configuration file from command line', () => {
     processArgv.push('-c', 'custom.argus.config.js');
     const commandLineOptions = getCommandLineOptions(processArgv);
-    assert.equal(commandLineOptions.config, path.join(process.cwd(), 'custom.argus.config.js'));
+    expect(commandLineOptions.config).to.equal(path.join(process.cwd(), 'custom.argus.config.js'));
   });
 
   it('should normalize given absolute config path', () => {
@@ -41,6 +40,6 @@ describe('command line options', () => {
   it('should use same version as package json', () => {
     const expectedVersion = version;
     const commandLineOptions = getCommandLineOptions(processArgv);
-    assert.equal(commandLineOptions.version(), expectedVersion);
+    expect(commandLineOptions.version()).to.equal(expectedVersion);
   });
 });
