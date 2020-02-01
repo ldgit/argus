@@ -60,7 +60,7 @@
   "scripts": {
     "test": "mocha",
     "test-int": "mocha test/integration/**/*.test.js",
-    "test-all": "npm run lint && npm test && npm run test-int",
+    "test-all": "npm run prettier && npm run lint && npm test && npm run test-int",
     "lint": "eslint test/ src/ ./index.js",
     "coverage": "nyc --all npm t && nyc report --reporter=text-lcov | coveralls",
     "prettier": "prettier --check \"./**/*.{js,md}\""
