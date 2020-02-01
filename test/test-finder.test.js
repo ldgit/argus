@@ -102,7 +102,7 @@ describe('test-finder', () => {
   });
 
   function assertTestFound(actualTests, expectedTestPath, expectedEnvironment = phpEnvironment) {
-    expect(actualTests, [
+    expect(actualTests).to.eql([
       { path: path.join(expectedTestPath), environment: expectedEnvironment },
     ]);
   }
