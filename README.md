@@ -8,12 +8,14 @@ Watches your files and executes automated tests for them when they change.
 
 ## Note
 
-These are the docs for **2.0.0** version. For **1.4.1** version documentation see [here](../1.4.1/README.md).
+These are the docs for **3.0.0** version.
+For version **2.0** documentation see [here](../v2.0/README.md).
+For version **1.4** documentation see [here](../v1.4/README.md).
 
 ## Requirements
 
-- [Node.js](https://nodejs.org/en/) v8.\* or greater
-- npm 5 or greater
+- [Node.js](https://nodejs.org/en/) v12 or greater
+- npm v6 or greater
 
 ## Installation
 
@@ -22,7 +24,7 @@ These are the docs for **2.0.0** version. For **1.4.1** version documentation se
 1. `npm install -g argus-test-runner`
 2. Navigate to your project root
 3. Create a configuration file named `argus.config.js` (see [configuration examples](#configuration-file-examples))
-4. Type `argus` to start watching
+4. Type `argus` to start watching tests and corresponding production files
 5. Type `argus -h` for usage information
 
 ### Local installation
@@ -34,24 +36,24 @@ These are the docs for **2.0.0** version. For **1.4.1** version documentation se
 5. You can also add an npm script for convenience in your package.json:
    ```json
        "devDependencies": {
-         "argus-test-runner": "^2.0.0"
+         "argus-test-runner": "^3.0.0"
        },
        "scripts": {
-         "argus": "argus"
+         "test:watch": "argus"
        }
    ```
-   and run `npm run argus`
+   and run `npm run test:watch`
 
-To stop watching files just press `Ctrl + C`
+To stop watching files just press `Ctrl + C`.
 
 ## Configuration
 
 You must configure argus-test-runner by creating a configuration file. By default, `argus` looks for the configuration file named `argus.config.js` in the directory in which it is run, but you can specify a different location via `-c` console parameter, for example `argus -c ../my.custom.argus.config.js`.
 Configuration files are written in _Javascript_.
 
-### Configuration file examples:
+### Configuration file examples
 
-#### Just PHPUnit unit tests:
+#### PHPUnit unit tests
 
 ```javascript
 module.exports = {
@@ -70,7 +72,7 @@ module.exports = {
 };
 ```
 
-#### PHPUnit unit and integration tests:
+#### PHPUnit unit and integration tests
 
 ```javascript
 module.exports = {
@@ -100,7 +102,7 @@ module.exports = {
 };
 ```
 
-#### PHPUnit unit tests and Javascript unit tests:
+#### PHPUnit unit tests and Javascript unit tests
 
 ```javascript
 module.exports = {
