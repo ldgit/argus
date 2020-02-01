@@ -34,6 +34,7 @@ For version **1.4** documentation see [here](../v1.4/README.md).
 3. Create a configuration file named `argus.config.js` (see [configuration examples](#configuration-file-examples))
 4. Start Argus with `./node_modules/.bin/argus`
 5. You can also add an npm script for convenience in your package.json:
+
    ```json
        "devDependencies": {
          "argus-test-runner": "^3.0.0"
@@ -42,6 +43,7 @@ For version **1.4** documentation see [here](../v1.4/README.md).
          "test:watch": "argus"
        }
    ```
+
    and run `npm run test:watch`
 
 To stop watching files just press `Ctrl + C`.
