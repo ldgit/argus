@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['airbnb-base', 'prettier'],
+  extends: ['airbnb-base', 'plugin:chai-expect/recommended', 'prettier'],
   env: {
     mocha: true,
     node: true,
