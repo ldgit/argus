@@ -1,6 +1,6 @@
 const path = require('path');
 const program = require('commander');
-const { version } = require('./../package.json');
+const { version } = require('../package.json');
 
 module.exports = function getCommandLineOptions(processArgv) {
   program

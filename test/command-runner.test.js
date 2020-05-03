@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const lolex = require('lolex');
+const FakeTimers = require('@sinonjs/fake-timers');
 const { spawnSync } = require('child_process');
 const { configureRunCommands } = require('../src/command-runner');
 const { createPrinterSpy, format } = require('../src/printer');
@@ -59,7 +59,7 @@ describe('command-runner', () => {
     let clock;
 
     beforeEach(() => {
-      clock = lolex.install({ now: new Date(2017, 7, 1, 18, 5, 5) });
+      clock = FakeTimers.install({ now: new Date(2017, 7, 1, 18, 5, 5) });
     });
 
     afterEach(() => clock.uninstall());

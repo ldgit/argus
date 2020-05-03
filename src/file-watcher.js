@@ -49,12 +49,7 @@ function getFilesWatchedCount(environments, watched) {
 
   Object.values(watched).forEach(files => {
     filesWatchedCount += files.filter(file =>
-      supportedExtensions.includes(
-        file
-          .split('.')
-          .pop()
-          .toLowerCase(),
-      ),
+      supportedExtensions.includes(file.split('.').pop().toLowerCase()),
     ).length;
   });
 

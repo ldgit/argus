@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const path = require('path');
 const getCommandLineOptions = require('../src/command-line-options');
-const { version } = require('./../package.json');
+const { version } = require('../package.json');
 
 describe('command line options', () => {
   let processArgv;

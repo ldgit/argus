@@ -1,6 +1,6 @@
 const formatDate = require('date-fns/format');
 const crossSpawn = require('cross-spawn');
-const { consolePrinter, format } = require('../src/printer');
+const { consolePrinter, format } = require('./printer');
 
 function configureRunCommands(spawn, printer, stdin, platform) {
   return runCommands.bind(null, spawn, printer, stdin, platform);

@@ -30,10 +30,7 @@ function getPossibleTestPath(filePath, environment) {
 
 function getEnvironmentsForFile(filePath, environments) {
   const foundEnvironments = [];
-  const fileExtension = filePath
-    .split('.')
-    .pop()
-    .toLowerCase();
+  const fileExtension = filePath.split('.').pop().toLowerCase();
   environments.forEach(environment => {
     if (environment.extension === fileExtension) {
       foundEnvironments.push(environment);
@@ -44,10 +41,7 @@ function getEnvironmentsForFile(filePath, environments) {
 }
 
 function pathWithoutExtensionAndSourceDir(filePath, environment) {
-  return removeSourceDirFromPath(filePath, environment)
-    .split('.')
-    .slice(0, -1)
-    .join('.');
+  return removeSourceDirFromPath(filePath, environment).split('.').slice(0, -1).join('.');
 }
 
 function removeSourceDirFromPath(filePath, environment) {

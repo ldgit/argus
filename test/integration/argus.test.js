@@ -4,7 +4,7 @@ const { fork } = require('child_process');
 const { configureRunArgus } = require('../../src/argus');
 const { runCommands } = require('../../src/command-runner');
 const createRunCommandsSpy = require('../helpers/run-commands-spy');
-const { StdinMock } = require('./../helpers/mockStdio');
+const { StdinMock } = require('../helpers/mockStdio');
 
 const wait = miliseconds => new Promise(resolve => setTimeout(resolve, miliseconds));
 const waitForDebounce = () => wait(110);

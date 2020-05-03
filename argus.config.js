@@ -14,7 +14,7 @@ module.exports = {
       testDir: 'test/integration',
       sourceDir: 'src',
       testRunnerCommand: { command: 'npm', arguments: ['t', '--'] },
-      runAllTestsCommand: { command: 'npm', arguments: ['run', 'test-int'] },
+      runAllTestsCommand: { command: 'npm', arguments: ['run', 'test:int'] },
     },
   ],
 };

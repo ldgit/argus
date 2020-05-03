@@ -4,10 +4,10 @@ const {
   listenForUserInput,
   unconfiguredListenForUserInput,
   setLastRunCommands,
-} = require('./../src/user-input-handler');
+} = require('../src/user-input-handler');
 const createRunCommandsSpy = require('./helpers/run-commands-spy');
 const { format, createPrinterSpy } = require('../src/printer');
-const { runCommands } = require('./../src/command-runner');
+const { runCommands } = require('../src/command-runner');
 const wait = require('./helpers/wait');
 
 describe('configureListenForInput', () => {

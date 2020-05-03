@@ -1,5 +1,5 @@
-const { format, consolePrinter } = require('../src/printer');
-const { buildCommandsToRunAllTests } = require('../src/command-builder');
+const { format, consolePrinter } = require('./printer');
+const { buildCommandsToRunAllTests } = require('./command-builder');
 
 module.exports = {
   listenForUserInput: unconfiguredListenForUserInput.bind(null, process.exit, consolePrinter),
