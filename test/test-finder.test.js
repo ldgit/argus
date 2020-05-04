@@ -99,6 +99,13 @@ describe('test-finder', () => {
         { path: path.join('tests/unit/src/ExampleTwoTest.php'), environment: phpEnvironment },
       ]);
     });
+
+    it('should work when source and test are in the same dir', () => {
+      const environment = createEnvironment('js', 'src', '.test', 'src');
+      findTestsFor = configureFindTestsFor([environment]);
+
+      assertTestFound(findTestsFor('src/ExampleFour.js'), 'src/ExampleFour.test.js', environment);
+    });
   });
 
   function assertTestFound(actualTests, expectedTestPath, expectedEnvironment = phpEnvironment) {

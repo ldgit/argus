@@ -14,20 +14,6 @@ function findTestsFor(environments, filePath) {
     .filter(testPath => fs.existsSync(testPath.path));
 }
 
-function getPossibleTestPath(filePath, environment) {
-  const normalizedFilePath = path.normalize(filePath).replace(/\\/g, '/');
-  const normalizedTestDir = path.normalize(environment.testDir).replace(/\\/g, '/');
-
-  if (normalizedFilePath.startsWith(normalizedTestDir)) {
-    return path.join(normalizedFilePath);
-  }
-
-  return [
-    path.join(environment.testDir, pathWithoutExtensionAndSourceDir(filePath, environment)),
-    `${environment.testNameSuffix}.${environment.extension}`,
-  ].join('');
-}
-
 function getEnvironmentsForFile(filePath, environments) {
   const foundEnvironments = [];
   const fileExtension = filePath.split('.').pop().toLowerCase();
@@ -40,10 +26,39 @@ function getEnvironmentsForFile(filePath, environments) {
   return foundEnvironments;
 }
 
-function pathWithoutExtensionAndSourceDir(filePath, environment) {
-  return removeSourceDirFromPath(filePath, environment).split('.').slice(0, -1).join('.');
+function getPossibleTestPath(filePath, { testNameSuffix, testDir, sourceDir, extension }) {
+  const normalizedFilePath = path.normalize(filePath).replace(/\\/g, '/');
+  const normalizedTestDir = path.normalize(testDir).replace(/\\/g, '/');
+
+  if (
+    isInTestDir(normalizedFilePath, normalizedTestDir) &&
+    isTestFile(normalizedFilePath, testNameSuffix)
+  ) {
+    return path.join(normalizedFilePath);
+  }
+
+  return [
+    path.join(testDir, pathWithoutExtensionAndSourceDir(filePath, sourceDir)),
+    `${testNameSuffix}.${extension}`,
+  ].join('');
 }
 
-function removeSourceDirFromPath(filePath, environment) {
-  return filePath.replace(environment.sourceDir, '');
+function isInTestDir(filePath, testDir) {
+  return filePath.startsWith(testDir);
+}
+
+function isTestFile(filePath, testSuffix) {
+  return getWithoutExtension(filePath).endsWith(testSuffix);
+}
+
+function pathWithoutExtensionAndSourceDir(filePath, sourceDir) {
+  return getWithoutExtension(removeSourceDirFromPath(filePath, sourceDir));
+}
+
+function getWithoutExtension(filePath) {
+  return filePath.split('.').slice(0, -1).join('.');
+}
+
+function removeSourceDirFromPath(filePath, sourceDir) {
+  return filePath.replace(sourceDir, '');
 }
