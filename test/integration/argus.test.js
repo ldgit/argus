@@ -149,4 +149,54 @@ describe('argus', function argusTestSuite() {
       });
     });
   });
+
+  context('tests-and-source-together', () => {
+    let runCommandsSpy;
+
+    beforeEach(() => {
+      process.chdir(path.join('.', 'test', 'integration', 'fixtures', 'tests-and-source-together'));
+      runCommandsSpy = createRunCommandsSpy();
+      runArgus = configureRunArgus(runCommandsSpy, commandLineOptions, mockStdin);
+    });
+
+    it('should watch project with test and source next to each other', async () => {
+      watcher = runArgus();
+      fork(pathToTouchScript, [path.join('.', 'src', 'app.js')]);
+
+      const { commandCount, firstCommand } = await new Promise(resolve => {
+        watcher.on('change', () => {
+          waitForDebounce().then(() => {
+            resolve({
+              commandCount: runCommandsSpy.getLastRunCommands().length,
+              firstCommand: runCommandsSpy.getLastRunCommands()[0],
+            });
+          });
+        });
+      });
+
+      expect(commandCount).to.equal(1, 'Expected one command to run');
+      expect(firstCommand.command).to.equal('echo "I test thee"');
+      expect(firstCommand.args).to.eql(['src/app.test.js'].map(filepath => path.join(filepath)));
+    });
+
+    it('should watch project with test and source next to each other (test file changed)', async () => {
+      watcher = runArgus();
+      fork(pathToTouchScript, [path.join('.', 'src', 'app.test.js')]);
+
+      const { commandCount, firstCommand } = await new Promise(resolve => {
+        watcher.on('change', () => {
+          waitForDebounce().then(() => {
+            resolve({
+              commandCount: runCommandsSpy.getLastRunCommands().length,
+              firstCommand: runCommandsSpy.getLastRunCommands()[0],
+            });
+          });
+        });
+      });
+
+      expect(commandCount).to.equal(1, 'Expected one command to run');
+      expect(firstCommand.command).to.equal('echo "I test thee"');
+      expect(firstCommand.args).to.eql(['src/app.test.js'].map(filepath => path.join(filepath)));
+    });
+  });
 });
